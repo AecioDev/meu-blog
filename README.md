@@ -51,8 +51,18 @@ e `rss.xml`. É só isso que vai pro ar.
 
 ## Como escrever um post
 
-Crie um arquivo `.md` em `src/content/posts/`. **O nome do arquivo vira a URL** —
-`minha-dica-legal.md` fica acessível em `/posts/minha-dica-legal/`.
+Cada post é uma pasta dentro de `src/content/posts/`, com o texto e as imagens
+juntos. **O nome da pasta vira a URL:**
+
+```
+src/content/posts/
+└── minha-dica-legal/       ← vira /posts/minha-dica-legal/
+    ├── index.md            ← o texto
+    ├── capa.jpg            ← imagem de capa
+    └── passo-1.jpg         ← outras imagens do post (opcional)
+```
+
+Use só minúsculas, números e hífen no nome da pasta — sem acento e sem espaço.
 
 ```markdown
 ---
@@ -62,7 +72,7 @@ pubDate: 2026-09-01
 updatedDate: 2026-09-10        # opcional
 category: 'Hidráulica'
 tags: ['pia', 'entupimento']   # opcional
-coverImage: '../../assets/posts/minha-capa.jpg'
+coverImage: './capa.jpg'
 coverImageAlt: 'Descrição da imagem para quem não enxerga'
 author: 'Equipe Crescendo na Obra'   # opcional, já tem padrão
 featured: false                       # true = aparece em destaque na home
@@ -82,7 +92,7 @@ Seu texto aqui, em Markdown normal.
 | `updatedDate` | não | Mostra "Atualizado em..." no post |
 | `category` | sim | Cria a página `/categoria/...` automaticamente |
 | `tags` | não | Lista de strings |
-| `coverImage` | sim | Caminho relativo ao `.md`, dentro de `src/assets/` |
+| `coverImage` | sim | Relativo à pasta do post (`./capa.jpg`) |
 | `coverImageAlt` | sim | Acessibilidade — descreva a imagem de verdade |
 | `author` | não | Padrão: "Equipe Crescendo na Obra" |
 | `featured` | não | Padrão `false` |
@@ -90,9 +100,18 @@ Seu texto aqui, em Markdown normal.
 
 ### Sobre as imagens de capa
 
-Guarde as capas em `src/assets/posts/` (e **não** em `public/`). Assim o Astro
-otimiza tudo no build: converte pra WebP, redimensiona e gera as versões
-responsivas sozinho. O ideal é enviar em **1200×630**.
+Guarde as imagens dentro da pasta do próprio post (e **não** em `public/`).
+Assim o Astro otimiza tudo no build: converte pra WebP, redimensiona e gera as
+versões responsivas sozinho. O ideal é enviar a capa em **1200×630**.
+
+Vale tanto pra capa quanto pras imagens no meio do texto:
+
+```markdown
+![Descrição da imagem](./passo-1.jpg)
+```
+
+⚠️ Caminho absoluto (`/imagens/capa.jpg`) **não dá erro de build**, mas a capa
+fica quebrada no site e some do compartilhamento. Use sempre `./`.
 
 Se você errar o caminho ou esquecer um campo obrigatório, o build falha com uma
 mensagem dizendo exatamente qual post e qual campo — de propósito, pra nada
@@ -137,9 +156,8 @@ eles marcam cada bloco.
 
 ```
 src/
-├── assets/posts/       Imagens de capa (otimizadas no build)
 ├── components/         Peças reutilizáveis da interface
-├── content/posts/      Os posts em Markdown
+├── content/posts/      Um post por pasta: index.md + imagens
 ├── layouts/            Estrutura das páginas
 ├── pages/              Cada arquivo aqui vira uma rota
 │   ├── index.astro                 /

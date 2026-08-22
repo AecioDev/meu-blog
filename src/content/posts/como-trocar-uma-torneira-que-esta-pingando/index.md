@@ -4,7 +4,7 @@ description: 'Aquele pinga-pinga da cozinha some em 30 minutos com duas ferramen
 pubDate: 2026-08-12
 category: 'Hidráulica'
 tags: ['torneira', 'vazamento', 'passo a passo', 'economia']
-coverImage: '../../assets/posts/torneira-pingando.jpg'
+coverImage: './capa.jpg'
 coverImageAlt: 'Ilustração de uma torneira azul com uma gota d’água caindo'
 author: 'Equipe Crescendo na Obra'
 featured: true

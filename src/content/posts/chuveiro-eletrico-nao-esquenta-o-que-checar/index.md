@@ -4,7 +4,7 @@ description: 'Nem sempre é preciso trocar o chuveiro inteiro. Cinco verificaç�
 pubDate: 2026-07-28
 category: 'Elétrica'
 tags: ['chuveiro', 'resistência', 'segurança', 'diagnóstico']
-coverImage: '../../assets/posts/chuveiro-eletrico.jpg'
+coverImage: './capa.jpg'
 coverImageAlt: 'Ilustração de uma lâmpada acesa sobre fundo amarelo, representando energia elétrica'
 author: 'Equipe Crescendo na Obra'
 featured: false

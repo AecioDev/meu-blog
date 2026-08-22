@@ -4,7 +4,7 @@ description: 'Você não precisa da maleta gigante de 200 peças. Com menos de R
 pubDate: 2026-07-20
 category: 'Dicas Gerais'
 tags: ['ferramentas', 'primeiro apartamento', 'compras', 'economia']
-coverImage: '../../assets/posts/kit-ferramentas.jpg'
+coverImage: './capa.jpg'
 coverImageAlt: 'Ilustração de uma caixa de ferramentas laranja fechada sobre fundo verde'
 author: 'Equipe Crescendo na Obra'
 featured: true

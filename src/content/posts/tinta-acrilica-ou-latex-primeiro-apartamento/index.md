@@ -5,7 +5,7 @@ pubDate: 2026-08-05
 updatedDate: 2026-08-18
 category: 'Pintura'
 tags: ['tinta', 'comparativo', 'economia', 'parede']
-coverImage: '../../assets/posts/tinta-acrilica-latex.jpg'
+coverImage: './capa.jpg'
 coverImageAlt: 'Ilustração de um rolo de pintura roxo passando tinta amarela na parede'
 author: 'Equipe Crescendo na Obra'
 featured: true
