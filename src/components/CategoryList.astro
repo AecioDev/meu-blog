@@ -1,12 +1,17 @@
 ---
-import { getCategorias, estiloCategoria } from '../utils/posts';
+import { getCategorias, estiloCategoria, idUnico } from '../utils/posts';
 
 const categorias = await getCategorias();
 const caminhoAtual = Astro.url.pathname;
+// O mesmo widget pode aparecer duas vezes na página (bloco do
+// celular e barra lateral do desktop): id repetido quebraria a
+// ligação entre o título e a região para leitores de tela.
+const idTitulo = idUnico('titulo-categorias');
+
 ---
 
-<nav aria-labelledby="titulo-categorias">
-  <h2 id="titulo-categorias" class="font-titulo text-lg font-semibold text-tinta">
+<nav aria-labelledby={idTitulo}>
+  <h2 id={idTitulo} class="font-titulo text-lg font-semibold text-tinta">
     Categorias
   </h2>
   <ul class="mt-3 flex flex-col gap-1.5">

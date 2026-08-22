@@ -12,9 +12,12 @@ interface Props {
   post: Post;
   /** O primeiro destaque ocupa a linha inteira e carrega com prioridade. */
   grande?: boolean;
+  /** Texto do selo. No celular o card mostra o post mais recente,
+   *  que nem sempre é um post marcado como destaque. */
+  rotulo?: string;
 }
 
-const { post, grande = false } = Astro.props;
+const { post, grande = false, rotulo = '⭐ Destaque' } = Astro.props;
 const estilo = estiloCategoria(post.data.category);
 ---
 
@@ -43,7 +46,7 @@ const estilo = estiloCategoria(post.data.category);
       <span
         class="rounded-full bg-obra-100 px-3 py-1 text-xs font-bold text-obra-800"
       >
-        ⭐ Destaque
+        {rotulo}
       </span>
       <a
         href={urlDaCategoria(post.data.category)}

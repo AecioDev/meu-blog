@@ -1,27 +1,58 @@
 ---
+/**
+ * Home.
+ *
+ * Celular e desktop mostram conteúdos diferentes, na mesma ordem de DOM:
+ *
+ *  celular   hero → destaque mais recente → mais vistos → anúncio →
+ *            categorias → anúncio → newsletter
+ *  desktop   hero → destaques → publicados recentemente → categorias
+ *            (+ barra lateral, que no celular fica escondida)
+ *
+ * Os blocos exclusivos de cada largura usam `lg:hidden` / `hidden lg:block`.
+ * Nada aqui depende de clique para aparecer.
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import FeaturedPost from '../components/FeaturedPost.astro';
-import { getPosts, getPostsDestaque, getCategorias, urlDaCategoria, estiloCategoria } from '../utils/posts';
+import MostViewed from '../components/MostViewed.astro';
+import AdSlot from '../components/AdSlot.astro';
+import NewsletterBox from '../components/NewsletterBox.astro';
+import {
+  getPosts,
+  getPostsDestaque,
+  getCategorias,
+  urlDaCategoria,
+  estiloCategoria,
+} from '../utils/posts';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
-const destaques = await getPostsDestaque(3);
 const todos = await getPosts();
+const destaques = await getPostsDestaque(3);
 const idsDestaque = new Set(destaques.map((p) => p.id));
 const recentes = todos.filter((p) => !idsDestaque.has(p.id)).slice(0, 6);
 const categorias = await getCategorias();
+
+/** No celular o card grande é sempre o último post publicado. */
+const maisRecente = todos[0];
 ---
 
-<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-  <!-- Hero -->
+<BaseLayout
+  title={SITE_TITLE}
+  description={SITE_DESCRIPTION}
+  comSidebarMobile={false}
+>
+  <!-- 1. Hero (celular e desktop) -->
   <section
     class="rounded-2xl bg-linear-to-br from-obra-300 via-obra-400 to-tijolo-400 p-6 text-tinta sm:p-10"
   >
-    <p class="font-titulo text-sm font-semibold uppercase tracking-wider text-tinta/85">
+    <p
+      class="font-titulo text-sm font-semibold uppercase tracking-wider text-tinta/85"
+    >
       Bem-vindo à sua primeira casa
     </p>
     <h1 class="mt-2 font-titulo text-3xl font-bold leading-tight sm:text-5xl">
-      Consertar a própria casa não é
+      Consertar a própria casa não é{' '}
       <span class="relative inline-block">
         bicho de sete cabeças
         <span
@@ -52,10 +83,32 @@ const categorias = await getCategorias();
     </div>
   </section>
 
-  <!-- Destaques -->
+  <!-- 2. Celular: um único destaque, o post mais recente -->
+  {
+    maisRecente && (
+      <section aria-labelledby="titulo-mais-novo" class="mt-12 lg:hidden">
+        <h2
+          id="titulo-mais-novo"
+          class="font-titulo text-2xl font-bold text-tinta"
+        >
+          <span aria-hidden="true">🆕</span> O mais novo por aqui
+        </h2>
+        <p class="mt-1 text-tinta-suave">Saiu agora, quentinho.</p>
+
+        <div class="mt-5">
+          <FeaturedPost post={maisRecente} grande rotulo="🆕 Mais recente" />
+        </div>
+      </section>
+    )
+  }
+
+  <!-- 2b. Desktop: os posts marcados como destaque -->
   {
     destaques.length > 0 && (
-      <section aria-labelledby="titulo-destaques" class="mt-12">
+      <section
+        aria-labelledby="titulo-destaques"
+        class="mt-12 hidden lg:block"
+      >
         <h2
           id="titulo-destaques"
           class="font-titulo text-2xl font-bold text-tinta"
@@ -75,8 +128,15 @@ const categorias = await getCategorias();
     )
   }
 
-  <!-- Recentes -->
-  <section aria-labelledby="titulo-recentes-home" class="mt-14">
+  <!-- 3. Celular: mais vistos, no lugar da lista de recentes -->
+  <section class="mt-12 lg:hidden">
+    <div class="rounded-2xl border-2 border-borda bg-papel p-5 sm:p-6">
+      <MostViewed />
+    </div>
+  </section>
+
+  <!-- 3b. Desktop: publicados recentemente -->
+  <section aria-labelledby="titulo-recentes-home" class="mt-14 hidden lg:block">
     <div class="flex flex-wrap items-end justify-between gap-3">
       <div>
         <h2
@@ -110,7 +170,10 @@ const categorias = await getCategorias();
     }
   </section>
 
-  <!-- Atalho por categoria -->
+  <!-- 4. Celular: anúncio em faixa horizontal -->
+  <AdSlot slotId="home-mobile-1" formato="banner" class="mt-12 lg:hidden" />
+
+  <!-- 5. Categorias (celular e desktop) -->
   <section aria-labelledby="titulo-explorar" class="mt-14">
     <h2 id="titulo-explorar" class="font-titulo text-2xl font-bold text-tinta">
       <span aria-hidden="true">🧭</span> No que você quer mexer hoje?
@@ -147,4 +210,12 @@ const categorias = await getCategorias();
       }
     </div>
   </section>
+
+  <!-- 6. Celular: anúncio quadrado -->
+  <AdSlot slotId="home-mobile-2" formato="quadrado" class="mt-12 lg:hidden" />
+
+  <!-- 7. Celular: newsletter (no desktop ela vive na barra lateral) -->
+  <div class="mt-12 lg:hidden">
+    <NewsletterBox />
+  </div>
 </BaseLayout>

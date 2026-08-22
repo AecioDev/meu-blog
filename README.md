@@ -110,6 +110,29 @@ usa o visual padrão. Se quiser a categoria no menu do topo, inclua em
 
 ---
 
+## Home: celular e desktop mostram coisas diferentes
+
+A home tem duas montagens, decididas só por CSS (`lg:hidden` e
+`hidden lg:block`) — não há JavaScript nem clique envolvido:
+
+| Celular | Desktop |
+| --- | --- |
+| Hero | Hero |
+| Post mais recente, card grande | "Comece por aqui" (posts `featured`) |
+| Mais vistos | Publicados recentemente |
+| Anúncio (faixa horizontal) | — |
+| No que você quer mexer hoje | No que você quer mexer hoje |
+| Anúncio (quadrado) | — |
+| Newsletter | — |
+| Rodapé | Rodapé + barra lateral completa |
+
+No celular a barra lateral da home some (`comSidebarMobile={false}` no
+layout), porque os blocos dela já entram no fluxo da página, em outra ordem.
+Nas demais páginas ela aparece normalmente, empilhada abaixo do conteúdo.
+
+Se mudar a ordem, mexa nos comentários numerados do `src/pages/index.astro` —
+eles marcam cada bloco.
+
 ## Organização das pastas
 
 ```

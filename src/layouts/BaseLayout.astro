@@ -17,6 +17,11 @@ interface Props {
   noindex?: boolean;
   /** Mostra a barra lateral (desligue em páginas de leitura pura). */
   comSidebar?: boolean;
+  /**
+   * Mostra a lateral também no celular. A home desliga: lá os blocos
+   * entram no fluxo da página, em ordem própria.
+   */
+  comSidebarMobile?: boolean;
   /** Post aberto, pra não repetir na lista de recentes da lateral. */
   postAtualId?: string;
   /** Ocupa a largura toda, sem o container padrão (usado no 404). */
@@ -25,6 +30,7 @@ interface Props {
 
 const {
   comSidebar = true,
+  comSidebarMobile = true,
   postAtualId,
   larguraTotal = false,
   ...seo
@@ -52,7 +58,10 @@ const {
                 <div class="min-w-0">
                   <slot />
                 </div>
-                <Sidebar postAtualId={postAtualId} />
+                <Sidebar
+                  postAtualId={postAtualId}
+                  class={comSidebarMobile ? '' : 'hidden lg:block'}
+                />
               </div>
             ) : (
               <slot />

@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import { getPosts, urlDoPost, formatarData } from '../utils/posts';
+import { getPosts, urlDoPost, formatarData, idUnico } from '../utils/posts';
 
 interface Props {
   limite?: number;
@@ -13,10 +13,15 @@ const { limite = 4, titulo = 'Posts recentes', excluirId } = Astro.props;
 
 const todos = await getPosts();
 const posts = todos.filter((p) => p.id !== excluirId).slice(0, limite);
+// O mesmo widget pode aparecer duas vezes na página (bloco do
+// celular e barra lateral do desktop): id repetido quebraria a
+// ligação entre o título e a região para leitores de tela.
+const idTitulo = idUnico('titulo-recentes');
+
 ---
 
-<section aria-labelledby="titulo-recentes">
-  <h2 id="titulo-recentes" class="font-titulo text-lg font-semibold text-tinta">
+<section aria-labelledby={idTitulo}>
+  <h2 id={idTitulo} class="font-titulo text-lg font-semibold text-tinta">
     {titulo}
   </h2>
   <ul class="mt-3 flex flex-col gap-3">
