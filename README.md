@@ -184,6 +184,32 @@ O projeto é estático — não precisa de adapter nem configuração extra.
 3. A Vercel detecta o Astro sozinha (build: `npm run build`, saída: `dist`)
 4. Deploy
 
+### Sobre a barra no fim da URL
+
+As URLs do site terminam com barra (`/sobre/`, `/categoria/pintura/`). Isso está
+fixado em dois lugares que precisam continuar combinando:
+
+- `vercel.json` → `"trailingSlash": true`
+- `astro.config.mjs` → `trailingSlash: 'always'`
+
+Se os dois divergirem, cada tag canonical passa a apontar pra uma URL que
+redireciona — o site funciona, mas o sinal que chega no Google fica sujo. Por
+isso o servidor local também exige a barra: link interno escrito errado vira 404
+no `npm run dev`, antes de ir pro ar.
+
+### Domínio próprio
+
+Ao trocar pro domínio final, ajuste o campo `site` no `astro.config.mjs` e o
+`Sitemap:` no `public/robots.txt` — sempre com `https://` na frente.
+
+Escolha também se o domínio principal é com ou sem `www` e use exatamente a
+mesma forma no `site`. Se a Vercel redireciona pra `www` mas o `site` diz o
+contrário, as canonicals brigam com o redirecionamento.
+
+Vale apontar o DNS e confirmar o domínio ativo na Vercel **antes** de trocar o
+`site`: publicar canonicals pra um domínio que ainda não resolve dá trabalho
+pra desfazer no Search Console.
+
 ## Acessibilidade
 
 O projeto foi validado com contraste mínimo AA (WCAG) em todas as páginas,

@@ -21,12 +21,12 @@ export type ItemMenu = { titulo: string; href: string };
 
 export const MENU_PRINCIPAL: ItemMenu[] = [
   { titulo: 'Início', href: '/' },
-  { titulo: 'Hidráulica', href: '/categoria/hidraulica' },
-  { titulo: 'Pintura', href: '/categoria/pintura' },
-  { titulo: 'Elétrica', href: '/categoria/eletrica' },
-  { titulo: 'Dicas Gerais', href: '/categoria/dicas-gerais' },
-  { titulo: 'Sobre', href: '/sobre' },
-  { titulo: 'Contato', href: '/contato' },
+  { titulo: 'Hidráulica', href: '/categoria/hidraulica/' },
+  { titulo: 'Pintura', href: '/categoria/pintura/' },
+  { titulo: 'Elétrica', href: '/categoria/eletrica/' },
+  { titulo: 'Dicas Gerais', href: '/categoria/dicas-gerais/' },
+  { titulo: 'Sobre', href: '/sobre/' },
+  { titulo: 'Contato', href: '/contato/' },
 ];
 
 /**

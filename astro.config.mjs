@@ -9,6 +9,11 @@ export default defineConfig({
   // É usada no sitemap.xml, no RSS e nas tags canonical/Open Graph.
   site: 'https://crescendonaobra.vercel.app',
   output: 'static',
+  // URLs sempre terminam com barra (/sobre/), casando com o
+  // "trailingSlash": true do vercel.json e com as tags canonical.
+  // Assim o site local se comporta igual ao publicado: link interno
+  // sem a barra vira 404 no dev, antes de ir pro ar.
+  trailingSlash: 'always',
   integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],
