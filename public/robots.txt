@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 # Atualize o domínio abaixo junto com o `site` do astro.config.mjs
-Sitemap: https://crescendonaobra.vercel.app/sitemap-index.xml
+Sitemap: https://crescendonaobra.com.br/sitemap-index.xml
