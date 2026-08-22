@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getPosts, getCategorias, estiloCategoria } from '../utils/posts';
+
+const posts = (await getPosts()).slice(0, 2);
+const categorias = await getCategorias();
+---
+
+<BaseLayout
+  title="Página não encontrada"
+  description="Essa página não existe (ou mudou de lugar). Volte pra home e continue explorando os tutoriais."
+  noindex
+  comSidebar={false}
+>
+  <div class="mx-auto max-w-3xl text-center">
+    <p class="font-titulo text-7xl font-bold text-obra-600 sm:text-8xl" aria-hidden="true">
+      404
+    </p>
+
+    <h1 class="mt-3 font-titulo text-3xl font-bold sm:text-4xl">
+      Opa, essa parede não existe <span aria-hidden="true">🧱</span>
+    </h1>
+
+    <p class="mx-auto mt-4 max-w-xl text-lg text-tinta-suave">
+      A página que você procurou saiu do ar, mudou de endereço ou nunca foi
+      construída. Acontece até nas melhores obras.
+    </p>
+
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a
+        href="/"
+        class="rounded-xl bg-obra-500 px-6 py-3 font-titulo font-semibold text-tinta transition-transform hover:scale-[1.02] hover:bg-obra-400"
+      >
+        Voltar pro início
+      </a>
+      <a
+        href="/contato"
+        class="rounded-xl border-2 border-borda bg-papel px-6 py-3 font-titulo font-semibold text-tinta transition-colors hover:border-obra-300"
+      >
+        Avisar que o link quebrou
+      </a>
+    </div>
+
+    <section aria-labelledby="titulo-404-categorias" class="mt-12">
+      <h2 id="titulo-404-categorias" class="font-titulo text-xl font-semibold">
+        Que tal dar uma olhada nestes assuntos?
+      </h2>
+      <div class="mt-4 flex flex-wrap justify-center gap-2">
+        {
+          categorias.map((cat) => {
+            const estilo = estiloCategoria(cat.nome);
+            return (
+              <a
+                href={`/categoria/${cat.slug}/`}
+                class:list={[
+                  'rounded-full px-4 py-2 text-sm font-bold transition-transform hover:-translate-y-0.5',
+                  estilo.chip,
+                ]}
+              >
+                <span aria-hidden="true">{estilo.emoji}</span> {cat.nome}
+              </a>
+            );
+          })
+        }
+      </div>
+    </section>
+
+    {
+      posts.length > 0 && (
+        <section aria-labelledby="titulo-404-posts" class="mt-12 text-left">
+          <h2
+            id="titulo-404-posts"
+            class="text-center font-titulo text-xl font-semibold"
+          >
+            Ou comece por um destes
+          </h2>
+          <div class="mt-5 grid gap-5 sm:grid-cols-2">
+            {posts.map((post) => (
+              <PostCard post={post} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>

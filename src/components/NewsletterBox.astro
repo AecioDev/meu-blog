@@ -1,0 +1,109 @@
+---
+/**
+ * Bloco de captura de e-mail — só a interface, sem integração ainda.
+ *
+ * ────────────────────────────────────────────────────────────────
+ * COMO CONECTAR DEPOIS:
+ * Opção 1 (mais simples, continua site estático): troque o <form>
+ *   por um action do seu provedor —
+ *   Mailchimp:  action="https://SEU-DOMINIO.us1.list-manage.com/subscribe/post?u=...&id=..."
+ *   Buttondown: action="https://buttondown.email/api/emails/embed-subscribe/SEU_USER"
+ *   ConvertKit: action="https://app.kit.com/forms/SEU_ID/subscriptions"
+ *   e ajuste o `name` do input para o esperado (EMAIL, email_address...).
+ *
+ * Opção 2: criar uma Vercel Function em /api/newsletter e chamar via fetch.
+ *   Isso exige mudar o output do Astro para 'server' com o adapter da Vercel.
+ * ────────────────────────────────────────────────────────────────
+ */
+
+import { idUnico } from '../utils/posts';
+
+interface Props {
+  compacto?: boolean;
+}
+
+const { compacto = false } = Astro.props;
+
+// O bloco aparece na lateral e dentro do post na mesma página:
+// cada instância precisa dos seus próprios ids.
+const idTitulo = idUnico('titulo-newsletter');
+const idAviso = idUnico('aviso-newsletter');
+const idEmail = idUnico('email-newsletter');
+---
+
+<section
+  aria-labelledby={idTitulo}
+  class:list={[
+    'rounded-2xl bg-linear-to-br from-obra-300 to-obra-400 text-tinta',
+    compacto ? 'p-5' : 'p-6 sm:p-8',
+  ]}
+>
+  <h2
+    id={idTitulo}
+    class:list={[
+      'font-titulo font-bold',
+      compacto ? 'text-lg' : 'text-2xl sm:text-3xl',
+    ]}
+  >
+    <span aria-hidden="true">💌</span> Recebe as dicas no e-mail
+  </h2>
+  <p class:list={['mt-2 text-tinta/80', compacto ? 'text-sm' : 'text-base']}>
+    Um e-mail por semana com tutorial novo e dica de economia. Sem spam — e dá
+    pra sair quando quiser.
+  </p>
+
+  <form
+    class="mt-4 flex flex-col gap-2.5"
+    data-newsletter
+    aria-describedby={idAviso}
+  >
+    <label class="sr-only" for={idEmail}>
+      Seu melhor e-mail
+    </label>
+    <input
+      type="email"
+      id={idEmail}
+      name="email"
+      required
+      autocomplete="email"
+      placeholder="seu@email.com"
+      class="w-full rounded-xl border-2 border-tinta/20 bg-white/95 px-4 py-3 text-tinta placeholder:text-tinta-fraca focus:border-tinta focus:outline-none"
+    />
+    <button
+      type="submit"
+      class="rounded-xl bg-tinta px-4 py-3 font-titulo font-semibold text-white transition-transform hover:scale-[1.02] active:scale-100"
+    >
+      Quero receber
+    </button>
+  </form>
+
+  <p id={idAviso} class="mt-3 text-xs text-tinta/75">
+    Ainda estamos ligando o envio — a inscrição começa a valer em breve.
+  </p>
+
+  <p
+    data-newsletter-ok
+    hidden
+    class="mt-3 rounded-xl bg-tinta/10 p-3 text-sm font-bold"
+    role="status"
+  >
+    Anotado! Assim que a lista estiver no ar, você é o primeiro a saber. 🧡
+  </p>
+</section>
+
+<script>
+  // Sem backend por enquanto: só evita o reload e dá um retorno visual.
+  // Quando plugar o provedor de e-mail, este script pode ser removido.
+  document.querySelectorAll<HTMLFormElement>('form[data-newsletter]').forEach(
+    (form) => {
+      form.addEventListener('submit', (evento) => {
+        evento.preventDefault();
+        const aviso = form.parentElement?.querySelector<HTMLElement>(
+          '[data-newsletter-ok]',
+        );
+        if (aviso) aviso.hidden = false;
+        form.reset();
+      });
+    },
+  );
+</script>

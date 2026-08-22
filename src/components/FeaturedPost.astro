@@ -1,0 +1,91 @@
+---
+import { Image } from 'astro:assets';
+import type { Post } from '../utils/posts';
+import {
+  urlDoPost,
+  urlDaCategoria,
+  formatarData,
+  estiloCategoria,
+} from '../utils/posts';
+
+interface Props {
+  post: Post;
+  /** O primeiro destaque ocupa a linha inteira e carrega com prioridade. */
+  grande?: boolean;
+}
+
+const { post, grande = false } = Astro.props;
+const estilo = estiloCategoria(post.data.category);
+---
+
+<article
+  class:list={[
+    'group relative overflow-hidden rounded-2xl border-2 border-borda bg-papel transition-all hover:-translate-y-1 hover:shadow-xl',
+    grande ? 'sm:col-span-2 sm:grid sm:grid-cols-2' : '',
+  ]}
+>
+  <a href={urlDoPost(post)} class="block overflow-hidden" tabindex="-1" aria-hidden="true">
+    <Image
+      src={post.data.coverImage}
+      alt=""
+      width={grande ? 900 : 640}
+      height={grande ? 600 : 360}
+      loading={grande ? 'eager' : 'lazy'}
+      class:list={[
+        'w-full object-cover transition-transform duration-300 group-hover:scale-105',
+        grande ? 'h-56 sm:h-full' : 'aspect-video',
+      ]}
+    />
+  </a>
+
+  <div class="flex flex-col gap-3 p-5 sm:p-6">
+    <div class="flex flex-wrap items-center gap-2">
+      <span
+        class="rounded-full bg-obra-100 px-3 py-1 text-xs font-bold text-obra-800"
+      >
+        ⭐ Destaque
+      </span>
+      <a
+        href={urlDaCategoria(post.data.category)}
+        class:list={[
+          'rounded-full px-3 py-1 text-xs font-bold transition-opacity hover:opacity-85',
+          estilo.chip,
+        ]}
+      >
+        <span aria-hidden="true">{estilo.emoji}</span>
+        {post.data.category}
+      </a>
+    </div>
+
+    <h3
+      class:list={[
+        'font-titulo font-bold leading-tight',
+        grande ? 'text-2xl sm:text-3xl' : 'text-xl',
+      ]}
+    >
+      <a
+        href={urlDoPost(post)}
+        class="text-tinta transition-colors hover:text-tijolo-700"
+      >
+        {post.data.title}
+      </a>
+    </h3>
+
+    <p
+      class:list={[
+        'text-tinta-suave',
+        grande ? 'text-base' : 'line-clamp-3 text-sm',
+      ]}
+    >
+      {post.data.description}
+    </p>
+
+    <div class="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-2 text-xs text-tinta-fraca">
+      <time datetime={post.data.pubDate.toISOString()}>
+        {formatarData(post.data.pubDate)}
+      </time>
+      <span aria-hidden="true">•</span>
+      <span>{post.data.author}</span>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,54 @@
+---
+import { Image } from 'astro:assets';
+import { getPosts, urlDoPost, formatarData } from '../utils/posts';
+
+interface Props {
+  limite?: number;
+  titulo?: string;
+  /** Post que não deve aparecer na lista (normalmente, o que está aberto). */
+  excluirId?: string;
+}
+
+const { limite = 4, titulo = 'Posts recentes', excluirId } = Astro.props;
+
+const todos = await getPosts();
+const posts = todos.filter((p) => p.id !== excluirId).slice(0, limite);
+---
+
+<section aria-labelledby="titulo-recentes">
+  <h2 id="titulo-recentes" class="font-titulo text-lg font-semibold text-tinta">
+    {titulo}
+  </h2>
+  <ul class="mt-3 flex flex-col gap-3">
+    {
+      posts.map((post) => (
+        <li>
+          <a
+            href={urlDoPost(post)}
+            class="group flex items-center gap-3 rounded-xl p-1.5 transition-colors hover:bg-creme-forte"
+          >
+            <Image
+              src={post.data.coverImage}
+              alt={post.data.coverImageAlt}
+              width={128}
+              height={128}
+              loading="lazy"
+              class="h-16 w-16 shrink-0 rounded-xl object-cover"
+            />
+            <span class="min-w-0">
+              <span class="line-clamp-2 text-sm font-bold leading-snug text-tinta group-hover:text-tijolo-700">
+                {post.data.title}
+              </span>
+              <time
+                datetime={post.data.pubDate.toISOString()}
+                class="mt-0.5 block text-xs text-tinta-fraca"
+              >
+                {formatarData(post.data.pubDate)}
+              </time>
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>

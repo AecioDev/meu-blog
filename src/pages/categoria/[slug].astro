@@ -1,0 +1,89 @@
+---
+import type { InferGetStaticPropsType } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { getPosts, getCategorias, slugify, estiloCategoria } from '../../utils/posts';
+
+export async function getStaticPaths() {
+  const categorias = await getCategorias();
+  const posts = await getPosts();
+
+  return categorias.map((categoria) => ({
+    params: { slug: categoria.slug },
+    props: {
+      categoria,
+      posts: posts.filter((p) => slugify(p.data.category) === categoria.slug),
+    },
+  }));
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { categoria, posts } = Astro.props as Props;
+const estilo = estiloCategoria(categoria.nome);
+
+const descricoes: Record<string, string> = {
+  hidraulica:
+    'Torneira, vazamento, descarga, sifão entupido. Tudo que envolve água na sua casa — e o que dá pra resolver sozinho.',
+  pintura:
+    'Escolher tinta, calcular quantidade, preparar a parede e pintar sem sujeira. Do rolo ao acabamento.',
+  eletrica:
+    'Tomada, lâmpada, chuveiro e disjuntor. O que é seguro fazer e a hora certa de chamar um eletricista.',
+  'dicas-gerais':
+    'Ferramentas, organização, manutenção e aquelas dicas que ninguém te contou antes de você mudar.',
+};
+
+const descricao =
+  descricoes[categoria.slug] ??
+  `Tudo que já publicamos sobre ${categoria.nome} aqui no blog.`;
+---
+
+<BaseLayout
+  title={categoria.nome}
+  description={`${descricao} ${categoria.total} ${categoria.total === 1 ? 'post' : 'posts'} no Crescendo na Obra.`}
+>
+  <Breadcrumb
+    itens={[{ titulo: 'Início', href: '/' }, { titulo: categoria.nome }]}
+  />
+
+  <header
+    class="mt-5 flex flex-wrap items-center gap-4 rounded-2xl border-2 border-borda bg-papel p-6"
+  >
+    <span
+      class:list={[
+        'flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-3xl',
+        estilo.chip,
+      ]}
+      aria-hidden="true"
+    >
+      {estilo.emoji}
+    </span>
+    <div class="min-w-0">
+      <h1 class="font-titulo text-3xl font-bold text-tinta sm:text-4xl">
+        {categoria.nome}
+      </h1>
+      <p class="mt-1 text-sm font-bold text-tinta-fraca">
+        {categoria.total} {categoria.total === 1 ? 'post publicado' : 'posts publicados'}
+      </p>
+    </div>
+    <p class="w-full text-tinta-suave">{descricao}</p>
+  </header>
+
+  {
+    posts.length > 0 ? (
+      <div class="mt-8 grid gap-5 sm:grid-cols-2">
+        {posts.map((post, indice) => (
+          <PostCard post={post} prioritaria={indice < 2} nivelTitulo={2} />
+        ))}
+      </div>
+    ) : (
+      <p class="mt-8 rounded-2xl border-2 border-dashed border-borda p-8 text-center text-tinta-fraca">
+        Ainda não tem post nesta categoria. Volta daqui a pouco!
+      </p>
+    )
+  }
+
+  <AdSlot slotId="fim-categoria" formato="banner" class="mt-10" />
+</BaseLayout>

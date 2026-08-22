@@ -1,0 +1,127 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import NewsletterBox from '../components/NewsletterBox.astro';
+import { SITE_TITLE } from '../consts';
+
+const valores = [
+  {
+    emoji: '🗣️',
+    titulo: 'Português de gente',
+    texto:
+      'Nada de "efetuar a vedação do flange". Aqui é "aperta a rosca com fita veda-rosca até parar de vazar".',
+  },
+  {
+    emoji: '💸',
+    titulo: 'Barato de verdade',
+    texto:
+      'A gente sempre mostra a opção que cabe no bolso — e avisa quando economizar sai caro depois.',
+  },
+  {
+    emoji: '🏘️',
+    titulo: 'Pensado pra quem aluga',
+    texto:
+      'Muita dica é reversível: dá pra fazer no imóvel alugado sem brigar com o proprietário na saída.',
+  },
+  {
+    emoji: '🦺',
+    titulo: 'Honesto sobre o limite',
+    texto:
+      'Tem coisa que não é pra gente. Quando o caso pede profissional, a gente fala na cara dura.',
+  },
+];
+---
+
+<BaseLayout
+  title="Sobre a gente"
+  description="O Crescendo na Obra existe pra quem acabou de sair da casa dos pais e descobriu que agora o cano que vaza é problema seu. Conheça a proposta do blog."
+>
+  <Breadcrumb itens={[{ titulo: 'Início', href: '/' }, { titulo: 'Sobre' }]} />
+
+  <article class="mt-5">
+    <h1 class="font-titulo text-3xl font-bold sm:text-4xl">
+      Oi! A gente é o {SITE_TITLE} <span aria-hidden="true">👋</span>
+    </h1>
+
+    <div class="conteudo-post mt-6">
+      <p class="text-lg">
+        <strong>Texto placeholder</strong> — troque por sua história de verdade
+        antes de publicar. A estrutura abaixo já está pronta pra receber o
+        conteúdo final.
+      </p>
+
+      <p>
+        Um dia você tá morando com seus pais e alguém resolve tudo. No outro,
+        você assina um contrato de aluguel e descobre que a torneira da pia
+        agora é <em>responsabilidade sua</em>. Ninguém ensina isso na escola.
+      </p>
+
+      <p>
+        O {SITE_TITLE} nasceu justamente aí: pra ser aquele amigo que entende de
+        casa e te explica sem fazer cara feia. A gente escreve pensando em quem
+        nunca segurou uma chave de grifo na vida — e tudo bem, todo mundo
+        começou assim.
+      </p>
+
+      <h2>O que você vai encontrar por aqui</h2>
+      <ul>
+        <li>
+          <strong>Tutoriais passo a passo</strong> com foto, tempo estimado e
+          lista do que comprar.
+        </li>
+        <li>
+          <strong>Comparativos honestos</strong> de material: o que vale pagar
+          mais e o que é jogar dinheiro fora.
+        </li>
+        <li>
+          <strong>Dicas de economia</strong> pra conta de água e luz não te
+          assustar todo mês.
+        </li>
+        <li>
+          <strong>Notícias e curiosidades</strong> de construção e manutenção,
+          sem o tom de revista técnica.
+        </li>
+      </ul>
+
+      <h2>No que a gente acredita</h2>
+    </div>
+
+    <div class="mt-6 grid gap-4 sm:grid-cols-2">
+      {
+        valores.map((valor) => (
+          <div class="rounded-2xl border-2 border-borda bg-papel p-5">
+            <p class="text-3xl" aria-hidden="true">
+              {valor.emoji}
+            </p>
+            <h3 class="mt-2 font-titulo text-lg font-semibold text-tinta">
+              {valor.titulo}
+            </h3>
+            <p class="mt-1 text-sm text-tinta-suave">{valor.texto}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="conteudo-post mt-10">
+      <h2>Quem escreve</h2>
+      <p>
+        Placeholder: apresente aqui o time, sua formação ou de onde vem a
+        experiência prática. Um parágrafo curto e humano funciona melhor que um
+        currículo.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong>Importante:</strong> nosso conteúdo é educativo. Instalação de
+          gás, mexer no quadro de energia, obra estrutural e qualquer coisa que
+          envolva risco real pedem um profissional habilitado. A gente sempre
+          avisa quando é o caso.
+        </p>
+      </blockquote>
+    </div>
+
+    <div class="mt-10">
+      <NewsletterBox />
+    </div>
+  </article>
+</BaseLayout>

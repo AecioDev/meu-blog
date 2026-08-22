@@ -1,0 +1,40 @@
+---
+import PostCard from './PostCard.astro';
+import type { Post } from '../utils/posts';
+import { getPostsRelacionados, urlDaCategoria } from '../utils/posts';
+
+interface Props {
+  post: Post;
+  limite?: number;
+}
+
+const { post, limite = 3 } = Astro.props;
+const relacionados = await getPostsRelacionados(post, limite);
+---
+
+{
+  relacionados.length > 0 && (
+    <section aria-labelledby="titulo-relacionados" class="mt-14">
+      <div class="flex flex-wrap items-end justify-between gap-3">
+        <h2
+          id="titulo-relacionados"
+          class="font-titulo text-2xl font-bold text-tinta"
+        >
+          Leia também
+        </h2>
+        <a
+          href={urlDaCategoria(post.data.category)}
+          class="text-sm font-bold text-tijolo-700 underline-offset-4 hover:underline"
+        >
+          Ver tudo de {post.data.category} →
+        </a>
+      </div>
+
+      <div class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {relacionados.map((relacionado) => (
+          <PostCard post={relacionado} />
+        ))}
+      </div>
+    </section>
+  )
+}

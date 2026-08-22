@@ -1,0 +1,23 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { InferGetStaticPropsType } from 'astro';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => data.draft !== true);
+  return posts.map((post) => ({
+    // O id do arquivo (nome do .md sem extensão) vira o slug da URL.
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { post } = Astro.props as Props;
+const { Content } = await render(post);
+---
+
+<PostLayout post={post}>
+  <Content />
+</PostLayout>

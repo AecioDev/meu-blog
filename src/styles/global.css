@@ -1,0 +1,217 @@
+@import 'tailwindcss';
+
+/* =========================================================
+   Crescendo na Obra — design tokens
+   Paleta quente e colorida: nada de cinza corporativo.
+   ========================================================= */
+@theme {
+  /* Fundo e superfícies */
+  --color-creme: #fff8ef;
+  --color-creme-forte: #ffefdc;
+  --color-papel: #ffffff;
+
+  /* Marca */
+  --color-obra-50: #fff4e0;
+  --color-obra-100: #ffe6bd;
+  --color-obra-200: #ffd58e;
+  --color-obra-300: #ffc25c;
+  --color-obra-400: #ffb02e;
+  --color-obra-500: #f79009;
+  --color-obra-600: #d97406;
+  --color-obra-700: #a85705;
+  --color-obra-800: #8a4704;
+
+  /* Acentos */
+  --color-tijolo-400: #ff8a5c;
+  --color-tijolo-500: #ef6541;
+  --color-tijolo-600: #d24a2a;
+  --color-tijolo-700: #b03a1e;
+  --color-menta-400: #43cd8b;
+  --color-menta-500: #22b573;
+  --color-menta-600: #159159;
+  --color-menta-700: #0f7a4a;
+  --color-ceu-400: #4cb8f5;
+  --color-ceu-500: #2196d8;
+  --color-ceu-600: #1478b0;
+  --color-ceu-700: #0f6491;
+  --color-uva-400: #a07bff;
+  --color-uva-500: #7c5cf0;
+  --color-uva-600: #6244cc;
+
+  /* Texto (marrom quente em vez de preto puro) */
+  --color-tinta: #2c2118;
+  --color-tinta-suave: #5c4b3d;
+  --color-tinta-fraca: #6f5b48;
+  --color-borda: #ecdcc6;
+
+  /* Tipografia arredondada e amigável */
+  --font-titulo: 'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
+  --font-corpo: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --radius-xl2: 1.25rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-creme);
+    color: var(--color-tinta);
+    font-family: var(--font-corpo);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-titulo);
+    color: var(--color-tinta);
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  /* Acessibilidade: foco sempre visível */
+  :focus-visible {
+    outline: 3px solid var(--color-uva-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background-color: var(--color-obra-200);
+    color: var(--color-tinta);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Link "pular para o conteúdo" (leitores de tela / teclado) */
+  .pular-conteudo {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+  }
+  .pular-conteudo:focus {
+    left: 1rem;
+    top: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--color-tinta);
+    color: #fff;
+    border-radius: 0.75rem;
+  }
+
+  /* Conteúdo do post renderizado a partir do Markdown */
+  .conteudo-post {
+    font-size: 1.0625rem;
+    color: var(--color-tinta-suave);
+  }
+  .conteudo-post > * + * {
+    margin-top: 1.15rem;
+  }
+  .conteudo-post h2 {
+    font-size: 1.6rem;
+    margin-top: 2.5rem;
+    margin-bottom: 0.25rem;
+    color: var(--color-tinta);
+  }
+  .conteudo-post h3 {
+    font-size: 1.25rem;
+    margin-top: 1.75rem;
+    margin-bottom: 0.25rem;
+    color: var(--color-tinta);
+  }
+  .conteudo-post p {
+    line-height: 1.8;
+  }
+  .conteudo-post strong {
+    color: var(--color-tinta);
+    font-weight: 700;
+  }
+  .conteudo-post a {
+    color: var(--color-tijolo-700);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .conteudo-post a:hover {
+    color: var(--color-obra-600);
+  }
+  .conteudo-post ul,
+  .conteudo-post ol {
+    padding-left: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .conteudo-post ul {
+    list-style: disc;
+  }
+  .conteudo-post ol {
+    list-style: decimal;
+  }
+  .conteudo-post li::marker {
+    color: var(--color-obra-500);
+    font-weight: 700;
+  }
+  .conteudo-post blockquote {
+    border-left: 5px solid var(--color-obra-400);
+    background: var(--color-creme-forte);
+    padding: 1rem 1.25rem;
+    border-radius: 0 1rem 1rem 0;
+    font-style: normal;
+    color: var(--color-tinta);
+  }
+  .conteudo-post blockquote p {
+    margin: 0;
+  }
+  .conteudo-post img {
+    border-radius: 1rem;
+    width: 100%;
+    height: auto;
+  }
+  .conteudo-post hr {
+    border: 0;
+    border-top: 2px dashed var(--color-borda);
+    margin: 2.5rem 0;
+  }
+  .conteudo-post code {
+    background: var(--color-creme-forte);
+    padding: 0.15em 0.4em;
+    border-radius: 0.4rem;
+    font-size: 0.9em;
+  }
+  .conteudo-post table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+  .conteudo-post th,
+  .conteudo-post td {
+    border: 1px solid var(--color-borda);
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+  }
+  .conteudo-post th {
+    background: var(--color-creme-forte);
+    font-family: var(--font-titulo);
+  }
+}

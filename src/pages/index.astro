@@ -1,0 +1,150 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import FeaturedPost from '../components/FeaturedPost.astro';
+import { getPosts, getPostsDestaque, getCategorias, urlDaCategoria, estiloCategoria } from '../utils/posts';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+
+const destaques = await getPostsDestaque(3);
+const todos = await getPosts();
+const idsDestaque = new Set(destaques.map((p) => p.id));
+const recentes = todos.filter((p) => !idsDestaque.has(p.id)).slice(0, 6);
+const categorias = await getCategorias();
+---
+
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+  <!-- Hero -->
+  <section
+    class="rounded-2xl bg-linear-to-br from-obra-300 via-obra-400 to-tijolo-400 p-6 text-tinta sm:p-10"
+  >
+    <p class="font-titulo text-sm font-semibold uppercase tracking-wider text-tinta/85">
+      Bem-vindo à sua primeira casa
+    </p>
+    <h1 class="mt-2 font-titulo text-3xl font-bold leading-tight sm:text-5xl">
+      Consertar a própria casa não é
+      <span class="relative inline-block">
+        bicho de sete cabeças
+        <span
+          class="absolute -bottom-1 left-0 h-2 w-full rounded-full bg-tinta/20"
+          aria-hidden="true"></span>
+      </span>
+    </h1>
+    <p class="mt-4 max-w-2xl text-base text-tinta/85 sm:text-lg">
+      Torneira pingando, parede pra pintar, chuveiro que resolveu esfriar bem
+      hoje. A gente explica o passo a passo em português de gente — sem termo
+      técnico e sem te fazer sentir burro.
+    </p>
+
+    <div class="mt-6 flex flex-wrap gap-2">
+      {
+        categorias.map((cat) => {
+          const estilo = estiloCategoria(cat.nome);
+          return (
+            <a
+              href={`/categoria/${cat.slug}/`}
+              class="rounded-full bg-creme px-4 py-2 text-sm font-bold text-tinta transition-transform hover:-translate-y-0.5 hover:bg-papel"
+            >
+              <span aria-hidden="true">{estilo.emoji}</span> {cat.nome}
+            </a>
+          );
+        })
+      }
+    </div>
+  </section>
+
+  <!-- Destaques -->
+  {
+    destaques.length > 0 && (
+      <section aria-labelledby="titulo-destaques" class="mt-12">
+        <h2
+          id="titulo-destaques"
+          class="font-titulo text-2xl font-bold text-tinta"
+        >
+          <span aria-hidden="true">⭐</span> Comece por aqui
+        </h2>
+        <p class="mt-1 text-tinta-suave">
+          Os tutoriais que mais salvam a pele de quem tá começando.
+        </p>
+
+        <div class="mt-5 grid gap-5 sm:grid-cols-2">
+          {destaques.map((post, indice) => (
+            <FeaturedPost post={post} grande={indice === 0} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Recentes -->
+  <section aria-labelledby="titulo-recentes-home" class="mt-14">
+    <div class="flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h2
+          id="titulo-recentes-home"
+          class="font-titulo text-2xl font-bold text-tinta"
+        >
+          <span aria-hidden="true">🆕</span> Publicados recentemente
+        </h2>
+        <p class="mt-1 text-tinta-suave">Fresquinho, saindo do forno.</p>
+      </div>
+      <a
+        href="/rss.xml"
+        class="text-sm font-bold text-tijolo-700 underline-offset-4 hover:underline"
+      >
+        Assinar o RSS →
+      </a>
+    </div>
+
+    {
+      recentes.length > 0 ? (
+        <div class="mt-5 grid gap-5 sm:grid-cols-2">
+          {recentes.map((post, indice) => (
+            <PostCard post={post} prioritaria={indice < 2} />
+          ))}
+        </div>
+      ) : (
+        <p class="mt-5 rounded-2xl border-2 border-dashed border-borda p-8 text-center text-tinta-fraca">
+          Ainda não temos outros posts por aqui — mas já já chega mais coisa.
+        </p>
+      )
+    }
+  </section>
+
+  <!-- Atalho por categoria -->
+  <section aria-labelledby="titulo-explorar" class="mt-14">
+    <h2 id="titulo-explorar" class="font-titulo text-2xl font-bold text-tinta">
+      <span aria-hidden="true">🧭</span> No que você quer mexer hoje?
+    </h2>
+    <div class="mt-5 grid gap-4 sm:grid-cols-2">
+      {
+        categorias.map((cat) => {
+          const estilo = estiloCategoria(cat.nome);
+          return (
+            <a
+              href={urlDaCategoria(cat.nome)}
+              class="group flex items-center gap-4 rounded-2xl border-2 border-borda bg-papel p-5 transition-all hover:-translate-y-1 hover:border-obra-300 hover:shadow-lg"
+            >
+              <span
+                class:list={[
+                  'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl',
+                  estilo.chip,
+                ]}
+                aria-hidden="true"
+              >
+                {estilo.emoji}
+              </span>
+              <span>
+                <span class="block font-titulo text-lg font-semibold text-tinta group-hover:text-tijolo-700">
+                  {cat.nome}
+                </span>
+                <span class="block text-sm text-tinta-fraca">
+                  {cat.total} {cat.total === 1 ? 'post' : 'posts'}
+                </span>
+              </span>
+            </a>
+          );
+        })
+      }
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,107 @@
+---
+/**
+ * Barra lateral do blog.
+ *
+ * Desktop: coluna fixa à direita, sempre aberta.
+ * Celular: vai para baixo do conteúdo e vira um bloco colapsável
+ * (começa aberta no HTML; o script fecha em telas pequenas, então
+ * quem estiver sem JS continua vendo tudo).
+ */
+import CategoryList from './CategoryList.astro';
+import MostViewed from './MostViewed.astro';
+import RecentPosts from './RecentPosts.astro';
+import AdSlot from './AdSlot.astro';
+import NewsletterBox from './NewsletterBox.astro';
+
+interface Props {
+  /** Post aberto no momento — some da lista de recentes. */
+  postAtualId?: string;
+}
+
+const { postAtualId } = Astro.props;
+---
+
+<aside class="lg:sticky lg:top-24" aria-label="Conteúdo complementar">
+  <details class="sidebar-colapsavel" data-sidebar open>
+    <summary
+      class="mb-3 flex cursor-pointer list-none items-center justify-between gap-2 rounded-2xl border-2 border-borda bg-papel px-4 py-3 font-titulo font-semibold text-tinta lg:hidden"
+    >
+      <span>Explorar o blog</span>
+      <svg
+        class="seta h-5 w-5 shrink-0 transition-transform"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M6 9l6 6 6-6"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+    </summary>
+
+    <div class="flex flex-col gap-5">
+      <div class="rounded-2xl border-2 border-borda bg-papel p-5">
+        <CategoryList />
+      </div>
+
+      <div class="rounded-2xl border-2 border-borda bg-papel p-5">
+        <MostViewed />
+      </div>
+
+      <AdSlot slotId="sidebar-topo" formato="retangulo" />
+
+      <div class="rounded-2xl border-2 border-borda bg-papel p-5">
+        <RecentPosts limite={4} excluirId={postAtualId} />
+      </div>
+
+      <NewsletterBox compacto />
+    </div>
+  </details>
+</aside>
+
+<style>
+  .sidebar-colapsavel summary::-webkit-details-marker {
+    display: none;
+  }
+  .sidebar-colapsavel[open] > summary .seta {
+    transform: rotate(180deg);
+  }
+
+  /* Rede de segurança: no desktop o conteúdo aparece mesmo que o
+     <details> esteja fechado (JS desligado, evento de resize perdido).
+     Como o cabeçalho some nessa largura, ficar fechado deixaria a
+     lateral inacessível. */
+  @media (min-width: 1024px) {
+    .sidebar-colapsavel > div {
+      display: flex !important;
+      content-visibility: visible !important;
+    }
+  }
+</style>
+
+<script>
+  // Em telas pequenas a lateral começa fechada, pra não empurrar o rodapé.
+  const sidebar = document.querySelector<HTMLDetailsElement>('[data-sidebar]');
+  const telaGrande = window.matchMedia('(min-width: 1024px)');
+
+  // Só um clique no cabeçalho conta como escolha da pessoa — mudanças
+  // automáticas não devem marcar preferência.
+  sidebar?.querySelector('summary')?.addEventListener('click', () => {
+    if (!telaGrande.matches && sidebar) sidebar.dataset.tocado = 'sim';
+  });
+
+  function ajustarSidebar() {
+    if (!sidebar) return;
+    if (telaGrande.matches) {
+      sidebar.open = true;
+    } else if (!sidebar.dataset.tocado) {
+      sidebar.open = false;
+    }
+  }
+
+  ajustarSidebar();
+  telaGrande.addEventListener('change', ajustarSidebar);
+</script>

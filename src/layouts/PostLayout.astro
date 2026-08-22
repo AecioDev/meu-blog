@@ -1,0 +1,163 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import RelatedPosts from '../components/RelatedPosts.astro';
+import AdSlot from '../components/AdSlot.astro';
+import NewsletterBox from '../components/NewsletterBox.astro';
+import type { Post } from '../utils/posts';
+import {
+  formatarData,
+  estiloCategoria,
+  urlDaCategoria,
+  urlDoPost,
+  tempoDeLeitura,
+} from '../utils/posts';
+import { SITE_TITLE } from '../consts';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  category,
+  tags,
+  coverImage,
+  coverImageAlt,
+  author,
+} = post.data;
+
+const estilo = estiloCategoria(category);
+const minutos = tempoDeLeitura(post.body);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  datePublished: pubDate.toISOString(),
+  ...(updatedDate ? { dateModified: updatedDate.toISOString() } : {}),
+  author: { '@type': 'Organization', name: author },
+  publisher: { '@type': 'Organization', name: SITE_TITLE },
+  image: new URL(coverImage.src, Astro.site).href,
+  mainEntityOfPage: new URL(urlDoPost(post), Astro.site).href,
+  articleSection: category,
+  ...(tags?.length ? { keywords: tags.join(', ') } : {}),
+  inLanguage: 'pt-BR',
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image={coverImage.src}
+  imageAlt={coverImageAlt}
+  type="article"
+  publishedTime={pubDate}
+  modifiedTime={updatedDate}
+  author={author}
+  postAtualId={post.id}
+>
+  <article>
+    <Breadcrumb
+      itens={[
+        { titulo: 'Início', href: '/' },
+        { titulo: category, href: urlDaCategoria(category) },
+        { titulo: title },
+      ]}
+    />
+
+    <header class="mt-5">
+      <a
+        href={urlDaCategoria(category)}
+        class:list={[
+          'inline-block rounded-full px-3 py-1 text-xs font-bold transition-opacity hover:opacity-85',
+          estilo.chip,
+        ]}
+      >
+        <span aria-hidden="true">{estilo.emoji}</span>
+        {category}
+      </a>
+
+      <h1 class="mt-3 font-titulo text-3xl font-bold leading-tight sm:text-4xl">
+        {title}
+      </h1>
+
+      <p class="mt-3 text-lg text-tinta-suave">{description}</p>
+
+      <div
+        class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-tinta-fraca"
+      >
+        <span>Por <strong class="text-tinta-suave">{author}</strong></span>
+        <span aria-hidden="true">•</span>
+        <time datetime={pubDate.toISOString()}>{formatarData(pubDate)}</time>
+        <span aria-hidden="true">•</span>
+        <span>{minutos} min de leitura</span>
+      </div>
+
+      {
+        updatedDate && (
+          <p class="mt-2 text-sm text-tinta-fraca">
+            <em>
+              Atualizado em{' '}
+              <time datetime={updatedDate.toISOString()}>
+                {formatarData(updatedDate)}
+              </time>
+            </em>
+          </p>
+        )
+      }
+    </header>
+
+    <figure class="mt-6">
+      <Image
+        src={coverImage}
+        alt={coverImageAlt}
+        width={1200}
+        height={630}
+        loading="eager"
+        class="w-full rounded-2xl border-2 border-borda object-cover"
+      />
+    </figure>
+
+    <div class="conteudo-post mt-8">
+      <slot />
+    </div>
+
+    {
+      tags && tags.length > 0 && (
+        <div class="mt-10 border-t-2 border-dashed border-borda pt-6">
+          <h2 class="font-titulo text-sm font-semibold uppercase tracking-wide text-tinta-fraca">
+            Assuntos deste post
+          </h2>
+          <ul class="mt-3 flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <li class="rounded-full bg-creme-forte px-3 py-1 text-sm font-semibold text-tinta-suave">
+                #{tag}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
+    <AdSlot slotId="pos-conteudo" formato="banner" class="mt-10" />
+
+    <div class="mt-10">
+      <NewsletterBox />
+    </div>
+  </article>
+
+  <RelatedPosts post={post} />
+
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(jsonLd)}
+    is:inline
+  />
+</BaseLayout>

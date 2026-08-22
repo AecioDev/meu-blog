@@ -1,0 +1,72 @@
+---
+/**
+ * Espaço reservado para anúncio.
+ *
+ * ────────────────────────────────────────────────────────────────
+ * COMO PLUGAR O GOOGLE ADSENSE DEPOIS:
+ *
+ * 1. No `src/components/BaseHead.astro`, adicione o script global
+ *    (uma única vez no site, dentro do <head>):
+ *
+ *    <script async
+ *      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-SEU_ID"
+ *      crossorigin="anonymous"></script>
+ *
+ * 2. Aqui embaixo, troque o bloco do placeholder por:
+ *
+ *    <ins class="adsbygoogle"
+ *      style="display:block"
+ *      data-ad-client="ca-pub-SEU_ID"
+ *      data-ad-slot={slotId}
+ *      data-ad-format="auto"
+ *      data-full-width-responsive="true"></ins>
+ *    <script is:inline>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+ *
+ * 3. Guarde o ID em variável de ambiente (PUBLIC_ADSENSE_ID) em vez de
+ *    deixar fixo no código.
+ * ────────────────────────────────────────────────────────────────
+ */
+
+interface Props {
+  /** Identificador do bloco no AdSense (data-ad-slot). */
+  slotId?: string;
+  /** Formato do espaço: muda só a altura do placeholder. */
+  formato?: 'retangulo' | 'banner' | 'quadrado';
+  rotulo?: string;
+  class?: string;
+}
+
+const {
+  slotId = 'placeholder',
+  formato = 'retangulo',
+  rotulo = 'Publicidade',
+  class: classe = '',
+} = Astro.props;
+
+const alturas: Record<string, string> = {
+  retangulo: 'min-h-[250px]',
+  banner: 'min-h-[90px]',
+  quadrado: 'min-h-[300px]',
+};
+---
+
+<aside
+  class:list={['not-prose', classe]}
+  aria-label={rotulo}
+  data-ad-slot={slotId}
+>
+  <p class="mb-1 text-center text-[0.65rem] uppercase tracking-widest text-tinta-fraca">
+    {rotulo}
+  </p>
+  <div
+    class:list={[
+      'flex items-center justify-center rounded-2xl border-2 border-dashed border-borda bg-creme-forte/60 p-4 text-center',
+      alturas[formato],
+    ]}
+  >
+    <span class="text-sm text-tinta-fraca">
+      Espaço reservado para anúncio
+      <span class="mt-1 block text-xs opacity-70">(AdSense entra aqui)</span>
+    </span>
+  </div>
+</aside>

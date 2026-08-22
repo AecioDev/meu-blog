@@ -1,0 +1,43 @@
+# Build
+dist/
+.output/
+.vercel/
+
+# Cache gerado pelo Astro
+.astro/
+
+# Dependências
+node_modules/
+.pnp
+.pnp.js
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs
+*.log
+
+# Variáveis de ambiente (nunca versione chaves de API)
+.env
+.env.production
+.env.local
+.env.*.local
+!.env.example
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+.idea/
+*.swp
+*.swo
+
+# Diversos
+*.tmp.mjs

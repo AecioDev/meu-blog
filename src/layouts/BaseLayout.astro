@@ -1,0 +1,67 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { SITE_LANG } from '../consts';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  type?: 'website' | 'article';
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  author?: string;
+  noindex?: boolean;
+  /** Mostra a barra lateral (desligue em páginas de leitura pura). */
+  comSidebar?: boolean;
+  /** Post aberto, pra não repetir na lista de recentes da lateral. */
+  postAtualId?: string;
+  /** Ocupa a largura toda, sem o container padrão (usado no 404). */
+  larguraTotal?: boolean;
+}
+
+const {
+  comSidebar = true,
+  postAtualId,
+  larguraTotal = false,
+  ...seo
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={SITE_LANG}>
+  <head>
+    <BaseHead {...seo} />
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <a href="#conteudo" class="pular-conteudo">Pular para o conteúdo</a>
+
+    <Header />
+
+    <main id="conteudo" class="flex-1">
+      {
+        larguraTotal ? (
+          <slot />
+        ) : (
+          <div class="mx-auto max-w-6xl px-4 py-8 lg:px-6 lg:py-12">
+            {comSidebar ? (
+              <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">
+                <div class="min-w-0">
+                  <slot />
+                </div>
+                <Sidebar postAtualId={postAtualId} />
+              </div>
+            ) : (
+              <slot />
+            )}
+          </div>
+        )
+      }
+    </main>
+
+    <Footer />
+  </body>
+</html>

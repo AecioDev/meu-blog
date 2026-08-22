@@ -1,0 +1,84 @@
+---
+/**
+ * "Mais vistos" — hoje roda com dado MOCKADO.
+ *
+ * ────────────────────────────────────────────────────────────────
+ * COMO PLUGAR ANALYTICS DE VERDADE DEPOIS:
+ * A única coisa que precisa mudar é a constante `IDS_MAIS_VISTOS`
+ * abaixo — ela é só uma lista de slugs (o nome do arquivo .md sem
+ * extensão), na ordem de audiência.
+ *
+ * Caminhos possíveis:
+ *  a) Build estático: buscar os top slugs da API do Plausible / GA4
+ *     aqui mesmo no frontmatter (roda no build, sem custo pro usuário)
+ *     e revalidar com um rebuild diário na Vercel (Deploy Hook + cron).
+ *  b) Tempo real: transformar isto num componente client e buscar de
+ *     um endpoint /api/mais-vistos.
+ *
+ * Enquanto isso, a ordem é definida na mão. Slug que não existir mais
+ * é ignorado sem quebrar a página.
+ * ────────────────────────────────────────────────────────────────
+ */
+import { getPosts, urlDoPost, estiloCategoria } from '../utils/posts';
+
+interface Props {
+  limite?: number;
+}
+
+const { limite = 4 } = Astro.props;
+
+/** MOCK: ordem de audiência definida manualmente. */
+const IDS_MAIS_VISTOS = [
+  'como-trocar-uma-torneira-que-esta-pingando',
+  'tinta-acrilica-ou-latex-primeiro-apartamento',
+  'chuveiro-eletrico-nao-esquenta-o-que-checar',
+  'kit-de-ferramentas-basico-primeiro-apartamento',
+];
+
+const todos = await getPosts();
+const posts = IDS_MAIS_VISTOS.map((id) => todos.find((p) => p.id === id))
+  .filter((p) => p !== undefined)
+  .slice(0, limite);
+---
+
+{
+  posts.length > 0 && (
+    <section aria-labelledby="titulo-mais-vistos">
+      <h2
+        id="titulo-mais-vistos"
+        class="flex items-center gap-2 font-titulo text-lg font-semibold text-tinta"
+      >
+        <span aria-hidden="true">🔥</span>
+        Mais vistos
+      </h2>
+      <ol class="mt-3 flex flex-col gap-1">
+        {posts.map((post, indice) => (
+          <li>
+            <a
+              href={urlDoPost(post)}
+              class="group flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-creme-forte"
+            >
+              <span
+                class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-tijolo-700 font-titulo text-sm font-bold text-white"
+                aria-hidden="true"
+              >
+                {indice + 1}
+              </span>
+              <span class="min-w-0">
+                <span class="line-clamp-2 text-sm font-bold leading-snug text-tinta group-hover:text-tijolo-700">
+                  {post.data.title}
+                </span>
+                <span class="mt-0.5 block text-xs text-tinta-fraca">
+                  <span aria-hidden="true">
+                    {estiloCategoria(post.data.category).emoji}{' '}
+                  </span>
+                  {post.data.category}
+                </span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}
