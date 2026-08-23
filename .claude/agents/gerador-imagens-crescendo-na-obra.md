@@ -104,6 +104,12 @@ Regras que valem para todos os passos:
 - **Sem texto na imagem** — nem número em régua, nem etiqueta, nem rótulo. Se
   o passo precisa indicar medida, use uma seta de dupla ponta ou uma linha
   tracejada, nunca algarismos.
+- **Cota fica fora do objeto, nunca sobre ele.** Largura embaixo, altura na
+  lateral, como em planta baixa. Duas setas que se cruzam no meio do objeto
+  viram uma mira e não comunicam medida. Diga também que a seta começa e
+  termina alinhada com as bordas, senão ela ultrapassa e perde o sentido.
+- **Os círculos do fundo ficam atrás do objeto**, que é opaco. Sem isso eles
+  aparecem como manchas por cima da ilustração.
 - **Sem pessoa, sem rosto, sem mão.** Mostre a ferramenta agindo sobre o
   objeto. Mão é a parte que mais sai deformada, e o estilo chapado não pede
   figura humana.
