@@ -45,10 +45,25 @@ Não prossiga sem ter isso em mãos (pergunte ao usuário o que faltar):
 - Data de publicação — se o usuário não disser, use a data de hoje
 - Se deve ser marcado como destaque (`featured: true`) — padrão é `false`
 
-Sobre a imagem: se ela veio **anexada na conversa**, o anexo serve para você
-ver a foto, mas não vira arquivo no projeto. Peça o caminho dela no computador
-(ex: `C:UsersespirDownloadspia.jpg`) ou que o usuário a salve na pasta
-do post.
+A capa pode chegar de três formas:
+
+1. **Rascunho em `drafts/`** — quando o post veio dos subagentes, o material
+   fica em `drafts/<slug>/`: o `post.md` do redator e a `capa.jpg` do gerador
+   de imagens. Mova de lá para a pasta final do post.
+2. **Já no projeto** — o usuário colocou o arquivo na pasta do post. Confira
+   que existe antes de escrever o frontmatter.
+3. **Caminho no computador** — o usuário informa onde o arquivo está
+   (ex: `C:\Users\espir\Downloads\pia.jpg`) e você copia para a pasta do post como `capa.jpg`.
+
+Se a imagem veio **anexada na conversa**, o anexo serve para você ver a foto,
+mas não vira arquivo no projeto: peça o caminho dela no computador ou que o
+usuário a salve na pasta do post.
+
+Vindo de `drafts/`, confira se sobrou algum marcador do rascunho no texto —
+`[CONFERIR: ...]`, `[IMAGEM PENDENTE: ...]` ou `[SUGESTÃO DE ANÚNCIO: ...]`.
+Nenhum vai para o ar: os dois primeiros dependem de decisão do usuário, e o
+terceiro só vira banner se houver anunciante. Na dúvida, pergunte em vez de
+apagar por conta própria.
 
 Sobre anúncios: o post já ganha um espaço automático depois do conteúdo,
 vindo do layout — não há nada a fazer para isso aparecer. Se o usuário quiser
