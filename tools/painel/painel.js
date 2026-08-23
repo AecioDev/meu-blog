@@ -88,14 +88,29 @@ function desenharQuadro() {
   }
 
   const pendentes = estado.pendenciasDeProduto.length;
-  $('#resumo-pendencias').textContent = pendentes
-    ? `${pendentes} produto${pendentes > 1 ? 's' : ''} de afiliado aguardando cadastro ou link`
-    : 'Nenhuma pendência de produto de afiliado.';
+  const publicadosPendentes = estado.cards.filter(
+    (c) => c.etapa === 'publicado' && c.pendencias.length
+  ).length;
+
+  const partes = [];
+  if (pendentes) {
+    partes.push(`${pendentes} produto${pendentes > 1 ? 's' : ''} aguardando cadastro ou link`);
+  }
+  if (publicadosPendentes) {
+    partes.push(
+      `${publicadosPendentes} post${publicadosPendentes > 1 ? 's' : ''} já no ar com pendência`
+    );
+  }
+  $('#resumo-pendencias').textContent = partes.length
+    ? partes.join(' · ')
+    : 'Nenhuma pendência aberta.';
 }
 
 function montarCard(card) {
   const botao = el('button', 'card');
   botao.type = 'button';
+  // publicar não exige link de afiliado; o card só fica marcado pra lembrar
+  if (card.pendencias.length) botao.classList.add('pendente');
   botao.append(el('span', 'titulo', card.titulo));
 
   const meta = el('div', 'meta');
@@ -248,6 +263,15 @@ function desenharProdutos() {
     cartao.append(links);
 
     if (p.observacao) cartao.append(el('p', 'vazia', p.observacao));
+
+    if (p.atualizadoEm) {
+      const dias = Math.floor(
+        (Date.now() - new Date(p.atualizadoEm).getTime()) / 86400000
+      );
+      const texto =
+        dias <= 0 ? 'links conferidos hoje' : `links conferidos há ${dias} dia${dias > 1 ? 's' : ''}`;
+      cartao.append(el('p', 'vazia', texto));
+    }
 
     const menu = el('menu');
     const editar = el('button', 'botao-secundario', 'Editar');
