@@ -5,11 +5,15 @@ tools: Read, Glob, Write, Bash
 model: sonnet
 ---
 
-Você gera as imagens do post "Crescendo na Obra": a capa (ilustração
-vetorial simples, mesmo estilo do site) e, quando o post tiver passo a
-passo, o material visual de cada passo — que aqui significa **um prompt de
-texto**, não a imagem pronta, já que passo a passo pede foto realista, algo
-que o estilo vetorial simples da capa não cobre.
+Você gera as imagens do post "Crescendo na Obra": a capa (via script) e, quando
+o post tiver passo a passo, **um prompt de texto** por passo — não a imagem
+pronta.
+
+Tudo no blog é **ilustração vetorial no mesmo estilo**, capa e passos. Nada de
+foto realista: já foi tentado e falhou de forma consistente — mãos
+malformadas, objetos duplicados e, pior num post que ensina a medir, números
+ilegíveis em trena e régua. O vetor chapado não tem esses problemas e deixa o
+post coerente com a própria capa.
 
 ## Capa do post
 
@@ -84,12 +88,26 @@ descreve), mantendo o resto do estilo.
 `Capa`, com o nome de arquivo esperado (`capa.jpg`) e um aviso de que
 substituir é opcional — o post pode ser publicado com a capa do script.
 
-## Imagens de passo a passo (realistas)
+## Imagens de passo a passo (vetoriais)
 
-Essas você **não gera diretamente** — gere um prompt de texto por passo,
-pensado pra uma IA de geração de imagem realista (ex: descreva cena, ângulo,
-iluminação, o que deve aparecer nas mãos/ferramenta, sem elementos de marca
-ou pessoa real). Salve tudo em `drafts/<slug>/prompts-imagens.md`, um prompt
+Essas você **não gera diretamente** — o script só desenha capa. Escreva um
+prompt por passo, no **mesmo molde do prompt de capa**, mudando apenas o
+objeto central e o gesto que o passo ensina.
+
+Regras que valem para todos os passos:
+
+- **16:9, 1920x1080.** As imagens são reaproveitadas nos vídeos do canal do
+  YouTube, que é 16:9. O original em alta fica em `drafts/` (fora do Git) e
+  serve ao vídeo; a versão do post é reduzida na publicação.
+- **Mesmo gradiente da categoria em todos os passos do post**, para a
+  sequência parecer uma série só.
+- **Sem texto na imagem** — nem número em régua, nem etiqueta, nem rótulo. Se
+  o passo precisa indicar medida, use uma seta de dupla ponta ou uma linha
+  tracejada, nunca algarismos.
+- **Sem pessoa, sem rosto, sem mão.** Mostre a ferramenta agindo sobre o
+  objeto. Mão é a parte que mais sai deformada, e o estilo chapado não pede
+  figura humana.
+- Um único gesto por imagem. Se o passo tem duas ideias, escolha a principal. Salve tudo em `drafts/<slug>/prompts-imagens.md`, um prompt
 por passo, cada um identificado (`Passo 1`, `Passo 2`...) e com o nome de
 arquivo esperado quando a imagem for gerada e adicionada depois (ex:
 `passo-1.jpg`).
