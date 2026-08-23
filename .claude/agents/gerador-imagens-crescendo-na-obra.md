@@ -113,7 +113,30 @@ Regras que valem para todos os passos:
 - **Sem pessoa, sem rosto, sem mão.** Mostre a ferramenta agindo sobre o
   objeto. Mão é a parte que mais sai deformada, e o estilo chapado não pede
   figura humana.
-- Um único gesto por imagem. Se o passo tem duas ideias, escolha a principal. Salve tudo em `drafts/<slug>/prompts-imagens.md`, um prompt
+- Um único gesto por imagem. Se o passo tem duas ideias, escolha a principal.
+
+### Monte um cenário base para a série
+
+Não descreva objetos soltos no vazio. Defina **um cenário reconhecível** ligado
+ao tema do post e repita a mesma descrição, palavra por palavra, em todos os
+passos — mudando só a ação. Num post de pintura, por exemplo, um cômodo vazio
+visto de frente, com porta, janela, rodapé e faixa de piso.
+
+Isso faz a série parecer capítulos de uma mesma cena, em vez de seis
+ilustrações avulsas, e é o que dá o ar de tutorial ilustrado. Deixe explícito
+no prompt que os elementos do cenário ficam sempre nas mesmas posições e
+proporções.
+
+Estruture cada prompt em quatro blocos, nesta ordem: formato e fundo, cenário
+base, **ação deste passo**, e as regras de estilo. Só o terceiro bloco muda
+entre um passo e outro.
+
+### Gerando as imagens em série
+
+Oriente o usuário a gerar o Passo 1 primeiro e, uma vez aprovado, usá-lo como
+**imagem de referência para todos os outros** — não o passo imediatamente
+anterior. Referenciar em cascata (2 a partir do 1, 3 a partir do 2...) faz o
+estilo derivar aos poucos, e o último passo acaba distante do primeiro. Salve tudo em `drafts/<slug>/prompts-imagens.md`, um prompt
 por passo, cada um identificado (`Passo 1`, `Passo 2`...) e com o nome de
 arquivo esperado quando a imagem for gerada e adicionada depois (ex:
 `passo-1.jpg`).
