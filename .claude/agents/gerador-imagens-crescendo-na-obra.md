@@ -108,8 +108,11 @@ Regras que valem para todos os passos:
   lateral, como em planta baixa. Duas setas que se cruzam no meio do objeto
   viram uma mira e não comunicam medida. Diga também que a seta começa e
   termina alinhada com as bordas, senão ela ultrapassa e perde o sentido.
-- **Os círculos do fundo ficam atrás do objeto**, que é opaco. Sem isso eles
-  aparecem como manchas por cima da ilustração.
+- **Nos passos, fundo liso, sem os círculos da capa.** Na capa eles funcionam,
+  porque o fundo é amplo e vazio; num passo, o cenário ocupa quase todo o
+  quadro e eles acabam pousando por cima da cena como manchas claras. Pedir
+  que fiquem "atrás" não resolve — o modelo ignora ordem de camada. Peça
+  gradiente limpo e diga que não há círculo, textura nem brilho.
 - **Sem pessoa, sem rosto, sem mão.** Mostre a ferramenta agindo sobre o
   objeto. Mão é a parte que mais sai deformada, e o estilo chapado não pede
   figura humana.
