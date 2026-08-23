@@ -33,6 +33,7 @@ sozinha.
 | `npm run build` | Gera o site final na pasta `dist/` |
 | `npm run preview` | Serve a pasta `dist/` pra você conferir o build |
 | `npm run check` | Verifica erros de TypeScript e dos arquivos `.astro` |
+| `npm run gerar-capa` | Gera uma imagem de capa no estilo do blog (veja abaixo) |
 
 > **Sobre o `npm run check`:** ele exige TypeScript 6.x. O projeto já vem com a
 > versão certa fixada — o TypeScript 7 (compilador nativo) ainda não expõe a API
@@ -152,6 +153,37 @@ Nas demais páginas ela aparece normalmente, empilhada abaixo do conteúdo.
 Se mudar a ordem, mexa nos comentários numerados do `src/pages/index.astro` —
 eles marcam cada bloco.
 
+## Gerando uma capa
+
+Se você não tiver uma foto pronta, dá pra gerar uma ilustração no estilo das
+capas atuais:
+
+```bash
+node scripts/gerar-capa.js --tema torneira --saida src/content/posts/meu-post/capa.jpg
+```
+
+Para ver os temas disponíveis:
+
+```bash
+node scripts/gerar-capa.js --listar
+```
+
+| Tema | Combina com |
+| --- | --- |
+| `torneira` | Hidráulica |
+| `rolo` | Pintura |
+| `lampada` | Elétrica |
+| `caixa` | Dicas Gerais |
+| `marca` | capa padrão de compartilhamento |
+
+O script só desenha formas geométricas — não depende de fonte instalada, então
+a saída é igual em qualquer máquina. A paleta dele espelha os tokens de
+`src/styles/global.css`; se mudar as cores lá, atualize no script também.
+
+Ele não sobrescreve arquivo existente sem `--forcar`, e aceita `--largura` e
+`--altura` se precisar de outro formato. Para criar um tema novo, copie um dos
+existentes dentro de `scripts/gerar-capa.js` e troque o desenho.
+
 ## Organização das pastas
 
 ```
@@ -173,6 +205,7 @@ src/
 └── content.config.ts   Regras do frontmatter dos posts
 
 public/                 Arquivos servidos como estão (favicon, robots.txt)
+scripts/                Utilitários de apoio (gerador de capa)
 ```
 
 ## Onde mexer pra personalizar
