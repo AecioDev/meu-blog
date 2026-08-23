@@ -60,10 +60,17 @@ mas não vira arquivo no projeto: peça o caminho dela no computador ou que o
 usuário a salve na pasta do post.
 
 Vindo de `drafts/`, confira se sobrou algum marcador do rascunho no texto —
-`[CONFERIR: ...]`, `[IMAGEM PENDENTE: ...]` ou `[SUGESTÃO DE ANÚNCIO: ...]`.
-Nenhum vai para o ar: os dois primeiros dependem de decisão do usuário, e o
-terceiro só vira banner se houver anunciante. Na dúvida, pergunte em vez de
-apagar por conta própria.
+`[CONFERIR: ...]` ou `[SUGESTÃO DE ANÚNCIO: ...]`. Nenhum vai para o ar: o
+primeiro depende de decisão do usuário, e o segundo só vira banner se houver
+anunciante. Na dúvida, pergunte em vez de apagar por conta própria.
+
+**Imagens de passo a passo:** o rascunho já vem com as referências prontas
+(`![alt](./passo-1.jpg)`). Leve todos os arquivos de imagem da pasta do
+rascunho junto com o `index.md`. Se o build parar com
+`[ImageNotFound] Could not find requested image`, é imagem de passo que o
+usuário ainda não gerou: **pare e peça o arquivo**. Nunca remova a referência
+nem invente uma imagem no lugar — a referência é o que faz o post ficar
+pronto sozinho quando o arquivo chega.
 
 Sobre anúncios: o post já ganha um espaço automático depois do conteúdo,
 vindo do layout — não há nada a fazer para isso aparecer. Se o usuário quiser

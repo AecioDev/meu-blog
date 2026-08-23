@@ -99,12 +99,26 @@ collection do Astro captura *qualquer* `.md` naquela árvore e tenta validá-lo
 como post — um `prompts-imagens.md` ali derruba o build inteiro com
 "data does not match collection schema". Por isso ele fica em `drafts/`.
 
-No corpo do post, no lugar de cada imagem de passo, deixe um placeholder de
-texto simples — nunca um link de imagem quebrado:
+No corpo do post, escreva **a referência de imagem já pronta**, com o nome
+final do arquivo e o alt escrito:
 
+```markdown
+![Mãos medindo a parede com uma trena amarela](./passo-1.jpg)
 ```
-[IMAGEM PENDENTE: passo-1.jpg — ver prompt em prompts-imagens.md]
-```
+
+A ideia é que o post fique pronto no instante em que o arquivo cair na pasta,
+sem ninguém precisar editar texto depois. O nome que você escreve aqui é o
+mesmo que aparece no `prompts-imagens.md` — eles têm que bater exatamente.
+
+Escreva o **alt de cada passo** junto do prompt, no arquivo de prompts, para
+o usuário conferir. Alt descreve o que se vê na foto ("mãos apertando a porca
+com chave inglesa"), não o que o passo ensina.
+
+Isso deixa o rascunho temporariamente sem buildar, e tudo bem: `drafts/` está
+fora da content collection, então nada quebra enquanto o post não é
+publicado. Se alguém tentar publicar antes das imagens existirem, o build
+para com `[ImageNotFound] Could not find requested image './passo-1.jpg'` —
+que é exatamente o aviso que se quer, em vez de um buraco no ar.
 
 ## Saída
 
