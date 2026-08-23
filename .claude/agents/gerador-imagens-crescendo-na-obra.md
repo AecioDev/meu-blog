@@ -131,6 +131,12 @@ Estruture cada prompt em quatro blocos, nesta ordem: formato e fundo, cenário
 base, **ação deste passo**, e as regras de estilo. Só o terceiro bloco muda
 entre um passo e outro.
 
+Elementos da mesma natureza recebem o mesmo tratamento: porta e janela são
+vãos com acabamento, então levam guarnição de igual espessura e cor. Se um
+elemento ganha contorno e o irmão dele não, a cena fica torta. Quando pedir
+contorno, diga que é fino e uniforme — o modelo tende a exagerar a espessura,
+e aí a moldura vira o elemento mais pesado do desenho.
+
 ### Gerando as imagens em série
 
 Oriente o usuário a gerar o Passo 1 primeiro e, uma vez aprovado, usá-lo como
