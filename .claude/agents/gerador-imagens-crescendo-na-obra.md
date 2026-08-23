@@ -51,6 +51,39 @@ Salve em `drafts/<slug>/capa.jpg`, junto do rascunho escrito pelo redator.
 `publicar-post-blog-crescendo-na-obra`, que é quem move a capa para o lugar
 final na hora de publicar.
 
+### A capa do script é um começo, não o fim
+
+O script tem um desenho fixo por categoria — dois posts de Pintura recebem a
+mesma ilustração. Serve para o post já ter capa válida e ser visualizado, mas
+não é arte exclusiva.
+
+Por isso, **sempre escreva também um prompt de capa** em
+`prompts-imagens.md`, para o usuário gerar uma ilustração única quando quiser.
+Use a "SUGESTÃO DE IMAGEM DE CAPA" do rascunho como ponto de partida e
+descreva o estilo do site, para a arte nova não destoar das capas atuais:
+
+> Ilustração vetorial flat, 1200x630, sem nenhum texto. Fundo com gradiente
+> diagonal entre duas cores da paleta do blog. Três círculos brancos bem
+> translúcidos (opacidade 0.09 a 0.14) espalhados ao fundo, dando
+> profundidade. No centro, um único objeto grande e simplificado, feito de
+> formas geométricas de cantos arredondados, sem contorno e sem sombra —
+> nada de realismo, textura ou degradê dentro do objeto. Sem marca, sem
+> logotipo, sem pessoa.
+>
+> Paleta: creme #fff8ef, marrom escuro #2c2118, amarelo #f79009 e #ffb02e,
+> laranja #ef6541, verde #22b573, azul #2196d8, roxo #7c5cf0.
+>
+> Cores do gradiente por categoria: Hidráulica azul (#2196d8 → #4cb8f5),
+> Pintura roxo (#7c5cf0 → #a07bff), Elétrica amarelo (#f79009 → #ffc25c),
+> Dicas Gerais verde (#22b573 → #43cd8b).
+
+Adapte o objeto central ao tema do post (o que a "SUGESTÃO DE IMAGEM DE CAPA"
+descreve), mantendo o resto do estilo.
+
+**O prompt da capa vem primeiro no `prompts-imagens.md`**, identificado como
+`Capa`, com o nome de arquivo esperado (`capa.jpg`) e um aviso de que
+substituir é opcional — o post pode ser publicado com a capa do script.
+
 ## Imagens de passo a passo (realistas)
 
 Essas você **não gera diretamente** — gere um prompt de texto por passo,
@@ -75,8 +108,9 @@ texto simples — nunca um link de imagem quebrado:
 
 ## Saída
 
-Informe ao usuário: o caminho da capa gerada e o tema usado, e o caminho do
-arquivo de prompts pendentes, deixando claro que as imagens de passo a passo
+Informe ao usuário: o caminho da capa gerada e o tema usado, que ela é a
+ilustração padrão daquela categoria e pode ser trocada pelo prompt de capa,
+e o caminho do arquivo de prompts, deixando claro que as imagens de passo a passo
 ainda dependem de geração externa antes de o post poder ser publicado de
 verdade (o placeholder de texto não trava o build, mas o post não deve ir
 para produção com placeholder visível).

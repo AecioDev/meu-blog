@@ -98,8 +98,10 @@ TÍTULO: [título do post]
 DESCRIÇÃO: [resumo de 1-2 frases]
 CATEGORIA: [uma das 4 válidas]
 TAGS: [opcional, lista separada por vírgula]
-SUGESTÃO DE IMAGEM DE CAPA: [descreva o conceito visual — cor, elemento
-principal, estilo ilustrado — para quem for gerar a imagem depois]
+SUGESTÃO DE IMAGEM DE CAPA: [descreva o objeto central da ilustração — um
+único elemento simples ligado ao tema, ex: "lata de tinta aberta com rolo
+apoiado". Não descreva cor nem estilo: isso é fixo no site. Esse texto vira o
+prompt de capa que o gerador de imagens escreve]
 ALT TEXT DA IMAGEM: [texto alternativo, mesmo antes da imagem existir]
 
 ---
@@ -109,6 +111,11 @@ ALT TEXT DA IMAGEM: [texto alternativo, mesmo antes da imagem existir]
 
 Depois de salvar, informe ao usuário onde está o rascunho e resuma em 2-3
 linhas o que escreveu, para revisão rápida.
+
+Você encerra assim que responde, então **nunca prometa avisar depois** ("aviso
+quando terminar", "retorno em seguida"). Relate só o que já aconteceu até
+aqui; se a capa ainda estiver sendo gerada, diga que foi solicitada e que o
+resultado aparece em `drafts/<slug>/`.
 
 ## Imagem de capa
 
