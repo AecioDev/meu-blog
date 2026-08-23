@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Painel — Crescendo na Obra</title>
+    <link rel="stylesheet" href="/painel.css" />
+  </head>
+  <body>
+    <header class="topo">
+      <div class="marca">
+        <span class="logo" aria-hidden="true"></span>
+        <div>
+          <strong>Crescendo na Obra</strong>
+          <span class="sub">painel de produção · local</span>
+        </div>
+      </div>
+
+      <nav class="menu">
+        <button type="button" data-tela="quadro" class="ativo">Quadro</button>
+        <button type="button" data-tela="produtos">Produtos de afiliado</button>
+      </nav>
+
+      <button type="button" id="recarregar" class="botao-secundario" title="Reler os arquivos do projeto">
+        Atualizar
+      </button>
+    </header>
+
+    <main>
+      <!-- ================= QUADRO ================= -->
+      <section id="tela-quadro">
+        <div class="barra-acoes">
+          <button type="button" id="abrir-nova-pauta" class="botao-primario">+ Novo post</button>
+          <p id="resumo-pendencias" class="resumo"></p>
+        </div>
+
+        <div id="quadro" class="quadro" aria-live="polite"></div>
+      </section>
+
+      <!-- ================= PRODUTOS ================= -->
+      <section id="tela-produtos" hidden>
+        <div class="barra-acoes">
+          <button type="button" id="abrir-novo-produto" class="botao-primario">+ Novo produto</button>
+          <label class="busca">
+            <span class="sr-only">Buscar produto</span>
+            <input type="search" id="busca-produto" placeholder="Buscar por nome ou tag..." />
+          </label>
+        </div>
+
+        <div id="pendencias-catalogo"></div>
+        <div id="lista-produtos" class="lista-produtos"></div>
+      </section>
+    </main>
+
+    <!-- ================= diálogos ================= -->
+    <dialog id="dialogo-pauta">
+      <form method="dialog" id="form-pauta">
+        <h2>Nova pauta</h2>
+        <p class="ajuda">
+          Só registra a intenção. Nenhum arquivo é criado agora — o card entra
+          em "Pauta definida" e anda sozinho quando o rascunho aparecer.
+        </p>
+
+        <label>
+          Tema / título provisório
+          <input type="text" name="titulo" required autocomplete="off" />
+        </label>
+
+        <label>
+          Categoria
+          <select name="categoria">
+            <option value="">— a definir —</option>
+          </select>
+        </label>
+
+        <label>
+          Observação (opcional)
+          <textarea name="observacao" rows="3" placeholder="ângulo, fonte da pauta, lembrete..."></textarea>
+        </label>
+
+        <p class="erro" data-erro hidden></p>
+
+        <menu>
+          <button type="button" data-fechar class="botao-secundario">Cancelar</button>
+          <button type="submit" class="botao-primario">Salvar pauta</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <dialog id="dialogo-produto">
+      <form method="dialog" id="form-produto">
+        <h2>Produto de afiliado</h2>
+        <p class="ajuda">
+          O catálogo é a fonte da verdade: os posts citam o produto pelo nome e
+          o painel resolve o link a partir daqui.
+        </p>
+
+        <label>
+          Nome do produto
+          <input type="text" name="nome" required autocomplete="off" />
+        </label>
+
+        <label>
+          Tags / categoria (opcional)
+          <input type="text" name="tags" placeholder="hidráulica, ferramentas" autocomplete="off" />
+        </label>
+
+        <label>
+          Link Mercado Livre
+          <input type="url" name="linkMercadoLivre" placeholder="https://..." />
+        </label>
+
+        <label>
+          Link Amazon
+          <input type="url" name="linkAmazon" placeholder="https://..." />
+        </label>
+
+        <label>
+          Observação (opcional)
+          <textarea name="observacao" rows="2"></textarea>
+        </label>
+
+        <p class="erro" data-erro hidden></p>
+
+        <menu>
+          <button type="button" data-fechar class="botao-secundario">Cancelar</button>
+          <button type="submit" class="botao-primario">Salvar produto</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <dialog id="dialogo-card">
+      <div id="detalhe-card"></div>
+      <menu>
+        <button type="button" data-fechar class="botao-secundario">Fechar</button>
+      </menu>
+    </dialog>
+
+    <script type="module" src="/painel.js"></script>
+  </body>
+</html>

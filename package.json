@@ -11,7 +11,8 @@
     "astro": "astro",
     "check": "astro check",
     "gerar-capa": "node scripts/gerar-capa.js",
-    "otimizar-imagem": "node scripts/otimizar-imagem.js"
+    "otimizar-imagem": "node scripts/otimizar-imagem.js",
+    "painel": "node tools/painel/servidor.js"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",

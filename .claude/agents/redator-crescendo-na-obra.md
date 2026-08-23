@@ -69,17 +69,23 @@ link e funciona em Markdown puro.
 
 ## Produtos relacionados (sugestão, sem link)
 
+Antes de sugerir um produto, consulte
+`tools/painel/produtos-afiliados.json` (se o arquivo existir) — é o
+catálogo de produtos já cadastrados pelo usuário no painel administrativo.
+
+- Se um produto do catálogo combinar com o post, cite ele pelo nome exato
+  cadastrado e marque como `(já cadastrado)` — o painel resolve o link
+  sozinho a partir daí, você não precisa (nem deve) copiar o link.
+- Se não houver produto parecido no catálogo, sugira o nome genérico
+  normalmente e marque como `(novo, sem cadastro ainda)`.
+
 Ao final do rascunho, liste 2-4 produtos/ferramentas relacionados ao post,
-que fazem sentido virar propaganda de afiliado (Mercado Livre/Amazon) mais
-tarde. Você só sugere o **nome genérico do produto e o motivo** — nunca
-invente um link, preço ou marca específica; isso o usuário adiciona depois
-manualmente, quando tiver os links de afiliado reais.
+que fazem sentido virar propaganda de afiliado (Mercado Livre/Amazon).
+Nunca invente link, preço ou marca específica.
 
 Formato:
-```
 PRODUTOS RELACIONADOS:
-- [nome genérico do produto] — [por que combina com este post]
-```
+- [nome do produto] (já cadastrado | novo, sem cadastro ainda) — [por que combina com este post]
 
 ## O que você entrega (formato de saída)
 

@@ -42,5 +42,8 @@ desktop.ini
 *.swp
 *.swo
 
+# Log do painel local
+painel.log
+
 # Diversos
 *.tmp.mjs
