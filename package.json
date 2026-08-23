@@ -10,7 +10,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
-    "gerar-capa": "node scripts/gerar-capa.js"
+    "gerar-capa": "node scripts/gerar-capa.js",
+    "otimizar-imagem": "node scripts/otimizar-imagem.js"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",

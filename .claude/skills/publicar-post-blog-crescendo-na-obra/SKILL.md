@@ -182,8 +182,25 @@ compartilhamento. Use sempre `./`.
 4. **Crie a pasta** `src/content/posts/<slug>/` e monte o `index.md` dentro
    dela, com o frontmatter exatamente conforme o schema acima, seguido do
    texto recebido do usuário (sem alterar o conteúdo).
-5. **Copie a imagem de capa** para dentro da mesma pasta, com o nome
-   `capa.jpg`, e deixe o frontmatter apontando `./capa.jpg`.
+5. **Leve as imagens para a pasta do post — sempre pelo otimizador**, nunca
+   com cópia direta:
+
+   ```bash
+   node scripts/otimizar-imagem.js --entrada drafts/<slug>/capa.jpg      --saida src/content/posts/<slug>/capa.jpg --tipo capa
+   ```
+
+   Faça o mesmo com cada imagem do corpo, trocando para `--tipo conteudo`
+   (mantém a proporção; `capa` corta para 1200x630, que é o formato de
+   compartilhamento). O frontmatter aponta `./capa.jpg`.
+
+   O motivo: `drafts/` fica fora do Git, mas `src/content/posts/` é
+   versionado. Arte vinda de gerador costuma ter vários MB, e o Git guarda
+   cada versão para sempre — uma capa de 1,75 MB vira 26 KB depois do
+   otimizador, sem diferença visível no site. O original em alta continua
+   intacto no rascunho.
+
+   Imagem que já for pequena passa sem ser ampliada, e GIF animado mantém
+   os quadros.
 6. **Rode `npm run build`.** É ele que valida o schema: campo obrigatório
    faltando derruba o build com exit 1, dizendo qual campo e qual arquivo.
    O `npm run dev` **não** acusa isso — o post simplesmente vira 404 e some
@@ -200,6 +217,8 @@ compartilhamento. Use sempre `./`.
 - [ ] Frontmatter completo, válido, categoria é uma das 4 permitidas
 - [ ] Pasta criada com o slug certo, sem conflito com post existente
 - [ ] Capa dentro da pasta do post, referenciada como `./capa.jpg`
+- [ ] Todas as imagens passaram por `scripts/otimizar-imagem.js` — nenhuma
+      cópia direta de `drafts/` para `src/`
 - [ ] Banner de anunciante, se houver: alt identificando como publicidade,
       `rel="sponsored"` no link, e o arquivo no lugar certo para a forma
       escolhida (pasta do post no Markdown; `public/` no HTML bruto)
@@ -214,6 +233,8 @@ compartilhamento. Use sempre `./`.
 - Nunca escrever ou reescrever o conteúdo do post — isso é responsabilidade
   do usuário ou de outro agente de redação.
 - Nunca inventar categoria, imagem ou informação que não foi fornecida.
+- Nunca copiar imagem direto de `drafts/` para `src/content/posts/`: passe
+  pelo otimizador, senão o arquivo em alta entra no histórico do Git.
 - Nunca usar caminho absoluto no `coverImage` — o build passa e a capa quebra
   depois, sem aviso nenhum.
 - Nunca deixar banner de anunciante passar por conteúdo: o alt sempre diz que

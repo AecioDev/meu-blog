@@ -34,6 +34,7 @@ sozinha.
 | `npm run preview` | Serve a pasta `dist/` pra você conferir o build |
 | `npm run check` | Verifica erros de TypeScript e dos arquivos `.astro` |
 | `npm run gerar-capa` | Gera uma imagem de capa no estilo do blog (veja abaixo) |
+| `npm run otimizar-imagem` | Redimensiona uma imagem antes de ela entrar no repositório |
 
 > **Sobre o `npm run check`:** ele exige TypeScript 6.x. O projeto já vem com a
 > versão certa fixada — o TypeScript 7 (compilador nativo) ainda não expõe a API
@@ -183,6 +184,26 @@ a saída é igual em qualquer máquina. A paleta dele espelha os tokens de
 Ele não sobrescreve arquivo existente sem `--forcar`, e aceita `--largura` e
 `--altura` se precisar de outro formato. Para criar um tema novo, copie um dos
 existentes dentro de `scripts/gerar-capa.js` e troque o desenho.
+
+## Antes de commitar uma imagem
+
+Imagem vinda de gerador costuma ter vários MB. O site não sofre com isso (o
+Astro redimensiona e converte para WebP no build), mas o **Git guarda cada
+versão para sempre** — e binário não comprime entre commits.
+
+Por isso, imagem que vai entrar em `src/content/posts/` passa antes por:
+
+```bash
+node scripts/otimizar-imagem.js --entrada drafts/meu-post/capa.jpg --saida src/content/posts/meu-post/capa.jpg --tipo capa
+```
+
+`--tipo capa` corta para 1200x630 (formato de compartilhamento);
+`--tipo conteudo` só limita a largura a 1200, mantendo a proporção — use nas
+imagens do meio do post. Uma capa de 1,75 MB costuma sair com 26 KB, sem
+diferença visível.
+
+Imagem que já for pequena não é ampliada, e GIF animado mantém os quadros.
+Guarde os originais em alta na pasta `drafts/`, que fica fora do Git.
 
 ## Organização das pastas
 
