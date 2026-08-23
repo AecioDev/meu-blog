@@ -50,10 +50,9 @@ ver a foto, mas não vira arquivo no projeto. Peça o caminho dela no computador
 (ex: `C:UsersespirDownloadspia.jpg`) ou que o usuário a salve na pasta
 do post.
 
-Sobre anúncios: **não existe anúncio por post.** Os espaços são do layout — o
-post já ganha um automaticamente depois do conteúdo. Se o usuário pedir um
-anúncio específico só para aquele post, pare e avise: isso exige mexer no
-schema e no layout, fora do escopo desta skill.
+Sobre anúncios: o post já ganha um espaço automático depois do conteúdo,
+vindo do layout — não há nada a fazer para isso aparecer. Se o usuário quiser
+um **banner de anunciante no meio do texto**, veja a seção logo abaixo.
 
 ## Onde o post mora
 
@@ -71,6 +70,61 @@ src/content/posts/
 Os caminhos no `index.md` são **relativos à própria pasta**: `./capa.jpg` no
 frontmatter, `![Descrição](./passo-1.jpg)` no meio do texto. O Astro otimiza
 as duas no build.
+
+## Banner de anunciante dentro do post
+
+O blog roda AdSense e venda direta ao mesmo tempo. São coisas diferentes:
+
+- **AdSense** — automático, vem do layout (o espaço depois do conteúdo e os da
+  barra lateral). Você não faz nada.
+- **Venda direta** — banner de um anunciante específico, colocado no meio do
+  texto. É isso que você monta quando o usuário pedir.
+
+O banner é só uma imagem com link. Guarde o arquivo na pasta do post, junto do
+`index.md`:
+
+```markdown
+[![Publicidade: Loja do Zé, 20% off em ferramentas](./banner-parceiro.jpg)](https://loja.com.br)
+```
+
+**GIF animado funciona.** O Astro preserva a animação e converte para WebP
+animado, que sai menor que o GIF original. Não precisa de `.mdx` nem de
+componente para isso.
+
+### Duas regras ao montar um banner
+
+**1. O alt precisa dizer que é publicidade.** É o que separa anúncio de
+conteúdo para quem usa leitor de tela. Escreva `alt="Publicidade: Loja do Zé,
+20% off"`, nunca uma descrição que soe como ilustração do tutorial.
+
+**2. Link pago leva `rel="sponsored"`.** É o que o Google espera, e o Markdown
+puro não gera esse atributo — precisa de HTML. **Só que HTML dentro do `.md`
+muda onde o arquivo tem que estar:**
+
+| Como você escreve | Onde o arquivo fica | O que acontece |
+| --- | --- | --- |
+| `![alt](./banner.gif)` | pasta do post | o Astro resolve e otimiza (vira WebP animado) |
+| `<img src="...">` | `public/anuncios/` | servido como está; caminho **absoluto** |
+
+O motivo: o Astro processa caminho relativo do Markdown, mas **não toca no
+`src` de HTML bruto** — ele sai literal no HTML final. Um `./banner.gif` ali
+vira 404, porque o arquivo nunca é copiado para junto da página. Testado: a
+pasta do post no `dist/` fica só com o `index.html`.
+
+Então, quando precisar de `rel="sponsored"`:
+
+```html
+<a href="https://loja.com.br" rel="sponsored">
+  <img src="/anuncios/banner-parceiro.gif" alt="Publicidade: Loja do Zé, 20% off">
+</a>
+```
+
+com o arquivo em `public/anuncios/`. A animação do GIF é preservada nos dois
+caminhos.
+
+⚠️ Ao escrever HTML dentro do `.md`, use **somente classes CSS que já existam
+no projeto**. O Tailwind não escaneia os arquivos da collection, então classe
+nova escrita ali não é compilada e simplesmente não estiliza nada.
 
 ## Schema do frontmatter (obrigatório em todo post)
 
@@ -124,6 +178,11 @@ compartilhamento. Use sempre `./`.
 - [ ] Frontmatter completo, válido, categoria é uma das 4 permitidas
 - [ ] Pasta criada com o slug certo, sem conflito com post existente
 - [ ] Capa dentro da pasta do post, referenciada como `./capa.jpg`
+- [ ] Banner de anunciante, se houver: alt identificando como publicidade,
+      `rel="sponsored"` no link, e o arquivo no lugar certo para a forma
+      escolhida (pasta do post no Markdown; `public/` no HTML bruto)
+- [ ] Se usou HTML bruto: conferiu no `dist/` que a imagem do banner existe
+      no caminho que o `src` aponta
 - [ ] `npm run build` passou (é ele que valida o schema)
 - [ ] `npm run dev` mostra o post certo na home e na categoria
 - [ ] Usuário revisou e aprovou antes de qualquer commit/push
@@ -135,6 +194,8 @@ compartilhamento. Use sempre `./`.
 - Nunca inventar categoria, imagem ou informação que não foi fornecida.
 - Nunca usar caminho absoluto no `coverImage` — o build passa e a capa quebra
   depois, sem aviso nenhum.
+- Nunca deixar banner de anunciante passar por conteúdo: o alt sempre diz que
+  é publicidade, e o link sempre leva `rel="sponsored"`.
 - Nunca considerar o post pronto tendo rodado só o `npm run dev`: erro de
   schema não aparece lá.
 - Nunca publicar (commit/push) sem aprovação explícita do usuário.
