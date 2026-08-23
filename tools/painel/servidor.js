@@ -31,6 +31,14 @@ const PORTA = Number(process.env.PORTA_PAINEL) || 5173;
 
 const CATEGORIAS = ['Hidráulica', 'Elétrica', 'Pintura', 'Dicas Gerais'];
 
+/**
+ * Link de afiliado envelhece: oferta expira, produto sai de linha. A ideia é
+ * passar o olho toda semana, e não deixar passar de duas.
+ * Mexer aqui muda o alerta do painel.
+ */
+const DIAS_PARA_CONFERIR = 7;
+const DIAS_ATRASADO = 15;
+
 /** Etapas do pipeline, na ordem em que aparecem no quadro. */
 const ETAPAS = [
   { id: 'pauta', titulo: 'Pauta definida' },
@@ -255,6 +263,40 @@ function lerPublicados() {
 }
 
 // ---------------------------------------------------------------------------
+// validade dos links
+
+/** Há quantos dias os links deste produto foram conferidos. */
+function diasDesde(data) {
+  if (!data) return null;
+  const quando = new Date(data + 'T00:00:00');
+  if (Number.isNaN(quando.getTime())) return null;
+  return Math.floor((Date.now() - quando.getTime()) / 86400000);
+}
+
+/**
+ * Só entra na revisão o produto que já tem os dois links — produto sem link
+ * é outra pendência, e aparece na lista de cadastro.
+ */
+function montarRevisaoDeLinks(catalogo) {
+  const revisao = [];
+  for (const [chave, p] of Object.entries(catalogo)) {
+    const completo = (p.linkMercadoLivre || '').trim() && (p.linkAmazon || '').trim();
+    if (!completo) continue;
+
+    const dias = diasDesde(p.atualizadoEm);
+    if (dias === null || dias < DIAS_PARA_CONFERIR) continue;
+
+    revisao.push({
+      chave,
+      nome: p.nome,
+      dias,
+      atrasado: dias >= DIAS_ATRASADO,
+    });
+  }
+  return revisao.sort((a, b) => b.dias - a.dias);
+}
+
+// ---------------------------------------------------------------------------
 // cruzamento com o catálogo de produtos
 
 /**
@@ -423,6 +465,8 @@ async function montarEstado() {
     pautas,
     catalogo,
     pendenciasDeProduto: [...porProduto.values()],
+    revisaoDeLinks: montarRevisaoDeLinks(catalogo),
+    prazos: { conferir: DIAS_PARA_CONFERIR, atrasado: DIAS_ATRASADO },
   };
 }
 
@@ -521,6 +565,17 @@ const servidor = http.createServer(async (req, res) => {
       };
       gravarJson(ARQ_PRODUTOS, catalogo);
       return responderJson(res, { chave, ...catalogo[chave] }, 201);
+    }
+
+    if (rota.endsWith('/conferir') && req.method === 'POST') {
+      const chave = decodeURIComponent(
+        rota.slice('/api/produtos/'.length, -'/conferir'.length)
+      );
+      const catalogo = lerJson(ARQ_PRODUTOS, {});
+      if (!catalogo[chave]) return responderJson(res, { erro: 'produto não encontrado' }, 404);
+      catalogo[chave].atualizadoEm = new Date().toISOString().slice(0, 10);
+      gravarJson(ARQ_PRODUTOS, catalogo);
+      return responderJson(res, { ok: true, atualizadoEm: catalogo[chave].atualizadoEm });
     }
 
     if (rota.startsWith('/api/produtos/') && req.method === 'DELETE') {

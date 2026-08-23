@@ -6,7 +6,15 @@
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => [...document.querySelectorAll(sel)];
 
-let estado = { etapas: [], categorias: [], cards: [], catalogo: {}, pendenciasDeProduto: [] };
+let estado = {
+  etapas: [],
+  categorias: [],
+  cards: [],
+  catalogo: {},
+  pendenciasDeProduto: [],
+  revisaoDeLinks: [],
+  prazos: { conferir: 7, atrasado: 15 },
+};
 
 // ---------------------------------------------------------------------------
 // utilidades
@@ -100,6 +108,10 @@ function desenharQuadro() {
     partes.push(
       `${publicadosPendentes} post${publicadosPendentes > 1 ? 's' : ''} já no ar com pendência`
     );
+  }
+  const aConferir = estado.revisaoDeLinks.length;
+  if (aConferir) {
+    partes.push(`${aConferir} link${aConferir > 1 ? 's' : ''} pra conferir`);
   }
   $('#resumo-pendencias').textContent = partes.length
     ? partes.join(' · ')
@@ -270,7 +282,9 @@ function desenharProdutos() {
       );
       const texto =
         dias <= 0 ? 'links conferidos hoje' : `links conferidos há ${dias} dia${dias > 1 ? 's' : ''}`;
-      cartao.append(el('p', 'vazia', texto));
+      const linha = el('p', 'vazia', texto);
+      if (dias >= estado.prazos.conferir) linha.classList.add('link-falta');
+      cartao.append(linha);
     }
 
     const menu = el('menu');
@@ -278,6 +292,18 @@ function desenharProdutos() {
     editar.type = 'button';
     editar.addEventListener('click', () => abrirFormularioProduto(p, chave));
     menu.append(editar);
+
+    const temTodosOsLinks = p.linkMercadoLivre && p.linkAmazon;
+    if (temTodosOsLinks) {
+      const conferir = el('button', 'botao-secundario', 'Conferi hoje');
+      conferir.type = 'button';
+      conferir.title = 'Carimba a data sem precisar editar nada';
+      conferir.addEventListener('click', async () => {
+        await api(`/api/produtos/${encodeURIComponent(chave)}/conferir`, { method: 'POST' });
+        carregar();
+      });
+      menu.append(conferir);
+    }
 
     const apagar = el('button', 'botao-secundario', 'Remover');
     apagar.type = 'button';
@@ -295,9 +321,49 @@ function desenharProdutos() {
   desenharPendenciasCatalogo();
 }
 
+function desenharRevisaoDeLinks() {
+  if (!estado.revisaoDeLinks.length) return null;
+
+  const caixa = el('div', 'aviso');
+  caixa.append(
+    el(
+      'h2',
+      null,
+      `Links pra conferir (revisão a cada ${estado.prazos.conferir} dias)`
+    )
+  );
+
+  const ul = el('ul');
+  for (const item of estado.revisaoDeLinks) {
+    const li = el('li');
+    const quanto = `há ${item.dias} dia${item.dias > 1 ? 's' : ''}`;
+    li.append(
+      document.createTextNode(
+        `${item.nome} — conferido ${quanto}${item.atrasado ? ' (atrasado)' : ''}`
+      )
+    );
+    if (item.atrasado) li.classList.add('link-falta');
+
+    const b = el('button', null, 'conferi hoje');
+    b.type = 'button';
+    b.addEventListener('click', async () => {
+      await api(`/api/produtos/${encodeURIComponent(item.chave)}/conferir`, { method: 'POST' });
+      carregar();
+    });
+    li.append(b);
+    ul.append(li);
+  }
+  caixa.append(ul);
+  return caixa;
+}
+
 function desenharPendenciasCatalogo() {
   const alvo = $('#pendencias-catalogo');
   alvo.textContent = '';
+
+  const revisao = desenharRevisaoDeLinks();
+  if (revisao) alvo.append(revisao);
+
   if (!estado.pendenciasDeProduto.length) return;
 
   const caixa = el('div', 'aviso');
