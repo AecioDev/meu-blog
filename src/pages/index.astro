@@ -28,13 +28,21 @@ import {
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 const todos = await getPosts();
-const destaques = await getPostsDestaque(3);
-const idsDestaque = new Set(destaques.map((p) => p.id));
-const recentes = todos.filter((p) => !idsDestaque.has(p.id)).slice(0, 6);
 const categorias = await getCategorias();
 
-/** No celular o card grande é sempre o último post publicado. */
+/** O card grande da home é sempre o último post publicado. */
 const maisRecente = todos[0];
+
+/**
+ * "Comece por aqui" traz os posts marcados como destaque, tirando o que já
+ * aparece no card grande acima — senão o mesmo post apareceria duas vezes.
+ */
+const destaques = (await getPostsDestaque(4))
+  .filter((p) => p.id !== maisRecente?.id)
+  .slice(0, 3);
+
+const jaNaTela = new Set([maisRecente?.id, ...destaques.map((p) => p.id)]);
+const recentes = todos.filter((p) => !jaNaTela.has(p.id)).slice(0, 6);
 ---
 
 <BaseLayout
@@ -83,10 +91,10 @@ const maisRecente = todos[0];
     </div>
   </section>
 
-  <!-- 2. Celular: um único destaque, o post mais recente -->
+  <!-- 2. Destaque principal: sempre o último post publicado -->
   {
     maisRecente && (
-      <section aria-labelledby="titulo-mais-novo" class="mt-12 lg:hidden">
+      <section aria-labelledby="titulo-mais-novo" class="mt-12">
         <h2
           id="titulo-mais-novo"
           class="font-titulo text-2xl font-bold text-tinta"
@@ -120,8 +128,8 @@ const maisRecente = todos[0];
         </p>
 
         <div class="mt-5 grid gap-5 sm:grid-cols-2">
-          {destaques.map((post, indice) => (
-            <FeaturedPost post={post} grande={indice === 0} />
+          {destaques.map((post) => (
+            <FeaturedPost post={post} />
           ))}
         </div>
       </section>
