@@ -105,7 +105,8 @@ apagar o arquivo — útil para deixar um rascunho no projeto.
    * Fechamento com uma dica extra ou aviso de segurança, se o tema envolver risco (elétrica, gás, estrutura)
 6. Segurança em primeiro lugar: qualquer post sobre elétrica, gás ou estrutura precisa terminar com um aviso recomendando profissional habilitado para partes de risco — siga o padrão que já existe no rodapé do site.
 7. Rode `npm run build` (pega erro de schema e de imagem, que o dev server pode deixar passar) e depois `npm run dev` para conferir que o post aparece na home, na categoria certa e com a capa carregando.
-   * Se você **moveu ou renomeou** arquivos de post, o dev server que já estava rodando fica com o índice antigo em cache e acusa erro de imagem que não existe mais. Pare o servidor, apague a pasta `.astro/` e suba de novo. O `npm run build` não sofre disso, por rodar em processo novo.
+   * **Post novo não exige reiniciar nada.** O dev server detecta a pasta nova sozinho em poucos segundos, com a capa já otimizada.
+   * A exceção é **mover ou renomear** um post que já existia: aí o servidor em execução mantém o índice antigo em `.astro/` e acusa erro de imagem que não existe mais. Pare o servidor, apague `.astro/` e suba de novo. Isso é problema só do servidor local — `npm run build` e o deploy não sofrem disso.
 8. NÃO faça commit nem push automaticamente. Mostre o post pronto para o usuário revisar. Só publique (`git add`, `git commit`, `git push`) depois de confirmação explícita dele.
 
 ## Checklist antes de considerar o post pronto
