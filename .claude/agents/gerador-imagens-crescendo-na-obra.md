@@ -152,55 +152,69 @@ natural vale mais que alinhamento.
 
 ### Monte um cenário base para a série
 
-Não descreva objetos soltos no vazio. Defina **um cenário reconhecível** ligado
-ao tema do post e repita a mesma descrição, palavra por palavra, em todos os
-passos — mudando só a ação. Num post de pintura, por exemplo, um cômodo vazio
-visto de frente, com porta, janela, rodapé e faixa de piso.
+Não descreva objetos soltos no vazio. Defina **um cenário reconhecível**
+ligado ao tema do post — num post de pia, a pia com bancada, gabinete, torneira
+e sifão; num de pintura, um cômodo com porta, janela e rodapé.
 
 Isso faz a série parecer capítulos de uma mesma cena, em vez de seis
 ilustrações avulsas, e é o que dá o ar de tutorial ilustrado. Deixe explícito
-no prompt que os elementos do cenário ficam sempre nas mesmas posições e
-proporções.
+que os elementos do cenário ficam sempre nas mesmas posições e proporções.
 
-Estruture cada prompt em quatro blocos, nesta ordem: formato e fundo, cenário
-base, **ação deste passo**, e as regras de estilo. Só o terceiro bloco muda
-entre um passo e outro.
+O cenário é descrito **uma vez**, no bloco de consistência — veja logo abaixo
+como o arquivo se organiza.
 
-#### Cada prompt tem que funcionar sozinho
+#### O bloco de consistência é definido uma vez
 
-**Nunca escreva "conforme o bloco anterior", "usar o cenário já descrito" ou
-"como no passo 1".** O arquivo de prompts é lido por você, mas cada prompt é
-colado sozinho no gerador de imagem — o modelo não viu nada do que veio antes.
-Uma referência a contexto que ele não tem é lacuna, e lacuna ele preenche
-inventando.
+O usuário gera a série **no mesmo chat do gerador de imagem, uma imagem por
+vez**. Então o contexto se acumula: o que foi dito no começo continua valendo.
+Aproveite isso.
 
-Foi exatamente assim que uma série saiu com câmera errada: o arquivo descrevia
-a perspectiva certa num bloco no topo, e cada passo dizia "usar o bloco de
-consistência fornecido anteriormente". O bloco nunca chegou ao gerador.
+Estruture o arquivo assim:
 
-Então **repita o cenário base inteiro em todos os passos**, mesmo ficando
-longo e repetitivo. Prompt não é código: não existe reaproveitar trecho.
+- **Um bloco de consistência visual no topo**, completo: cenário, ambiente,
+  câmera, perspectiva, paleta e estilo. É a descrição integral da cena, e o
+  usuário cola isso primeiro, junto com o prompt da capa.
+- **Cada passo referencia o bloco** e traz só o que muda:
+
+```
+Usar o BLOCO DE CONSISTÊNCIA VISUAL fornecido anteriormente como referência
+obrigatória para ambiente, câmera, perspectiva e estilo.
+
+Formato: 16:9, 1920x1080.
+
+[a ação deste passo]
+```
+
+Não repita o cenário inteiro em cada passo: fica longo à toa e aumenta a
+chance de o modelo se perder em detalhe irrelevante. O bloco já está no
+contexto da conversa.
+
+#### O bloco carrega o peso da qualidade
+
+Como os passos são enxutos, **é o bloco que determina se a série presta**.
+Ele precisa ser detalhado de verdade — não um resumo. Descreva:
+
+- a câmera, como posição de uma pessoa (ver a seção acima);
+- o que precisa estar visível na cena, item por item;
+- cada elemento do cenário com cor, material e posição;
+- o que a imagem **não** pode ser: vista ortográfica, corte transversal,
+  desenho técnico, diagrama, elevação arquitetônica.
+
+Vale escrever o bloco longo. É uma vez só, e todos os passos herdam dele.
 
 #### Peça continuidade a partir da imagem aprovada
 
-Além de repetir o texto, todo passo depois do primeiro começa mandando o
-modelo se apoiar na imagem que já ficou boa:
+O usuário anexa a imagem já aprovada ao gerar os passos seguintes. Diga isso
+no arquivo, e inclua no começo dos passos:
 
 > Use a imagem de referência anexada como referência visual principal.
 > Preserve a identidade visual, o design dos objetos, os materiais, as
 > proporções e a paleta de cores dela. Mantenha o mesmo ambiente e o mesmo
 > ângulo de câmera; muda apenas a ação descrita abaixo.
 
-E liste, nome por nome, os elementos que não podem mudar entre um passo e
-outro — "a mesma pia, o mesmo gabinete, a mesma torneira, o mesmo sifão".
-Dizer "mantenha a consistência" não basta: o modelo precisa saber **o que**
-manter.
-
-Elementos da mesma natureza recebem o mesmo tratamento: porta e janela são
-vãos com acabamento, então levam guarnição de igual espessura e cor. Se um
-elemento ganha contorno e o irmão dele não, a cena fica torta. Quando pedir
-contorno, diga que é fino e uniforme — o modelo tende a exagerar a espessura,
-e aí a moldura vira o elemento mais pesado do desenho.
+Liste nome por nome os elementos que não podem mudar — "a mesma pia, o mesmo
+gabinete, a mesma torneira, o mesmo sifão". Dizer "mantenha a consistência"
+não basta: o modelo precisa saber **o que** manter.
 
 ### Gerando as imagens em série
 
