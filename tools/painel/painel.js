@@ -214,6 +214,37 @@ function abrirDetalhe(card) {
     alvo.append(linha);
   }
 
+  // --- gravar os materiais no post ---
+  if (card.origem === 'publicado') {
+    const prontos = card.produtos.filter((p) => p.situacao === 'resolvido');
+
+    const gravar = el(
+      'button',
+      'botao-primario',
+      prontos.length
+        ? `Gravar ${prontos.length} produto${prontos.length > 1 ? 's' : ''} no post`
+        : 'Nenhum produto com link ainda'
+    );
+    gravar.type = 'button';
+    gravar.style.marginTop = '12px';
+    gravar.disabled = !prontos.length;
+    gravar.title =
+      'Escreve o campo "materiais" no frontmatter — é ele que faz o bloco "Onde comprar" aparecer no post';
+
+    gravar.addEventListener('click', async () => {
+      const r = await api(`/api/posts/${encodeURIComponent(card.slug)}/materiais`, {
+        method: 'POST',
+        body: JSON.stringify({ materiais: prontos.map((p) => p.chave) }),
+      });
+      $('#dialogo-card').close();
+      await carregar();
+      alert(
+        `${r.gravados} produto(s) gravados no post.\nRode "npm run build" para ver o bloco na página.`
+      );
+    });
+    alvo.append(gravar);
+  }
+
   // --- texto ---
   if (card.corpo && card.corpo.trim()) {
     alvo.append(el('h3', null, 'Texto'));

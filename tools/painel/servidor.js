@@ -775,6 +775,52 @@ const servidor = http.createServer(async (req, res) => {
       return responderJson(res, { chave, ...catalogo[chave] }, 201);
     }
 
+    if (rota.endsWith('/materiais') && req.method === 'POST') {
+      const slug = decodeURIComponent(
+        rota.slice('/api/posts/'.length, -'/materiais'.length)
+      );
+      const arquivo = path.join(PASTA_POSTS, slug, 'index.md');
+      if (!existe(arquivo)) return responderJson(res, { erro: 'post não encontrado' }, 404);
+
+      const corpo = await lerCorpo(req);
+      const chaves = Array.isArray(corpo.materiais) ? corpo.materiais : [];
+
+      const texto = fs.readFileSync(arquivo, 'utf8');
+      const fim = texto.indexOf('\n---', 4);
+      if (!texto.startsWith('---') || fim === -1) {
+        return responderJson(res, { erro: 'frontmatter não reconhecido' }, 422);
+      }
+
+      // o arquivo pode estar em CRLF: começa depois da primeira quebra de
+      // linha, seja ela qual for, em vez de contar bytes na mão
+      const inicio = texto.indexOf('\n') + 1;
+
+      // reescreve só o campo materiais, preservando o resto do frontmatter
+      const linhas = texto
+        .slice(inicio, fim)
+        .split('\n')
+        .map((l) => l.replace(/\r$/, ''));
+      const semMateriais = [];
+      let dentro = false;
+      for (const linha of linhas) {
+        if (linha.startsWith('materiais:')) { dentro = true; continue; }
+        if (dentro) {
+          if (/^\s+-\s/.test(linha)) continue;
+          dentro = false;
+        }
+        semMateriais.push(linha);
+      }
+
+      if (chaves.length) {
+        semMateriais.push('materiais:');
+        for (const chave of chaves) semMateriais.push('  - ' + chave);
+      }
+
+      const novo = '---\n' + semMateriais.join('\n') + '\n---' + texto.slice(fim + 4);
+      fs.writeFileSync(arquivo, novo);
+      return responderJson(res, { ok: true, gravados: chaves.length });
+    }
+
     if (rota.endsWith('/conferir') && req.method === 'POST') {
       const chave = decodeURIComponent(
         rota.slice('/api/produtos/'.length, -'/conferir'.length)

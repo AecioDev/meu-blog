@@ -9,6 +9,9 @@ coverImageAlt: "Ilustração de uma pia de cozinha com o gabinete aberto, mostra
 author: "Equipe Crescendo na Obra"
 featured: false
 draft: false
+materiais:
+  - desentupidor-de-borracha
+  - chave-de-grifo
 ---
 
 Você abre a torneira pra lavar um copo e a água fica ali, parada, girando

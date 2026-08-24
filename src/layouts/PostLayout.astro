@@ -5,6 +5,7 @@ import Breadcrumb from '../components/Breadcrumb.astro';
 import RelatedPosts from '../components/RelatedPosts.astro';
 import AdSlot from '../components/AdSlot.astro';
 import NewsletterBox from '../components/NewsletterBox.astro';
+import OndeComprar from '../components/OndeComprar.astro';
 import type { Post } from '../utils/posts';
 import {
   formatarData,
@@ -30,6 +31,7 @@ const {
   coverImage,
   coverImageAlt,
   author,
+  materiais,
 } = post.data;
 
 const estilo = estiloCategoria(category);
@@ -128,6 +130,8 @@ const jsonLd = {
     <div class="conteudo-post mt-8">
       <slot />
     </div>
+
+    <OndeComprar materiais={materiais} />
 
     {
       tags && tags.length > 0 && (

@@ -32,6 +32,12 @@ const posts = defineCollection({
       featured: z.boolean().default(false),
       /** Deixe true para esconder o post do site sem apagar o arquivo. */
       draft: z.boolean().default(false),
+      /**
+       * Produtos de afiliado deste post, pelos slugs do catálogo do painel
+       * (tools/painel/produtos-afiliados.json). Viram o bloco "Onde comprar",
+       * logo abaixo da lista de materiais. O painel preenche este campo.
+       */
+      materiais: z.array(z.string()).optional(),
     }),
 });
 
