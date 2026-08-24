@@ -39,6 +39,31 @@ const CATEGORIAS = ['Hidráulica', 'Elétrica', 'Pintura', 'Dicas Gerais'];
 const DIAS_PARA_CONFERIR = 7;
 const DIAS_ATRASADO = 15;
 
+/**
+ * Lojas do programa de afiliados. Para incluir outra, basta acrescentar aqui
+ * e no formulário do painel.
+ *
+ * Um produto é considerado resolvido com **pelo menos um** link: nem todo
+ * item existe nas três, e exigir todas deixaria o painel gritando pendência
+ * para sempre. As lojas que faltam aparecem como informação, não como erro.
+ */
+const LOJAS = [
+  { campo: 'linkAmazon', nome: 'Amazon' },
+  { campo: 'linkMercadoLivre', nome: 'Mercado Livre' },
+  { campo: 'linkShopee', nome: 'Shopee' },
+];
+
+/** Quais lojas este produto já tem link, e quais faltam. */
+function situacaoDeLojas(produto) {
+  const tem = [];
+  const faltam = [];
+  for (const loja of LOJAS) {
+    if (String(produto[loja.campo] || '').trim()) tem.push(loja.nome);
+    else faltam.push(loja.nome);
+  }
+  return { tem, faltam };
+}
+
 /** Etapas do pipeline, na ordem em que aparecem no quadro. */
 const ETAPAS = [
   { id: 'pauta', titulo: 'Pauta definida' },
@@ -280,8 +305,8 @@ function diasDesde(data) {
 function montarRevisaoDeLinks(catalogo) {
   const revisao = [];
   for (const [chave, p] of Object.entries(catalogo)) {
-    const completo = (p.linkMercadoLivre || '').trim() && (p.linkAmazon || '').trim();
-    if (!completo) continue;
+    // produto sem link nenhum é pendência de cadastro, não de validade
+    if (!situacaoDeLojas(p).tem.length) continue;
 
     const dias = diasDesde(p.atualizadoEm);
     if (dias === null || dias < DIAS_PARA_CONFERIR) continue;
@@ -312,18 +337,24 @@ function cruzarProdutos(citados, catalogo) {
       return { nome, chave, situacao: 'nao-cadastrado' };
     }
 
-    const temML = Boolean((cadastrado.linkMercadoLivre || '').trim());
-    const temAmazon = Boolean((cadastrado.linkAmazon || '').trim());
+    const { tem, faltam } = situacaoDeLojas(cadastrado);
 
-    if (temML && temAmazon) {
-      return { nome: cadastrado.nome, chave, situacao: 'resolvido', produto: cadastrado };
+    if (tem.length) {
+      return {
+        nome: cadastrado.nome,
+        chave,
+        situacao: 'resolvido',
+        produto: cadastrado,
+        lojas: tem,
+        faltando: faltam,
+      };
     }
     return {
       nome: cadastrado.nome,
       chave,
-      situacao: 'link-incompleto',
+      situacao: 'sem-link',
       produto: cadastrado,
-      faltando: [!temML && 'Mercado Livre', !temAmazon && 'Amazon'].filter(Boolean),
+      faltando: faltam,
     };
   });
 }
@@ -466,6 +497,7 @@ async function montarEstado() {
     catalogo,
     pendenciasDeProduto: [...porProduto.values()],
     revisaoDeLinks: montarRevisaoDeLinks(catalogo),
+    lojas: LOJAS,
     prazos: { conferir: DIAS_PARA_CONFERIR, atrasado: DIAS_ATRASADO },
   };
 }
@@ -558,8 +590,9 @@ const servidor = http.createServer(async (req, res) => {
       catalogo[chave] = {
         nome,
         tags: String(corpo.tags || '').trim(),
-        linkMercadoLivre: String(corpo.linkMercadoLivre || '').trim(),
         linkAmazon: String(corpo.linkAmazon || '').trim(),
+        linkMercadoLivre: String(corpo.linkMercadoLivre || '').trim(),
+        linkShopee: String(corpo.linkShopee || '').trim(),
         observacao: String(corpo.observacao || '').trim(),
         atualizadoEm: new Date().toISOString().slice(0, 10),
       };

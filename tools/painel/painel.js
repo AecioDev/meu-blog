@@ -13,6 +13,7 @@ let estado = {
   catalogo: {},
   pendenciasDeProduto: [],
   revisaoDeLinks: [],
+  lojas: [],
   prazos: { conferir: 7, atrasado: 15 },
 };
 
@@ -167,19 +168,27 @@ function abrirDetalhe(card) {
     linha.append(el('span', 'nome', p.nome));
 
     if (p.situacao === 'resolvido') {
-      linha.append(el('span', 'link-ok', 'links completos'));
-      for (const [rotulo, href] of [
-        ['Mercado Livre', p.produto.linkMercadoLivre],
-        ['Amazon', p.produto.linkAmazon],
-      ]) {
-        const a = el('a', null, rotulo);
+      for (const loja of estado.lojas) {
+        const href = p.produto[loja.campo];
+        if (!href) continue;
+        const a = el('a', 'link-ok', loja.nome);
         a.href = href;
         a.target = '_blank';
         a.rel = 'noopener noreferrer';
         linha.append(a);
       }
-    } else if (p.situacao === 'link-incompleto') {
-      linha.append(el('span', 'link-falta', `falta: ${p.faltando.join(' e ')}`));
+      if (p.faltando && p.faltando.length) {
+        linha.append(el('span', 'vazia', `(sem ${p.faltando.join(' e ')})`));
+        const b = el('button', 'botao-secundario', 'Somar loja');
+        b.type = 'button';
+        b.addEventListener('click', () => {
+          $('#dialogo-card').close();
+          abrirFormularioProduto(p.produto, p.chave);
+        });
+        linha.append(b);
+      }
+    } else if (p.situacao === 'sem-link') {
+      linha.append(el('span', 'link-falta', 'cadastrado, mas sem link nenhum'));
       const b = el('button', 'botao-secundario', 'Completar');
       b.type = 'button';
       b.addEventListener('click', () => {
@@ -258,18 +267,17 @@ function desenharProdutos() {
     if (p.tags) cartao.append(el('span', 'chip', p.tags));
 
     const links = el('div', 'links');
-    for (const [rotulo, href] of [
-      ['Mercado Livre', p.linkMercadoLivre],
-      ['Amazon', p.linkAmazon],
-    ]) {
+    for (const loja of estado.lojas) {
+      const href = p[loja.campo];
       if (href) {
-        const a = el('a', 'link-ok', `${rotulo}: cadastrado`);
+        const a = el('a', 'link-ok', `${loja.nome}: cadastrado`);
         a.href = href;
         a.target = '_blank';
         a.rel = 'noopener noreferrer';
         links.append(a);
       } else {
-        links.append(el('span', 'link-falta', `${rotulo}: falta`));
+        // sem link não é erro: o produto pode simplesmente não existir na loja
+        links.append(el('span', 'vazia', `${loja.nome}: —`));
       }
     }
     cartao.append(links);
@@ -293,8 +301,8 @@ function desenharProdutos() {
     editar.addEventListener('click', () => abrirFormularioProduto(p, chave));
     menu.append(editar);
 
-    const temTodosOsLinks = p.linkMercadoLivre && p.linkAmazon;
-    if (temTodosOsLinks) {
+    const temAlgumLink = estado.lojas.some((loja) => p[loja.campo]);
+    if (temAlgumLink) {
       const conferir = el('button', 'botao-secundario', 'Conferi hoje');
       conferir.type = 'button';
       conferir.title = 'Carimba a data sem precisar editar nada';
@@ -375,7 +383,7 @@ function desenharPendenciasCatalogo() {
     const situacao =
       p.situacao === 'nao-cadastrado'
         ? 'não está no catálogo'
-        : `falta ${p.faltando.join(' e ')}`;
+        : 'cadastrado, mas sem link nenhum';
     li.append(document.createTextNode(`${p.nome} — ${situacao} · citado em: ${p.posts.join(', ')}`));
 
     const b = el('button', null, p.situacao === 'nao-cadastrado' ? 'cadastrar' : 'completar');
@@ -395,8 +403,9 @@ function abrirFormularioProduto(produto = {}, chave = null) {
   form.reset();
   form.nome.value = produto.nome || '';
   form.tags.value = produto.tags || '';
-  form.linkMercadoLivre.value = produto.linkMercadoLivre || '';
   form.linkAmazon.value = produto.linkAmazon || '';
+  form.linkMercadoLivre.value = produto.linkMercadoLivre || '';
+  form.linkShopee.value = produto.linkShopee || '';
   form.observacao.value = produto.observacao || '';
   form.dataset.chave = chave || '';
   form.querySelector('[data-erro]').hidden = true;
@@ -464,8 +473,9 @@ $('#form-produto').addEventListener('submit', async (evento) => {
       body: JSON.stringify({
         nome: form.nome.value,
         tags: form.tags.value,
-        linkMercadoLivre: form.linkMercadoLivre.value,
         linkAmazon: form.linkAmazon.value,
+        linkMercadoLivre: form.linkMercadoLivre.value,
+        linkShopee: form.linkShopee.value,
         observacao: form.observacao.value,
       }),
     });
