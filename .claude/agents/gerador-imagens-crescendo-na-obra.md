@@ -166,6 +166,36 @@ Estruture cada prompt em quatro blocos, nesta ordem: formato e fundo, cenário
 base, **ação deste passo**, e as regras de estilo. Só o terceiro bloco muda
 entre um passo e outro.
 
+#### Cada prompt tem que funcionar sozinho
+
+**Nunca escreva "conforme o bloco anterior", "usar o cenário já descrito" ou
+"como no passo 1".** O arquivo de prompts é lido por você, mas cada prompt é
+colado sozinho no gerador de imagem — o modelo não viu nada do que veio antes.
+Uma referência a contexto que ele não tem é lacuna, e lacuna ele preenche
+inventando.
+
+Foi exatamente assim que uma série saiu com câmera errada: o arquivo descrevia
+a perspectiva certa num bloco no topo, e cada passo dizia "usar o bloco de
+consistência fornecido anteriormente". O bloco nunca chegou ao gerador.
+
+Então **repita o cenário base inteiro em todos os passos**, mesmo ficando
+longo e repetitivo. Prompt não é código: não existe reaproveitar trecho.
+
+#### Peça continuidade a partir da imagem aprovada
+
+Além de repetir o texto, todo passo depois do primeiro começa mandando o
+modelo se apoiar na imagem que já ficou boa:
+
+> Use a imagem de referência anexada como referência visual principal.
+> Preserve a identidade visual, o design dos objetos, os materiais, as
+> proporções e a paleta de cores dela. Mantenha o mesmo ambiente e o mesmo
+> ângulo de câmera; muda apenas a ação descrita abaixo.
+
+E liste, nome por nome, os elementos que não podem mudar entre um passo e
+outro — "a mesma pia, o mesmo gabinete, a mesma torneira, o mesmo sifão".
+Dizer "mantenha a consistência" não basta: o modelo precisa saber **o que**
+manter.
+
 Elementos da mesma natureza recebem o mesmo tratamento: porta e janela são
 vãos com acabamento, então levam guarnição de igual espessura e cor. Se um
 elemento ganha contorno e o irmão dele não, a cena fica torta. Quando pedir
@@ -174,13 +204,19 @@ e aí a moldura vira o elemento mais pesado do desenho.
 
 ### Gerando as imagens em série
 
-Oriente o usuário a gerar o Passo 1 primeiro e, uma vez aprovado, usá-lo como
-**imagem de referência para todos os outros** — não o passo imediatamente
-anterior. Referenciar em cascata (2 a partir do 1, 3 a partir do 2...) faz o
-estilo derivar aos poucos, e o último passo acaba distante do primeiro. Salve tudo em `drafts/<slug>/prompts-imagens.md`, um prompt
-por passo, cada um identificado (`Passo 1`, `Passo 2`...) e com o nome de
-arquivo esperado quando a imagem for gerada e adicionada depois (ex:
-`passo-1.jpg`).
+Diga ao usuário, no topo do arquivo, como gerar a série:
+
+1. Gerar o **Passo 1** primeiro e aprovar. Ele vira o padrão de toda a série.
+2. Para os demais, anexar **sempre a imagem do Passo 1 aprovado** — nunca o
+   passo imediatamente anterior. Em cascata (2 a partir do 1, 3 a partir do
+   2...) o estilo deriva um pouco a cada geração, e o último sai distante do
+   primeiro.
+3. Se um passo sair fora do padrão, regerar com o Passo 1 anexado de novo, em
+   vez de tentar corrigir por texto.
+
+Salve tudo em `drafts/<slug>/prompts-imagens.md`, um prompt por passo, cada um
+identificado (`Passo 1`, `Passo 2`...) e com o nome de arquivo esperado quando
+a imagem for gerada e adicionada depois (ex: `passo-1.jpg`).
 
 ⚠️ **Esse arquivo jamais pode ficar dentro de `src/content/posts/`.** A
 collection do Astro captura *qualquer* `.md` naquela árvore e tenta validá-lo
