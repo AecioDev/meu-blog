@@ -90,6 +90,11 @@ function slugificar(texto) {
     .replace(/^-+|-+$/g, '');
 }
 
+/** Caminho relativo à raiz, sempre com barra normal (Windows usa ). */
+function caminhoRelativo(alvo) {
+  return path.relative(RAIZ, alvo).split(path.sep).join('/');
+}
+
 function lerJson(arquivo, padrao) {
   try {
     return JSON.parse(fs.readFileSync(arquivo, 'utf8'));
@@ -285,6 +290,44 @@ function lerPublicados() {
     });
   }
   return mapa;
+}
+
+// ---------------------------------------------------------------------------
+// criação do rascunho
+
+/**
+ * Cria `drafts/<slug>/post.md` com o cabeçalho que o redator usa, já
+ * preenchido com o que a pauta sabe. O corpo fica vazio de propósito: com
+ * título mas sem descrição nem texto, o card cai em "Rascunho em andamento"
+ * e só passa para "Aguardando revisão" quando estiver completo de verdade.
+ */
+function criarRascunho(pauta) {
+  const slug = pauta.slug || slugificar(pauta.titulo);
+  const pasta = path.join(PASTA_DRAFTS, slug);
+  const arquivo = path.join(pasta, 'post.md');
+
+  if (existe(arquivo)) {
+    return { ja: true, caminho: caminhoRelativo(arquivo) };
+  }
+
+  const linhas = [
+    `TÍTULO: ${pauta.titulo}`,
+    'DESCRIÇÃO: ',
+    `CATEGORIA: ${pauta.categoria || ''}`,
+    'TAGS: ',
+    'SUGESTÃO DE IMAGEM DE CAPA: ',
+    'ALT TEXT DA IMAGEM: ',
+    '',
+    '---',
+    '',
+  ];
+  if (pauta.observacao) {
+    linhas.push(`<!-- da pauta: ${pauta.observacao} -->`, '');
+  }
+
+  fs.mkdirSync(pasta, { recursive: true });
+  fs.writeFileSync(arquivo, linhas.join('\n'));
+  return { ja: false, caminho: caminhoRelativo(arquivo) };
 }
 
 // ---------------------------------------------------------------------------
@@ -566,7 +609,20 @@ const servidor = http.createServer(async (req, res) => {
       }
       pautas.push(nova);
       gravarJson(ARQ_PAUTAS, pautas);
-      return responderJson(res, nova, 201);
+
+      let rascunho = null;
+      if (corpo.criarRascunho) rascunho = criarRascunho(nova);
+
+      return responderJson(res, { ...nova, rascunho }, 201);
+    }
+
+    if (rota.endsWith('/rascunho') && req.method === 'POST') {
+      const id = decodeURIComponent(
+        rota.slice('/api/pautas/'.length, -'/rascunho'.length)
+      );
+      const pauta = lerJson(ARQ_PAUTAS, []).find((p) => p.id === id);
+      if (!pauta) return responderJson(res, { erro: 'pauta não encontrada' }, 404);
+      return responderJson(res, criarRascunho(pauta), 201);
     }
 
     if (rota.startsWith('/api/pautas/') && req.method === 'DELETE') {

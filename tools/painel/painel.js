@@ -215,12 +215,32 @@ function abrirDetalhe(card) {
     alvo.append(el('div', 'corpo', card.corpo.trim()));
   }
 
-  // --- apagar pauta ---
+  // --- ações da pauta ---
   if (card.origem === 'pauta') {
+    const iniciar = el('button', 'botao-primario', 'Iniciar rascunho');
+    iniciar.type = 'button';
+    iniciar.title = 'Cria drafts/<slug>/post.md com o cabeçalho já preenchido';
+    iniciar.style.marginTop = '16px';
+    iniciar.addEventListener('click', async () => {
+      const r = await api(`/api/pautas/${encodeURIComponent(card.idPauta)}/rascunho`, {
+        method: 'POST',
+      });
+      $('#dialogo-card').close();
+      await carregar();
+      alert(
+        r.ja
+          ? `Já existia um rascunho em ${r.caminho}`
+          : `Rascunho criado em ${r.caminho}`
+      );
+    });
+    alvo.append(iniciar);
+
     const b = el('button', 'botao-secundario', 'Descartar esta pauta');
     b.type = 'button';
     b.style.marginTop = '16px';
+    b.style.marginLeft = '8px';
     b.addEventListener('click', async () => {
+      if (!confirm('Descartar esta pauta? O rascunho, se existir, não é apagado.')) return;
       await api(`/api/pautas/${encodeURIComponent(card.idPauta)}`, { method: 'DELETE' });
       $('#dialogo-card').close();
       carregar();
@@ -453,6 +473,7 @@ $('#form-pauta').addEventListener('submit', async (evento) => {
         titulo: form.titulo.value,
         categoria: form.categoria.value,
         observacao: form.observacao.value,
+        criarRascunho: form.criarRascunho.checked,
       }),
     });
     $('#dialogo-pauta').close();

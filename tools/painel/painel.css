@@ -488,3 +488,22 @@ dialog menu {
   flex: 1;
   min-width: 140px;
 }
+
+/* checkbox fica em linha, não empilhado como os outros campos */
+dialog label.linha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400;
+  font-size: 14px;
+}
+dialog label.linha input {
+  width: auto;
+  margin: 0;
+}
+dialog label.linha code {
+  background: var(--creme-forte);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 13px;
+}
