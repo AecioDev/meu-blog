@@ -118,6 +118,38 @@ Regras que valem para todos os passos:
   figura humana.
 - Um único gesto por imagem. Se o passo tem duas ideias, escolha a principal.
 
+### Diga de que ângulo a cena é vista
+
+**Esta é a instrução que mais decide se a imagem presta.** Sem ela, o modelo
+escolhe sozinho — e escolhe desenho técnico: vista reta, chapada, com o objeto
+cortado ao meio como num diagrama de manual. Fica correto e ilegível.
+
+Descreva a câmera como a posição de uma pessoa:
+
+> Cena vista em ângulo frontal levemente elevado, como quem está em pé diante
+> da pia, olhando um pouco para baixo. Perspectiva natural e suave. Os objetos
+> têm volume e profundidade visíveis.
+
+E **liste o que não pode ser**, porque o modelo tende justamente para lá:
+
+> Não usar vista ortográfica, vista frontal perfeitamente reta, aparência de
+> corte transversal, de desenho técnico, de diagrama, nem linhas perfeitamente
+> horizontais de elevação arquitetônica.
+
+Duas regras práticas:
+
+- **Objeto plano aceita vista frontal** (uma parede, uma porta). **Objeto com
+  interior ou volume exige ângulo elevado** — pia, lata, gabinete, ralo. Se o
+  passo depende de enxergar dentro de alguma coisa, a câmera tem que estar
+  acima.
+- **Diga o que precisa estar visível na cena**: "o interior da cuba", "o sifão
+  embaixo da bancada", "a profundidade da bancada". Listar isso resolve o
+  enquadramento melhor do que descrever a câmera em detalhe.
+
+Simetria perfeita também puxa para o aspecto técnico. Vale dizer no prompt que
+a composição **não precisa ser matematicamente simétrica** — perspectiva
+natural vale mais que alinhamento.
+
 ### Monte um cenário base para a série
 
 Não descreva objetos soltos no vazio. Defina **um cenário reconhecível** ligado

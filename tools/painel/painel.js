@@ -166,8 +166,13 @@ function abrirDetalhe(card) {
   for (const p of card.produtos) {
     const linha = el('div', 'produto-linha');
     linha.append(el('span', 'nome', p.nome));
+    linha.append(
+      el('span', 'chip', p.origem === 'material' ? 'da lista de materiais' : 'sugerido')
+    );
 
-    if (p.situacao === 'resolvido') {
+    if (p.situacao === 'ignorado') {
+      linha.append(el('span', 'vazia', 'marcado como "não vale link"'));
+    } else if (p.situacao === 'resolvido') {
       for (const loja of estado.lojas) {
         const href = p.produto[loja.campo];
         if (!href) continue;
@@ -302,6 +307,7 @@ function desenharProdutos() {
     }
     cartao.append(links);
 
+    if (p.ignorar) cartao.append(el('p', 'vazia', 'marcado como "não vale link"'));
     if (p.observacao) cartao.append(el('p', 'vazia', p.observacao));
 
     if (p.atualizadoEm) {
@@ -427,6 +433,7 @@ function abrirFormularioProduto(produto = {}, chave = null) {
   form.linkMercadoLivre.value = produto.linkMercadoLivre || '';
   form.linkShopee.value = produto.linkShopee || '';
   form.observacao.value = produto.observacao || '';
+  form.ignorar.checked = Boolean(produto.ignorar);
   form.dataset.chave = chave || '';
   form.querySelector('[data-erro]').hidden = true;
   trocarTela('produtos');
@@ -498,6 +505,7 @@ $('#form-produto').addEventListener('submit', async (evento) => {
         linkMercadoLivre: form.linkMercadoLivre.value,
         linkShopee: form.linkShopee.value,
         observacao: form.observacao.value,
+        ignorar: form.ignorar.checked,
       }),
     });
     $('#dialogo-produto').close();

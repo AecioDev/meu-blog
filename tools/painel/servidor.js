@@ -177,6 +177,82 @@ function lerCabecalhoRascunho(texto) {
 }
 
 /**
+ * Títulos de seção que costumam abrir uma lista de compras dentro do post.
+ * O que está aí é material que a pessoa vai precisar comprar — ou seja,
+ * exatamente o que pode virar link de afiliado.
+ */
+const TITULOS_DE_MATERIAL = [
+  'o que você vai precisar',
+  'o que voce vai precisar',
+  'o que você precisa',
+  'do que você vai precisar',
+  'materiais',
+  'material necessário',
+  'lista de materiais',
+  'ferramentas',
+  'ferramentas necessárias',
+  'o que ter em casa',
+];
+
+/** Tira o marcador, o negrito e o motivo, sobrando só o nome do produto. */
+function limparNomeDeProduto(item) {
+  let nome = item.replace(/^[-*]\s*/, '');
+
+  // "**Desentupidor de borracha** — o de cozinha" -> pega o negrito
+  const negrito = nome.match(/\*\*([^*]+)\*\*/);
+  if (negrito) return negrito[1].trim().replace(/[:,.]$/, '');
+
+  const travessao = nome.search(/\s[—–-]\s/);
+  if (travessao !== -1) nome = nome.slice(0, travessao);
+  return nome
+    .replace(/\([^)]*\)/g, '')
+    .replace(/[[\]]/g, '')
+    .trim();
+}
+
+/** Remove acento e pontuação, para comparar título de seção. */
+function normalizar(texto) {
+  return texto
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9 ]/g, '')
+    .trim();
+}
+
+/**
+ * Lê a lista de materiais do corpo do post: acha um título de seção que
+ * anuncie compras e recolhe os itens de lista logo abaixo.
+ *
+ * É a segunda fonte de produto monetizável — e a que sobrevive à
+ * publicação, porque "PRODUTOS RELACIONADOS" é metadado do rascunho e não
+ * vai para o site.
+ */
+function lerMateriaisDoCorpo(texto) {
+  const linhas = texto.split('\n');
+  const encontrados = [];
+  const alvos = TITULOS_DE_MATERIAL.map(normalizar);
+
+  for (let i = 0; i < linhas.length; i += 1) {
+    const titulo = linhas[i].match(/^#{2,4}\s+(.*)$/);
+    if (!titulo) continue;
+
+    const limpo = normalizar(titulo[1]);
+    if (!alvos.some((alvo) => limpo.includes(alvo))) continue;
+
+    // recolhe os itens até a próxima seção
+    for (let j = i + 1; j < linhas.length; j += 1) {
+      if (/^#{1,4}\s/.test(linhas[j])) break;
+      if (!/^\s*[-*]\s+/.test(linhas[j])) continue;
+
+      const nome = limparNomeDeProduto(linhas[j].trim());
+      if (nome && nome.length > 2) encontrados.push(nome);
+    }
+  }
+  return encontrados;
+}
+
+/**
  * Extrai a seção PRODUTOS RELACIONADOS.
  * Formato de cada linha: `- nome (marcação) — motivo`
  */
@@ -204,6 +280,25 @@ function lerProdutosCitados(texto) {
     if (nome) produtos.push(nome);
   }
   return produtos;
+}
+
+/**
+ * Junta as duas fontes de produto sem repetir, marcando de onde cada um veio.
+ * Quando o mesmo item aparece nas duas, vale "sugerido" — é a intenção
+ * explícita do redator, e costuma trazer o nome mais completo.
+ */
+function juntarProdutos(sugeridos, materiais) {
+  const juntos = new Map();
+
+  for (const nome of sugeridos) {
+    const chave = slugificar(nome);
+    if (chave) juntos.set(chave, { nome, origem: 'sugerido' });
+  }
+  for (const nome of materiais) {
+    const chave = slugificar(nome);
+    if (chave && !juntos.has(chave)) juntos.set(chave, { nome, origem: 'material' });
+  }
+  return [...juntos.values()];
 }
 
 /** Confere se o rascunho tem tudo que a publicação vai exigir. */
@@ -253,7 +348,7 @@ function lerRascunhos() {
       descricao: dados['DESCRIÇÃO'] || dados['DESCRICAO'] || '',
       categoria: (dados['CATEGORIA'] || '').trim(),
       completo: rascunhoCompleto(dados, corpo),
-      produtos: lerProdutosCitados(texto),
+      produtos: juntarProdutos(lerProdutosCitados(texto), lerMateriaisDoCorpo(corpo)),
       temPromptsPendentes: pasta ? existe(path.join(pasta, 'prompts-imagens.md')) : false,
     });
   }
@@ -274,6 +369,14 @@ function lerPublicados() {
     const texto = fs.readFileSync(arquivo, 'utf8');
     const { dados, corpo } = lerFrontmatter(texto);
 
+    // "PRODUTOS RELACIONADOS" é metadado de produção e não vai para o site,
+    // então some quando o post é publicado. O rascunho, quando ainda existe,
+    // guarda a sugestão do redator — vale recuperar de lá.
+    const rascunho = path.join(PASTA_DRAFTS, entrada.name, 'post.md');
+    const sugeridos = existe(rascunho)
+      ? lerProdutosCitados(fs.readFileSync(rascunho, 'utf8'))
+      : [];
+
     mapa.set(entrada.name, {
       slug: entrada.name,
       arquivo,
@@ -284,7 +387,10 @@ function lerPublicados() {
       descricao: dados.description || '',
       categoria: dados.category || '',
       ehRascunho: String(dados.draft).trim() === 'true',
-      produtos: lerProdutosCitados(texto),
+      produtos: juntarProdutos(
+        [...lerProdutosCitados(texto), ...sugeridos],
+        lerMateriaisDoCorpo(corpo)
+      ),
       temPromptsPendentes: existe(path.join(pasta, 'prompts-imagens.md')),
       temBannerPendente: texto.includes('[BANNER DE ANÚNCIO PENDENTE]'),
     });
@@ -350,6 +456,7 @@ function montarRevisaoDeLinks(catalogo) {
   for (const [chave, p] of Object.entries(catalogo)) {
     // produto sem link nenhum é pendência de cadastro, não de validade
     if (!situacaoDeLojas(p).tem.length) continue;
+    if (p.ignorar) continue;
 
     const dias = diasDesde(p.atualizadoEm);
     if (dias === null || dias < DIAS_PARA_CONFERIR) continue;
@@ -372,12 +479,19 @@ function montarRevisaoDeLinks(catalogo) {
  * nem existe no catálogo ainda.
  */
 function cruzarProdutos(citados, catalogo) {
-  return citados.map((nome) => {
+  return citados.map(({ nome, origem }) => {
     const chave = slugificar(nome);
     const cadastrado = catalogo[chave];
 
     if (!cadastrado) {
-      return { nome, chave, situacao: 'nao-cadastrado' };
+      return { nome, chave, origem, situacao: 'nao-cadastrado' };
+    }
+
+    // item marcado como "não vale link" sai de vez das pendências:
+    // detergente, pano velho e afins aparecem na lista de materiais mas
+    // ninguém compra por link de afiliado
+    if (cadastrado.ignorar) {
+      return { nome: cadastrado.nome, chave, origem, situacao: 'ignorado' };
     }
 
     const { tem, faltam } = situacaoDeLojas(cadastrado);
@@ -432,7 +546,9 @@ async function montarEstado() {
   for (const [slug, post] of publicados) {
     vistos.add(slug);
     const produtos = cruzarProdutos(post.produtos, catalogo);
-    const semLink = produtos.filter((p) => p.situacao !== 'resolvido');
+    const semLink = produtos.filter(
+      (p) => p.situacao !== 'resolvido' && p.situacao !== 'ignorado'
+    );
     const pendencias = [];
 
     if (semLink.length) {
@@ -474,7 +590,9 @@ async function montarEstado() {
     if (vistos.has(slug)) continue;
     vistos.add(slug);
     const produtos = cruzarProdutos(rascunho.produtos, catalogo);
-    const semLink = produtos.filter((p) => p.situacao !== 'resolvido');
+    const semLink = produtos.filter(
+      (p) => p.situacao !== 'resolvido' && p.situacao !== 'ignorado'
+    );
     const pendencias = [];
 
     if (semLink.length) {
@@ -524,7 +642,7 @@ async function montarEstado() {
   const porProduto = new Map();
   for (const card of cards) {
     for (const p of card.produtos) {
-      if (p.situacao === 'resolvido') continue;
+      if (p.situacao === 'resolvido' || p.situacao === 'ignorado') continue;
       if (!porProduto.has(p.chave)) {
         porProduto.set(p.chave, { ...p, posts: [] });
       }
@@ -650,6 +768,7 @@ const servidor = http.createServer(async (req, res) => {
         linkMercadoLivre: String(corpo.linkMercadoLivre || '').trim(),
         linkShopee: String(corpo.linkShopee || '').trim(),
         observacao: String(corpo.observacao || '').trim(),
+        ignorar: Boolean(corpo.ignorar),
         atualizadoEm: new Date().toISOString().slice(0, 10),
       };
       gravarJson(ARQ_PRODUTOS, catalogo);
