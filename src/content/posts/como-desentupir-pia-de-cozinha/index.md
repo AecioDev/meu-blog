@@ -10,7 +10,12 @@ author: "Equipe Crescendo na Obra"
 featured: false
 draft: false
 materiais:
-  - desentupidor-de-borracha
+  - desentupidor-de-borracha-para-pia
+  - sonda-mola-desentupidora-flexivel
+  - telinha-protetora-de-ralo-para-pia
+  - sifao-completo-para-pia-de-cozinha
+  - balde-retratil-10l
+  - luva-de-borracha
   - chave-de-grifo
 ---
 
@@ -138,8 +143,11 @@ olhando.
 4. Limpe por dentro com água corrente e uma escova velha (de louça ou de dente).
    Você provavelmente vai tirar uma pasta cinza de gordura. É ela a culpada.
 5. Confira o **anel de borracha** de cada porca. Se estiver ressecado ou
-   rachado, leve na loja e compre igual — custa poucos reais e é o que evita
-   vazamento depois.
+   rachado, é ele que vai vazar depois. Existe o anel avulso, mas o **sifão
+   completo** custa pouco mais e já vem com as borrachas novas — se o seu é
+   antigo, esbranquiçado ou meio empenado, compensa trocar a peça inteira e
+   não mexer nisso de novo tão cedo. Leve a velha na loja pra comparar a
+   bitola.
 6. Monte de volta rosqueando **com a mão** até ficar firme. Aperto de ferramenta
    com força racha a rosca do plástico.
 7. Abra a torneira e observe as juntas por uns 30 segundos, com o balde ainda ali.

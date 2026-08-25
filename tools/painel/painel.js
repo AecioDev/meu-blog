@@ -228,7 +228,14 @@ function abrirDetalhe(card) {
 
   // --- gravar os materiais no post ---
   if (card.origem === 'publicado') {
-    const prontos = card.produtos.filter((p) => p.situacao === 'resolvido');
+    // dois nomes podem apontar para o mesmo produto do catálogo — no bloco
+    // do post ele deve aparecer uma vez só
+    const prontos = [];
+    for (const p of card.produtos) {
+      if (p.situacao !== 'resolvido') continue;
+      if (prontos.some((x) => x.chave === p.chave)) continue;
+      prontos.push(p);
+    }
 
     const gravar = el(
       'button',
