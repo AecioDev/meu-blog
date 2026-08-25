@@ -18,6 +18,7 @@
 
       <nav class="menu">
         <button type="button" data-tela="quadro" class="ativo">Quadro</button>
+        <button type="button" data-tela="posts">Posts</button>
         <button type="button" data-tela="produtos">Produtos de afiliado</button>
       </nav>
 
@@ -35,6 +36,23 @@
         </div>
 
         <div id="quadro" class="quadro" aria-live="polite"></div>
+      </section>
+
+      <!-- ================= POSTS ================= -->
+      <section id="tela-posts" hidden>
+        <div class="barra-acoes">
+          <label class="busca">
+            <span class="sr-only">Buscar post</span>
+            <input type="search" id="busca-post" placeholder="Buscar por título ou categoria..." />
+          </label>
+          <label class="linha filtro">
+            <input type="checkbox" id="so-pendentes" />
+            <span>só com pendência</span>
+          </label>
+          <p id="resumo-posts" class="resumo"></p>
+        </div>
+
+        <div id="lista-posts" class="lista-posts"></div>
       </section>
 
       <!-- ================= PRODUTOS ================= -->

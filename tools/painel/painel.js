@@ -54,6 +54,7 @@ function el(tag, classe, texto) {
 async function carregar() {
   estado = await api('/api/estado');
   desenharQuadro();
+  desenharListaDePosts();
   desenharProdutos();
   preencherCategorias();
 }
@@ -299,6 +300,91 @@ function abrirDetalhe(card) {
 }
 
 // ---------------------------------------------------------------------------
+// lista de posts
+
+/**
+ * Mesma informação do quadro, em outro formato: aqui cada post é uma linha
+ * com o passo em que está e a trilha do fluxo. Serve para ver muitos posts
+ * de uma vez, que é onde o kanban começa a ficar apertado.
+ */
+function desenharListaDePosts() {
+  const alvo = $('#lista-posts');
+  alvo.textContent = '';
+
+  const busca = $('#busca-post').value.trim().toLowerCase();
+  const soPendentes = $('#so-pendentes').checked;
+
+  const ordem = estado.etapas.map((e) => e.id);
+
+  const posts = estado.cards
+    .filter((c) => {
+      if (soPendentes && !c.pendencias.length) return false;
+      if (!busca) return true;
+      return (
+        c.titulo.toLowerCase().includes(busca) ||
+        (c.categoria || '').toLowerCase().includes(busca)
+      );
+    })
+    .sort((a, b) => {
+      const posA = ordem.indexOf(a.etapa);
+      const posB = ordem.indexOf(b.etapa);
+      if (posA !== posB) return posA - posB; // quem está mais atrás vem antes
+      return a.titulo.localeCompare(b.titulo, 'pt-BR');
+    });
+
+  $('#resumo-posts').textContent = `${posts.length} de ${estado.cards.length} post${
+    estado.cards.length === 1 ? '' : 's'
+  }`;
+
+  if (!posts.length) {
+    alvo.append(el('p', 'vazia', 'Nenhum post com esse filtro.'));
+    return;
+  }
+
+  for (const card of posts) {
+    const indice = ordem.indexOf(card.etapa);
+    const etapa = estado.etapas[indice];
+
+    const cartao = el('button', 'post-cartao');
+    cartao.type = 'button';
+    if (card.pendencias.length) cartao.classList.add('pendente');
+
+    cartao.append(el('span', 'titulo', card.titulo));
+
+    const meta = el('div', 'linha-meta');
+    if (card.categoria) {
+      meta.append(el('span', `chip categoria ${slugificar(card.categoria)}`, card.categoria));
+    }
+    meta.append(
+      el('span', 'etapa-atual', `${indice + 1}/${estado.etapas.length} · ${etapa.titulo}`)
+    );
+    cartao.append(meta);
+
+    // trilha: etapas já vencidas, a atual, e as que faltam
+    const trilha = el('div', 'trilha');
+    trilha.setAttribute('aria-hidden', 'true');
+    estado.etapas.forEach((_, i) => {
+      const traco = el('span');
+      if (i < indice) traco.classList.add('feita');
+      if (i === indice) traco.classList.add('atual');
+      trilha.append(traco);
+    });
+    cartao.append(trilha);
+
+    if (card.pendencias.length) {
+      const pend = el('div', 'linha-meta');
+      for (const p of card.pendencias) {
+        pend.append(el('span', 'chip alerta', p.texto));
+      }
+      cartao.append(pend);
+    }
+
+    cartao.addEventListener('click', () => abrirDetalhe(card));
+    alvo.append(cartao);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // produtos
 
 function desenharProdutos() {
@@ -534,7 +620,13 @@ function abrirFormularioProduto(produto = {}, chave = null) {
 function trocarTela(nome) {
   $$('.menu button').forEach((b) => b.classList.toggle('ativo', b.dataset.tela === nome));
   $('#tela-quadro').hidden = nome !== 'quadro';
+  $('#tela-posts').hidden = nome !== 'posts';
   $('#tela-produtos').hidden = nome !== 'produtos';
+  // guarda a preferência: quem gosta da lista não quer voltar pro quadro
+  // toda vez que recarrega
+  try {
+    localStorage.setItem('painel-tela', nome);
+  } catch {}
 }
 
 $$('.menu button').forEach((b) =>
@@ -543,6 +635,8 @@ $$('.menu button').forEach((b) =>
 
 $('#recarregar').addEventListener('click', carregar);
 $('#busca-produto').addEventListener('input', desenharProdutos);
+$('#busca-post').addEventListener('input', desenharListaDePosts);
+$('#so-pendentes').addEventListener('change', desenharListaDePosts);
 
 $('#abrir-nova-pauta').addEventListener('click', () => {
   const form = $('#form-pauta');
@@ -603,6 +697,11 @@ $('#form-produto').addEventListener('submit', async (evento) => {
     erro.hidden = false;
   }
 });
+
+try {
+  const salva = localStorage.getItem('painel-tela');
+  if (salva) trocarTela(salva);
+} catch {}
 
 carregar().catch((e) => {
   document.body.prepend(

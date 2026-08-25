@@ -176,13 +176,17 @@ main {
 
 /* ---------- quadro ---------- */
 
+/* A barra de rolagem fica dentro do quadro, presa à altura da janela: sem
+   isso, uma coluna cheia empurrava a barra horizontal para o fim da página
+   e obrigava a rolar tudo para baixo só para navegar entre as etapas. */
 .quadro {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 270px;
-  gap: 14px;
-  overflow-x: auto;
-  padding-bottom: 16px;
+  grid-auto-columns: 232px;
+  gap: 12px;
+  overflow: auto;
+  max-height: calc(100dvh - 190px);
+  padding-bottom: 8px;
   align-items: start;
 }
 
@@ -190,12 +194,12 @@ main {
   background: var(--papel);
   border: 2px solid var(--borda);
   border-radius: var(--raio);
-  padding: 12px;
-  min-height: 120px;
+  padding: 10px;
+  min-height: 90px;
 }
 
 .coluna h2 {
-  font-size: 13px;
+  font-size: 11.5px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin: 0 0 4px;
@@ -238,9 +242,9 @@ main {
   font: inherit;
   background: var(--creme);
   border: 2px solid var(--borda);
-  border-radius: 11px;
-  padding: 10px 11px;
-  margin-top: 10px;
+  border-radius: 10px;
+  padding: 7px 9px;
+  margin-top: 7px;
   cursor: pointer;
   display: block;
 }
@@ -266,20 +270,20 @@ main {
 
 .card .titulo {
   font-weight: 700;
-  font-size: 14px;
-  line-height: 1.35;
+  font-size: 12.5px;
+  line-height: 1.3;
   display: block;
 }
 
 .card .meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 7px;
+  gap: 4px;
+  margin-top: 5px;
 }
 
 .chip {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 999px;
@@ -506,4 +510,75 @@ dialog label.linha code {
   padding: 1px 5px;
   border-radius: 4px;
   font-size: 13px;
+}
+
+/* ---------- lista de posts ---------- */
+
+.lista-posts {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+}
+
+.post-cartao {
+  background: var(--papel);
+  border: 2px solid var(--borda);
+  border-radius: var(--raio);
+  padding: 14px 16px;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.post-cartao:hover {
+  border-color: var(--obra);
+}
+.post-cartao.pendente {
+  border-color: #e8a48e;
+  background: #fff6f2;
+}
+
+.post-cartao .titulo {
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.post-cartao .linha-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+/* trilha das etapas: mostra onde o post está no fluxo */
+.trilha {
+  display: flex;
+  gap: 3px;
+  margin-top: 2px;
+}
+.trilha span {
+  height: 5px;
+  flex: 1;
+  border-radius: 999px;
+  background: var(--borda);
+}
+.trilha span.feita {
+  background: var(--obra-claro);
+}
+.trilha span.atual {
+  background: var(--obra);
+}
+
+.etapa-atual {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--tinta-suave);
+}
+
+.filtro {
+  font-size: 14px;
+  white-space: nowrap;
 }
