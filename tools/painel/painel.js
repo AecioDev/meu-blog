@@ -303,6 +303,16 @@ function abrirDetalhe(card) {
     alvo.append(el('div', 'corpo', card.corpo.trim()));
   }
 
+  // --- rascunho já criado: o prompt continua à mão ---
+  if (card.origem === 'rascunho') {
+    const copiar = el('button', 'botao-primario', 'Copiar prompt do fluxo');
+    copiar.type = 'button';
+    copiar.style.marginTop = '16px';
+    copiar.title = 'Monta de novo o prompt que conduz redação, imagens e publicação';
+    copiar.addEventListener('click', () => mostrarPromptDoFluxo(card, card.caminho, true));
+    alvo.append(copiar);
+  }
+
   // --- ações da pauta ---
   if (card.origem === 'pauta') {
     const editar = el('button', 'botao-secundario', 'Editar pauta');
@@ -323,7 +333,7 @@ function abrirDetalhe(card) {
       const r = await api(`/api/pautas/${encodeURIComponent(card.idPauta)}/rascunho`, {
         method: 'POST',
       });
-      mostrarPromptDoRedator(card, r.caminho, r.ja);
+      mostrarPromptDoFluxo(card, r.caminho, r.ja);
       carregar();
     });
     alvo.append(iniciar);
@@ -602,34 +612,53 @@ function desenharPendenciasCatalogo() {
 }
 
 /**
- * Depois de criar o rascunho, monta o prompt do redator com o que a pauta
- * sabe e deixa pronto para copiar.
+ * Depois de criar o rascunho, monta o prompt que conduz o fluxo inteiro —
+ * títulos, redação, imagens e publicação — e deixa pronto para copiar.
  *
- * O painel roda fora do Claude Code, então não consegue acionar o agente —
- * mas consegue tirar do caminho a parte chata, que é lembrar o caminho do
- * arquivo e reescrever o contexto que já foi anotado na pauta.
+ * O painel roda fora do Claude Code e não consegue acionar agente nenhum.
+ * O que ele pode fazer é entregar a ordem do trabalho escrita, com o que a
+ * pauta já sabe, para não ser preciso lembrar de cada etapa nem redigitar o
+ * contexto anotado.
  */
-function mostrarPromptDoRedator(card, caminho, jaExistia) {
-  const linhas = [
-    `Escreva o post do rascunho em ${caminho}, usando o subagente redator-crescendo-na-obra.`,
+function mostrarPromptDoFluxo(card, caminho, jaExistia) {
+  const partes = [
+    'Vamos produzir um post novo do blog. Conduza o fluxo completo, parando',
+    'nos pontos em que eu preciso agir.',
     '',
+    'PAUTA',
     `Tema: ${card.titulo}`,
   ];
-  if (card.categoria) linhas.push(`Categoria: ${card.categoria}`);
-  if (card.descricao) linhas.push(`Contexto da pauta: ${card.descricao}`);
+  if (card.categoria) partes.push(`Categoria: ${card.categoria}`);
+  if (card.descricao) partes.push(`Contexto: ${card.descricao}`);
+  partes.push(`Rascunho já criado em: ${caminho}`);
+  partes.push(
+    '',
+    'FLUXO',
+    '1. Me pergunte se tenho palavra-chave pesquisada para este post.',
+    '   - Se eu tiver, acione titulos-crescendo-na-obra e me mostre as opções',
+    '     para eu escolher antes de escrever.',
+    '   - Se eu não tiver, siga com o tema da pauta e deixe o título para',
+    '     depois do texto pronto.',
+    '2. Acione redator-crescendo-na-obra para escrever no rascunho acima.',
+    '3. O redator aciona o gerador de imagens. Me entregue os prompts das',
+    '   imagens e espere — eu gero e coloco os arquivos na pasta do rascunho.',
+    '4. Quando eu avisar que as imagens estão lá, publique com a skill',
+    '   publicar-post-blog-crescendo-na-obra.',
+    '5. Me mostre o resultado e não commite nada sem eu aprovar.',
+  );
 
-  const prompt = linhas.join('\n');
+  const prompt = partes.join('\n');
 
   const alvo = $('#detalhe-card');
   alvo.textContent = '';
   alvo.append(el('h2', null, jaExistia ? 'Rascunho já existia' : 'Rascunho criado'));
   alvo.append(el('p', 'caminho', caminho));
   alvo.append(
-    el('p', 'ajuda', 'Cole este prompt no chat para o redator escrever o post.')
+    el('p', 'ajuda', 'Cole este prompt no chat para começar. Ele conduz do título à publicação.')
   );
 
   const caixa = el('div', 'corpo', prompt);
-  caixa.style.maxHeight = '200px';
+  caixa.style.maxHeight = '260px';
   alvo.append(caixa);
 
   const copiar = el('button', 'botao-primario', 'Copiar prompt');
