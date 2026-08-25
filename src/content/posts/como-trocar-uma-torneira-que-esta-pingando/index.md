@@ -8,6 +8,11 @@ coverImage: './capa.jpg'
 coverImageAlt: 'Ilustração de uma torneira azul com uma gota d’água caindo'
 author: 'Equipe Crescendo na Obra'
 featured: true
+materiais:
+  - chave-inglesa-ajustavel
+  - fita-veda-rosca
+  - balde-retratil-10l
+  - torneira
 ---
 
 > **Texto de exemplo.** Este post existe só pra você ver o layout funcionando —

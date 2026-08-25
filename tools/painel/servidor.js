@@ -65,13 +65,22 @@ function situacaoDeLojas(produto) {
 }
 
 /** Etapas do pipeline, na ordem em que aparecem no quadro. */
+/**
+ * O quadro é lista de trabalho, não linha do tempo: uma pendência tem
+ * precedência sobre o estado do post. Post já no ar que ainda deve algo
+ * aparece na coluna do que falta, com o aviso de que está publicado — senão
+ * as colunas de pendência ficariam sempre vazias e não serviriam para nada.
+ *
+ * As etapas de produção viraram uma só: entre criar o rascunho e montar na
+ * collection costuma passar uma sessão inteira, e três colunas para isso
+ * ficavam vazias o tempo todo.
+ */
 const ETAPAS = [
   { id: 'pauta', titulo: 'Pauta definida' },
-  { id: 'rascunho', titulo: 'Rascunho em andamento' },
-  { id: 'revisao', titulo: 'Aguardando revisão' },
-  { id: 'estrutura', titulo: 'Publicado na estrutura (rascunho)' },
-  { id: 'monetizacao', titulo: 'Pendências de monetização' },
-  { id: 'imagem', titulo: 'Pendências de imagem' },
+  { id: 'producao', titulo: 'Em produção' },
+  { id: 'monetizacao', titulo: 'Falta link de produto' },
+  { id: 'imagem', titulo: 'Falta imagem' },
+  { id: 'vincular', titulo: 'Falta vincular no post' },
   { id: 'pronto', titulo: 'Pronto pra publicar' },
   { id: 'publicado', titulo: 'Publicado' },
 ];
@@ -614,6 +623,7 @@ async function montarEstado() {
       categoria: post.categoria,
       descricao: post.descricao,
       origem: 'publicado',
+      noAr: noGit.has(slug),
       caminho: path.relative(RAIZ, post.arquivo).replace(/\\/g, '/'),
       produtos,
       pendencias,
@@ -822,7 +832,11 @@ const servidor = http.createServer(async (req, res) => {
       if (!existe(arquivo)) return responderJson(res, { erro: 'post não encontrado' }, 404);
 
       const corpo = await lerCorpo(req);
-      const chaves = Array.isArray(corpo.materiais) ? corpo.materiais : [];
+      // sem repetição: dois nomes citados no post podem apontar para o mesmo
+      // produto do catálogo, e no bloco ele aparece uma vez só
+      const chaves = Array.isArray(corpo.materiais)
+        ? [...new Set(corpo.materiais.map((c) => String(c).trim()).filter(Boolean))]
+        : [];
 
       const texto = fs.readFileSync(arquivo, 'utf8');
       const fim = texto.indexOf('\n---', 4);

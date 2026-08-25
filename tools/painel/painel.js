@@ -134,6 +134,10 @@ function montarCard(card) {
   if (card.origem === 'pauta') {
     meta.append(el('span', 'chip pauta', 'só pauta'));
   }
+  // post que já está no ar mas caiu numa coluna de pendência
+  if (card.noAr && card.etapa !== 'publicado') {
+    meta.append(el('span', 'chip', 'no ar'));
+  }
   for (const p of card.pendencias) {
     meta.append(el('span', 'chip alerta', p.texto));
   }

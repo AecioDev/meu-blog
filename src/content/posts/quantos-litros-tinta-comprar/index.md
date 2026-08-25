@@ -8,6 +8,10 @@ coverImage: './capa.jpg'
 coverImageAlt: 'Ilustração de uma lata de tinta aberta com um rolo de pintura apoiado ao lado'
 author: 'Equipe Crescendo na Obra'
 featured: false
+materiais:
+  - trena-ou-fita-metrica
+  - rolo-de-pintura-com-bandeja
+  - fita-crepe-para-pintura
 ---
 Você mediu "no olho", comprou duas latas de tinta, e no fim da segunda demão sobrou quase uma lata inteira parada no canto do quarto. Ou pior: faltou tinta bem na metade da parede, e lá foi você de novo até a loja, tinta na mão, roupa suja, sábado à tarde perdido.
 
