@@ -7,7 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   // Troque pela URL final do seu domínio antes do deploy.
   // É usada no sitemap.xml, no RSS e nas tags canonical/Open Graph.
-  site: 'https://crescendonaobra.vercel.app',
+  site: 'https://crescendonaobra.com.br',
   output: 'static',
   // URLs sempre terminam com barra (/sobre/), casando com o
   // "trailingSlash": true do vercel.json e com as tags canonical.
