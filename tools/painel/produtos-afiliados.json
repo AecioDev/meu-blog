@@ -30,6 +30,8 @@
     "linkShopee": "",
     "observacao": "",
     "ignorar": false,
+    "destaque": true,
+    "chamada": "A telinha de R$ 13 que evita entupir a pia",
     "apelidos": [],
     "atualizadoEm": "2026-08-25"
   },
@@ -114,6 +116,8 @@
     "linkShopee": "",
     "observacao": "",
     "ignorar": false,
+    "destaque": true,
+    "chamada": "Fita veda-rosca: o item de R$ 12,99 contra vazamento",
     "apelidos": [],
     "atualizadoEm": "2026-08-25"
   },
