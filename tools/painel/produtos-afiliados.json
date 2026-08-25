@@ -30,7 +30,8 @@
     "linkShopee": "",
     "observacao": "",
     "ignorar": false,
-    "atualizadoEm": "2026-08-24"
+    "apelidos": [],
+    "atualizadoEm": "2026-08-25"
   },
   "chave-inglesa-ajustavel": {
     "nome": "Chave inglesa ajustável",
@@ -113,7 +114,8 @@
     "linkShopee": "",
     "observacao": "",
     "ignorar": false,
-    "atualizadoEm": "2026-08-24"
+    "apelidos": [],
+    "atualizadoEm": "2026-08-25"
   },
   "pano-velho": {
     "nome": "Pano velho",

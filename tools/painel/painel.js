@@ -652,6 +652,11 @@ function abrirFormularioProduto(produto = {}, chave = null) {
   form.destaque.checked = Boolean(produto.destaque);
   form.chamada.value = produto.chamada || '';
   form.dataset.chave = chave || '';
+  // os valores mudaram sem evento de digitação: reavalia os atalhos
+  $$('.abrir-link').forEach((b) => {
+    const campo = $(`#form-produto [name="${b.dataset.abrir}"]`);
+    b.disabled = !campo || !/^https?:\/\/\S+/i.test(campo.value.trim());
+  });
   form.querySelector('[data-erro]').hidden = true;
   trocarTela('produtos');
   $('#dialogo-produto').showModal();
@@ -689,6 +694,31 @@ $('#abrir-nova-pauta').addEventListener('click', () => {
 });
 
 $('#abrir-novo-produto').addEventListener('click', () => abrirFormularioProduto());
+
+/**
+ * Atalho para conferir o link sem sair do formulário — útil na revisão
+ * semanal: abre, vê se ainda está no ar, e volta para marcar.
+ *
+ * Segue o que está digitado, não o que foi salvo, e só habilita para
+ * endereço http(s): assim não abre nada estranho colado por engano.
+ */
+function ligarBotoesDeAbrirLink() {
+  for (const botao of $$('.abrir-link')) {
+    const campo = $(`#form-produto [name="${botao.dataset.abrir}"]`);
+    if (!campo) continue;
+
+    const atualizar = () => {
+      botao.disabled = !/^https?:\/\/\S+/i.test(campo.value.trim());
+    };
+    campo.addEventListener('input', atualizar);
+    botao.addEventListener('click', () => {
+      const url = campo.value.trim();
+      if (/^https?:\/\/\S+/i.test(url)) window.open(url, '_blank', 'noopener');
+    });
+    atualizar();
+  }
+}
+ligarBotoesDeAbrirLink();
 
 $$('[data-fechar]').forEach((b) =>
   b.addEventListener('click', () => b.closest('dialog').close())

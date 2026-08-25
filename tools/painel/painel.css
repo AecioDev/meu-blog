@@ -606,3 +606,36 @@ dialog label.linha code {
 #detalhe-card label.escolha span:first-of-type {
   flex: 1;
 }
+
+/* campo de link com atalho para abrir em outra aba */
+dialog .campo-link {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+  margin-top: 4px;
+}
+dialog .campo-link input {
+  margin-top: 0;
+  flex: 1;
+  min-width: 0;
+}
+.abrir-link {
+  flex: none;
+  width: 42px;
+  font: inherit;
+  font-size: 17px;
+  line-height: 1;
+  border: 2px solid var(--borda);
+  border-radius: 10px;
+  background: var(--papel);
+  color: var(--tinta-suave);
+  cursor: pointer;
+}
+.abrir-link:hover:not(:disabled) {
+  border-color: var(--obra);
+  color: var(--tinta);
+}
+.abrir-link:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
