@@ -324,6 +324,20 @@ function juntarProdutos(sugeridos, materiais) {
   return [...juntos.values()];
 }
 
+/**
+ * Data que representa o post para ordenar o painel. Usa a data de publicação
+ * quando existe; senão, quando o arquivo foi mexido pela última vez.
+ */
+function dataDoPost(pubDate, arquivo) {
+  const doFrontmatter = String(pubDate || '').trim();
+  if (/^\d{4}-\d{2}-\d{2}/.test(doFrontmatter)) return doFrontmatter.slice(0, 10);
+  try {
+    return fs.statSync(arquivo).mtime.toISOString().slice(0, 10);
+  } catch {
+    return '';
+  }
+}
+
 /** Confere se o rascunho tem tudo que a publicação vai exigir. */
 function rascunhoCompleto(dados, corpo) {
   const temTitulo = Boolean(dados['TÍTULO'] || dados['TITULO']);
@@ -371,6 +385,7 @@ function lerRascunhos() {
       descricao: dados['DESCRIÇÃO'] || dados['DESCRICAO'] || '',
       categoria: (dados['CATEGORIA'] || '').trim(),
       completo: rascunhoCompleto(dados, corpo),
+      data: dataDoPost(dados['DATA'], arquivo),
       produtos: juntarProdutos(lerProdutosCitados(texto), lerMateriaisDoCorpo(corpo)),
       temPromptsPendentes: pasta ? existe(path.join(pasta, 'prompts-imagens.md')) : false,
     });
@@ -424,6 +439,7 @@ function lerPublicados() {
       categoria: dados.category || '',
       ehRascunho: String(dados.draft).trim() === 'true',
       jaVinculados,
+      data: dataDoPost(dados.pubDate, arquivo),
       produtos: juntarProdutos(
         [...lerProdutosCitados(texto), ...sugeridos],
         lerMateriaisDoCorpo(corpo)
@@ -651,6 +667,7 @@ async function montarEstado() {
       categoria: post.categoria,
       descricao: post.descricao,
       origem: 'publicado',
+      data: post.data,
       noAr: noGit.has(slug),
       jaVinculados: post.jaVinculados,
       caminho: path.relative(RAIZ, post.arquivo).replace(/\\/g, '/'),
@@ -687,6 +704,7 @@ async function montarEstado() {
       categoria: rascunho.categoria,
       descricao: rascunho.descricao,
       origem: 'rascunho',
+      data: rascunho.data,
       caminho: path.relative(RAIZ, rascunho.arquivo).replace(/\\/g, '/'),
       produtos,
       pendencias,
@@ -705,6 +723,7 @@ async function montarEstado() {
       categoria: pauta.categoria || '',
       descricao: pauta.observacao || '',
       origem: 'pauta',
+      data: pauta.criadaEm || '',
       idPauta: pauta.id,
       produtos: [],
       pendencias: [],
@@ -724,6 +743,9 @@ async function montarEstado() {
       porProduto.get(p.chave).posts.push(card.titulo);
     }
   }
+
+  // mais recentes primeiro, em qualquer lugar que a lista apareça
+  cards.sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')));
 
   return {
     etapas: ETAPAS,

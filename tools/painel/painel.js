@@ -365,12 +365,8 @@ function desenharListaDePosts() {
         (c.categoria || '').toLowerCase().includes(busca)
       );
     })
-    .sort((a, b) => {
-      const posA = ordem.indexOf(a.etapa);
-      const posB = ordem.indexOf(b.etapa);
-      if (posA !== posB) return posA - posB; // quem está mais atrás vem antes
-      return a.titulo.localeCompare(b.titulo, 'pt-BR');
-    });
+    // o servidor já entrega do mais recente para o mais antigo
+    ;
 
   $('#resumo-posts').textContent = `${posts.length} de ${estado.cards.length} post${
     estado.cards.length === 1 ? '' : 's'
@@ -398,6 +394,10 @@ function desenharListaDePosts() {
     meta.append(
       el('span', 'etapa-atual', `${indice + 1}/${estado.etapas.length} · ${etapa.titulo}`)
     );
+    if (card.data) {
+      const [ano, mes, dia] = card.data.split('-');
+      meta.append(el('span', 'vazia', `${dia}/${mes}/${ano}`));
+    }
     cartao.append(meta);
 
     // trilha: etapas já vencidas, a atual, e as que faltam
