@@ -305,6 +305,16 @@ function abrirDetalhe(card) {
 
   // --- ações da pauta ---
   if (card.origem === 'pauta') {
+    const editar = el('button', 'botao-secundario', 'Editar pauta');
+    editar.type = 'button';
+    editar.style.marginTop = '16px';
+    editar.style.marginRight = '8px';
+    editar.addEventListener('click', () => {
+      $('#dialogo-card').close();
+      abrirFormularioPauta(card);
+    });
+    alvo.append(editar);
+
     const iniciar = el('button', 'botao-primario', 'Iniciar rascunho');
     iniciar.type = 'button';
     iniciar.title = 'Cria drafts/<slug>/post.md com o cabeçalho já preenchido';
@@ -686,6 +696,31 @@ $('#busca-produto').addEventListener('input', desenharProdutos);
 $('#busca-post').addEventListener('input', desenharListaDePosts);
 $('#so-pendentes').addEventListener('change', desenharListaDePosts);
 
+/**
+ * Abre o formulário de pauta. Com `pauta`, edita a existente; sem, cria uma
+ * nova. Editar é o caminho para corrigir o tema depois de anotado, sem
+ * precisar descartar e refazer.
+ */
+function abrirFormularioPauta(pauta) {
+  const form = $('#form-pauta');
+  form.reset();
+  form.querySelector('[data-erro]').hidden = true;
+  form.dataset.editando = pauta ? pauta.idPauta : '';
+
+  if (pauta) {
+    form.titulo.value = pauta.titulo || '';
+    form.categoria.value = pauta.categoria || '';
+    form.observacao.value = pauta.descricao || '';
+    form.criarRascunho.parentElement.hidden = true;
+  } else {
+    form.criarRascunho.parentElement.hidden = false;
+  }
+  $('#dialogo-pauta').querySelector('h2').textContent = pauta
+    ? 'Editar pauta'
+    : 'Nova pauta';
+  $('#dialogo-pauta').showModal();
+}
+
 $('#abrir-nova-pauta').addEventListener('click', () => {
   const form = $('#form-pauta');
   form.reset();
@@ -729,15 +764,30 @@ $('#form-pauta').addEventListener('submit', async (evento) => {
   const form = evento.target;
   const erro = form.querySelector('[data-erro]');
   try {
-    await api('/api/pautas', {
-      method: 'POST',
-      body: JSON.stringify({
-        titulo: form.titulo.value,
-        categoria: form.categoria.value,
-        observacao: form.observacao.value,
-        criarRascunho: form.criarRascunho.checked,
-      }),
-    });
+    const editando = form.dataset.editando;
+    const corpo = {
+      titulo: form.titulo.value,
+      categoria: form.categoria.value,
+      observacao: form.observacao.value,
+    };
+
+    if (editando) {
+      const r = await api(`/api/pautas/${encodeURIComponent(editando)}`, {
+        method: 'PUT',
+        body: JSON.stringify(corpo),
+      });
+      if (r.slugMantido) {
+        alert(
+          'Título alterado. A pasta do rascunho continua com o nome antigo, ' +
+            'porque renomear quebraria o que já foi escrito.'
+        );
+      }
+    } else {
+      await api('/api/pautas', {
+        method: 'POST',
+        body: JSON.stringify({ ...corpo, criarRascunho: form.criarRascunho.checked }),
+      });
+    }
     $('#dialogo-pauta').close();
     await carregar();
   } catch (e) {

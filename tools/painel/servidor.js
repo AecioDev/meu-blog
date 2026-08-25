@@ -840,6 +840,33 @@ const servidor = http.createServer(async (req, res) => {
       return responderJson(res, criarRascunho(pauta), 201);
     }
 
+    if (rota.startsWith('/api/pautas/') && req.method === 'PUT') {
+      const id = decodeURIComponent(rota.slice('/api/pautas/'.length));
+      const pautas = lerJson(ARQ_PAUTAS, []);
+      const pauta = pautas.find((p) => p.id === id);
+      if (!pauta) return responderJson(res, { erro: 'pauta não encontrada' }, 404);
+
+      const corpo = await lerCorpo(req);
+      const titulo = String(corpo.titulo || '').trim();
+      if (!titulo) return responderJson(res, { erro: 'informe o título da pauta' }, 400);
+
+      const novoSlug = slugificar(titulo);
+      if (pautas.some((p) => p.id !== id && p.slug === novoSlug)) {
+        return responderJson(res, { erro: 'já existe uma pauta com esse nome' }, 409);
+      }
+
+      // rascunho já criado fica onde está: renomear a pasta quebraria o que
+      // o redator escreveu. O slug só muda enquanto for só pauta.
+      const temRascunho = existe(path.join(PASTA_DRAFTS, pauta.slug));
+      pauta.titulo = titulo;
+      if (!temRascunho) pauta.slug = novoSlug;
+      pauta.categoria = corpo.categoria || '';
+      pauta.observacao = corpo.observacao || '';
+
+      gravarJson(ARQ_PAUTAS, pautas);
+      return responderJson(res, { ...pauta, slugMantido: temRascunho });
+    }
+
     if (rota.startsWith('/api/pautas/') && req.method === 'DELETE') {
       const id = decodeURIComponent(rota.slice('/api/pautas/'.length));
       const pautas = lerJson(ARQ_PAUTAS, []);
