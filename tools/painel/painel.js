@@ -317,19 +317,14 @@ function abrirDetalhe(card) {
 
     const iniciar = el('button', 'botao-primario', 'Iniciar rascunho');
     iniciar.type = 'button';
-    iniciar.title = 'Cria drafts/<slug>/post.md com o cabeçalho já preenchido';
+    iniciar.title = 'Cria o arquivo do rascunho e monta o prompt do redator';
     iniciar.style.marginTop = '16px';
     iniciar.addEventListener('click', async () => {
       const r = await api(`/api/pautas/${encodeURIComponent(card.idPauta)}/rascunho`, {
         method: 'POST',
       });
-      $('#dialogo-card').close();
-      await carregar();
-      alert(
-        r.ja
-          ? `Já existia um rascunho em ${r.caminho}`
-          : `Rascunho criado em ${r.caminho}`
-      );
+      mostrarPromptDoRedator(card, r.caminho, r.ja);
+      carregar();
     });
     alvo.append(iniciar);
 
@@ -604,6 +599,60 @@ function desenharPendenciasCatalogo() {
   }
   caixa.append(ul);
   alvo.append(caixa);
+}
+
+/**
+ * Depois de criar o rascunho, monta o prompt do redator com o que a pauta
+ * sabe e deixa pronto para copiar.
+ *
+ * O painel roda fora do Claude Code, então não consegue acionar o agente —
+ * mas consegue tirar do caminho a parte chata, que é lembrar o caminho do
+ * arquivo e reescrever o contexto que já foi anotado na pauta.
+ */
+function mostrarPromptDoRedator(card, caminho, jaExistia) {
+  const linhas = [
+    `Escreva o post do rascunho em ${caminho}, usando o subagente redator-crescendo-na-obra.`,
+    '',
+    `Tema: ${card.titulo}`,
+  ];
+  if (card.categoria) linhas.push(`Categoria: ${card.categoria}`);
+  if (card.descricao) linhas.push(`Contexto da pauta: ${card.descricao}`);
+
+  const prompt = linhas.join('\n');
+
+  const alvo = $('#detalhe-card');
+  alvo.textContent = '';
+  alvo.append(el('h2', null, jaExistia ? 'Rascunho já existia' : 'Rascunho criado'));
+  alvo.append(el('p', 'caminho', caminho));
+  alvo.append(
+    el('p', 'ajuda', 'Cole este prompt no chat para o redator escrever o post.')
+  );
+
+  const caixa = el('div', 'corpo', prompt);
+  caixa.style.maxHeight = '200px';
+  alvo.append(caixa);
+
+  const copiar = el('button', 'botao-primario', 'Copiar prompt');
+  copiar.type = 'button';
+  copiar.style.marginTop = '12px';
+  copiar.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(prompt);
+      copiar.textContent = 'Copiado ✓';
+      setTimeout(() => (copiar.textContent = 'Copiar prompt'), 2000);
+    } catch {
+      // sem permissão de área de transferência: seleciona para copiar na mão
+      const faixa = document.createRange();
+      faixa.selectNodeContents(caixa);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(faixa);
+      copiar.textContent = 'Selecionado — use Ctrl+C';
+    }
+  });
+  alvo.append(copiar);
+
+  $('#dialogo-card').showModal();
 }
 
 /**
