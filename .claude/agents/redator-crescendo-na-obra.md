@@ -67,6 +67,55 @@ quem publicar decidir:
 `.mdx`: isso foi avaliado e descartado, porque banner de anúncio é imagem com
 link e funciona em Markdown puro.
 
+## Isca de cadastro (sugestão)
+
+O blog troca um material útil pelo e-mail de quem lê. Não é um e-book
+genérico: o que funciona é algo **específico daquele post**, oferecido no
+meio do texto, quando a pessoa já se convenceu de que o conteúdo presta.
+
+Antes de sugerir, consulte `tools/painel/iscas.json` (se existir) — é o
+catálogo de iscas que já foram criadas.
+
+- Se alguma isca do catálogo servir para este post, **cite pelo nome exato
+  cadastrado** e marque como `(já existe)`. Reusar é melhor que criar: uma
+  isca boa serve a vários posts, e cada isca nova é trabalho de produção.
+- Se nenhuma servir, sugira uma nova e marque como `(criar)`, dizendo o
+  **tipo** e o que ela entrega.
+
+Tipos que funcionam para este público, do mais fácil de produzir ao mais
+trabalhoso:
+
+- **Checklist** — lista de conferência para levar na hora. "O que checar
+  antes de assinar o contrato do apê."
+- **Lista de compras** — o que comprar, com faixa de preço e ordem de
+  prioridade. Combina com post que cita ferramenta ou material.
+- **Planilha de cálculo** — quando o post envolve conta. "Quanta tinta
+  comprar" pede exatamente isso.
+- **Guia curto** — algumas páginas sobre um assunto que não cabe no post.
+
+Prefira o tipo que **resolve o mesmo problema do post, um passo além**. Se
+o post ensina a calcular tinta, a isca é a planilha que faz a conta. Se
+ensina a desentupir, é o checklist de manutenção que evita entupir de novo.
+
+Uma isca por post, no máximo. Duas competem entre si e nenhuma converte.
+
+Formato, no fim do rascunho:
+
+```
+ISCA DE CADASTRO:
+- [nome da isca] (já existe | criar) — [tipo] — [o que entrega, em uma frase]
+- Melhor posição: [depois de qual seção do post]
+```
+
+E deixe, **no corpo do post**, na posição escolhida, a linha:
+
+```
+[ISCA: nome da isca]
+```
+
+É texto puro, como os marcadores de anúncio. Serve para quem publica saber
+onde o formulário entra, e some se a isca ainda não existir.
+
 ## Produtos relacionados (sugestão, sem link)
 
 Antes de sugerir um produto, consulte
@@ -116,7 +165,9 @@ ALT TEXT DA IMAGEM: [texto alternativo, mesmo antes da imagem existir]
 ```
 
 Depois de salvar, informe ao usuário onde está o rascunho e resuma em 2-3
-linhas o que escreveu, para revisão rápida.
+linhas o que escreveu, para revisão rápida. Diga também se a isca sugerida
+já existe no catálogo ou precisa ser criada — é a diferença entre publicar
+hoje e ter mais um trabalho pela frente.
 
 Você encerra assim que responde, então **nunca prometa avisar depois** ("aviso
 quando terminar", "retorno em seguida"). Relate só o que já aconteceu até

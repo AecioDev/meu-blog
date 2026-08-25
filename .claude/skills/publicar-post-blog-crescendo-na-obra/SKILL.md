@@ -60,7 +60,7 @@ mas não vira arquivo no projeto: peça o caminho dela no computador ou que o
 usuário a salve na pasta do post.
 
 Vindo de `drafts/`, confira se sobrou algum marcador do rascunho no texto —
-`[CONFERIR: ...]` ou `[SUGESTÃO DE ANÚNCIO: ...]`. Nenhum vai para o ar: o
+`[CONFERIR: ...]`, `[SUGESTÃO DE ANÚNCIO: ...]` ou `[ISCA: ...]`. Nenhum vai para o ar: o
 primeiro depende de decisão do usuário, e o segundo só vira banner se houver
 anunciante. Na dúvida, pergunte em vez de apagar por conta própria.
 
