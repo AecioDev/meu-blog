@@ -189,13 +189,6 @@ function abrirDetalhe(card) {
       }
       if (p.faltando && p.faltando.length) {
         linha.append(el('span', 'vazia', `(sem ${p.faltando.join(' e ')})`));
-        const b = el('button', 'botao-secundario', 'Somar loja');
-        b.type = 'button';
-        b.addEventListener('click', () => {
-          $('#dialogo-card').close();
-          abrirFormularioProduto(p.produto, p.chave);
-        });
-        linha.append(b);
       }
     } else if (p.situacao === 'sem-link') {
       linha.append(el('span', 'link-falta', 'cadastrado, mas sem link nenhum'));
@@ -230,10 +223,10 @@ function abrirDetalhe(card) {
     alvo.append(linha);
   }
 
-  // --- gravar os materiais no post ---
+  // --- escolher o que vai para o bloco "Onde comprar" ---
   if (card.origem === 'publicado') {
-    // dois nomes podem apontar para o mesmo produto do catálogo — no bloco
-    // do post ele deve aparecer uma vez só
+    // dois nomes citados podem apontar para o mesmo item do catálogo:
+    // aqui ele aparece uma vez só
     const prontos = [];
     for (const p of card.produtos) {
       if (p.situacao !== 'resolvido') continue;
@@ -241,31 +234,67 @@ function abrirDetalhe(card) {
       prontos.push(p);
     }
 
-    const gravar = el(
-      'button',
-      'botao-primario',
-      prontos.length
-        ? `Gravar ${prontos.length} produto${prontos.length > 1 ? 's' : ''} no post`
-        : 'Nenhum produto com link ainda'
-    );
-    gravar.type = 'button';
-    gravar.style.marginTop = '12px';
-    gravar.disabled = !prontos.length;
-    gravar.title =
-      'Escreve o campo "materiais" no frontmatter — é ele que faz o bloco "Onde comprar" aparecer no post';
+    alvo.append(el('h3', null, 'Bloco "Onde comprar" do post'));
 
-    gravar.addEventListener('click', async () => {
-      const r = await api(`/api/posts/${encodeURIComponent(card.slug)}/materiais`, {
-        method: 'POST',
-        body: JSON.stringify({ materiais: prontos.map((p) => p.chave) }),
-      });
-      $('#dialogo-card').close();
-      await carregar();
-      alert(
-        `${r.gravados} produto(s) gravados no post.\nRode "npm run build" para ver o bloco na página.`
+    if (!prontos.length) {
+      alvo.append(
+        el('p', 'vazia', 'Nenhum produto com link ainda — cadastre o link no catálogo primeiro.')
       );
-    });
-    alvo.append(gravar);
+    } else {
+      const jaNoPost = card.jaVinculados || [];
+      alvo.append(
+        el('p', 'ajuda', 'Marque o que deve aparecer no post. O que estiver marcado vira o bloco.')
+      );
+
+      const caixas = [];
+      for (const p of prontos) {
+        const rotulo = el('label', 'linha escolha');
+        const caixa = el('input');
+        caixa.type = 'checkbox';
+        caixa.value = p.chave;
+        caixa.checked = jaNoPost.includes(p.chave);
+        caixas.push(caixa);
+
+        rotulo.append(caixa);
+        rotulo.append(el('span', null, p.nome));
+        if (jaNoPost.includes(p.chave)) {
+          rotulo.append(el('span', 'chip', 'no post'));
+        }
+        alvo.append(rotulo);
+      }
+
+      const gravar = el('button', 'botao-primario', '');
+      gravar.type = 'button';
+      gravar.style.marginTop = '12px';
+
+      // o texto do botão acompanha a seleção e avisa quando nada mudou
+      const atualizarBotao = () => {
+        const marcados = caixas.filter((c) => c.checked).map((c) => c.value);
+        const igual =
+          marcados.length === jaNoPost.length &&
+          marcados.every((c) => jaNoPost.includes(c));
+        gravar.textContent = igual
+          ? 'O post já está assim'
+          : `Gravar ${marcados.length} produto${marcados.length === 1 ? '' : 's'} no post`;
+        gravar.disabled = igual;
+      };
+      caixas.forEach((c) => c.addEventListener('change', atualizarBotao));
+      atualizarBotao();
+
+      gravar.addEventListener('click', async () => {
+        const marcados = caixas.filter((c) => c.checked).map((c) => c.value);
+        const r = await api(`/api/posts/${encodeURIComponent(card.slug)}/materiais`, {
+          method: 'POST',
+          body: JSON.stringify({ materiais: marcados }),
+        });
+        $('#dialogo-card').close();
+        await carregar();
+        alert(
+          `${r.gravados} produto(s) no post.\nRode "npm run build" para ver o bloco na página.`
+        );
+      });
+      alvo.append(gravar);
+    }
   }
 
   // --- texto ---

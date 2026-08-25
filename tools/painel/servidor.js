@@ -392,6 +392,19 @@ function lerPublicados() {
     const texto = fs.readFileSync(arquivo, 'utf8');
     const { dados, corpo } = lerFrontmatter(texto);
 
+    // slugs já gravados no frontmatter, para saber o que falta vincular
+    const jaVinculados = [];
+    let dentroDeMateriais = false;
+    for (const bruta of texto.split('\n')) {
+      const linha = bruta.replace(/\r$/, '');
+      if (linha.startsWith('materiais:')) { dentroDeMateriais = true; continue; }
+      if (dentroDeMateriais) {
+        const item = linha.match(/^\s+-\s+(.+)$/);
+        if (item) { jaVinculados.push(item[1].trim()); continue; }
+        dentroDeMateriais = false;
+      }
+    }
+
     // "PRODUTOS RELACIONADOS" é metadado de produção e não vai para o site,
     // então some quando o post é publicado. O rascunho, quando ainda existe,
     // guarda a sugestão do redator — vale recuperar de lá.
@@ -410,6 +423,7 @@ function lerPublicados() {
       descricao: dados.description || '',
       categoria: dados.category || '',
       ehRascunho: String(dados.draft).trim() === 'true',
+      jaVinculados,
       produtos: juntarProdutos(
         [...lerProdutosCitados(texto), ...sugeridos],
         lerMateriaisDoCorpo(corpo)
@@ -609,11 +623,25 @@ async function montarEstado() {
       pendencias.push({ tipo: 'imagem', texto: 'imagens de passo pendentes' });
     }
 
+    // produtos com link que ainda não estão gravados no frontmatter
+    const comLink = [
+      ...new Set(produtos.filter((p) => p.situacao === 'resolvido').map((p) => p.chave)),
+    ];
+    const faltaVincular = comLink.filter((c) => !post.jaVinculados.includes(c));
+    if (faltaVincular.length) {
+      pendencias.push({
+        tipo: 'vincular',
+        texto: `${faltaVincular.length} link${faltaVincular.length > 1 ? 's' : ''} pra vincular`,
+      });
+    }
+
+    // pendência vem antes do estado: o quadro mostra o que falta fazer
     let etapa;
-    if (noGit.has(slug)) etapa = 'publicado';
-    else if (post.ehRascunho) etapa = 'estrutura';
-    else if (semLink.length || post.temBannerPendente) etapa = 'monetizacao';
+    if (semLink.length || post.temBannerPendente) etapa = 'monetizacao';
     else if (post.temPromptsPendentes) etapa = 'imagem';
+    else if (faltaVincular.length) etapa = 'vincular';
+    else if (noGit.has(slug)) etapa = 'publicado';
+    else if (post.ehRascunho) etapa = 'producao';
     else etapa = 'pronto';
 
     cards.push({
@@ -624,6 +652,7 @@ async function montarEstado() {
       descricao: post.descricao,
       origem: 'publicado',
       noAr: noGit.has(slug),
+      jaVinculados: post.jaVinculados,
       caminho: path.relative(RAIZ, post.arquivo).replace(/\\/g, '/'),
       produtos,
       pendencias,
@@ -653,7 +682,7 @@ async function montarEstado() {
 
     cards.push({
       slug,
-      etapa: rascunho.completo ? 'revisao' : 'rascunho',
+      etapa: 'producao',
       titulo: rascunho.titulo,
       categoria: rascunho.categoria,
       descricao: rascunho.descricao,

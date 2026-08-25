@@ -582,3 +582,27 @@ dialog label.linha code {
   font-size: 14px;
   white-space: nowrap;
 }
+
+/* escolha dos produtos que entram no bloco do post */
+#detalhe-card label.escolha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 2px;
+  border-bottom: 1px solid var(--borda);
+  font-weight: 400;
+  font-size: 14px;
+  margin: 0;
+  cursor: pointer;
+}
+#detalhe-card label.escolha:last-of-type {
+  border-bottom: 0;
+}
+#detalhe-card label.escolha input {
+  width: auto;
+  margin: 0;
+  flex: none;
+}
+#detalhe-card label.escolha span:first-of-type {
+  flex: 1;
+}
