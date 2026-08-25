@@ -13,6 +13,7 @@ import CategoryList from './CategoryList.astro';
 import MostViewed from './MostViewed.astro';
 import RecentPosts from './RecentPosts.astro';
 import AdSlot from './AdSlot.astro';
+import Achados from './Achados.astro';
 import NewsletterBox from './NewsletterBox.astro';
 
 interface Props {
@@ -35,6 +36,10 @@ const { postAtualId, class: classe = '' } = Astro.props;
 
     <div class="rounded-2xl border-2 border-borda bg-papel p-5">
       <MostViewed />
+    </div>
+
+    <div class="rounded-2xl border-2 border-borda bg-papel p-5">
+      <Achados />
     </div>
 
     <AdSlot slotId="sidebar-topo" formato="retangulo" />

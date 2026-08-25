@@ -478,6 +478,7 @@ function desenharProdutos() {
     if (p.apelidos && p.apelidos.length) {
       cartao.append(el('p', 'vazia', 'também citado como: ' + p.apelidos.join(', ')));
     }
+    if (p.destaque) cartao.append(el('span', 'chip', '★ em destaque no blog'));
     if (p.ignorar) cartao.append(el('p', 'vazia', 'marcado como "não vale link"'));
     if (p.observacao) cartao.append(el('p', 'vazia', p.observacao));
 
@@ -648,6 +649,8 @@ function abrirFormularioProduto(produto = {}, chave = null) {
   form.linkShopee.value = produto.linkShopee || '';
   form.observacao.value = produto.observacao || '';
   form.ignorar.checked = Boolean(produto.ignorar);
+  form.destaque.checked = Boolean(produto.destaque);
+  form.chamada.value = produto.chamada || '';
   form.dataset.chave = chave || '';
   form.querySelector('[data-erro]').hidden = true;
   trocarTela('produtos');
@@ -728,6 +731,8 @@ $('#form-produto').addEventListener('submit', async (evento) => {
         linkShopee: form.linkShopee.value,
         observacao: form.observacao.value,
         ignorar: form.ignorar.checked,
+        destaque: form.destaque.checked,
+        chamada: form.chamada.value,
       }),
     });
     $('#dialogo-produto').close();

@@ -866,6 +866,8 @@ const servidor = http.createServer(async (req, res) => {
         linkShopee: String(corpo.linkShopee || '').trim(),
         observacao: String(corpo.observacao || '').trim(),
         ignorar: Boolean(corpo.ignorar),
+        destaque: Boolean(corpo.destaque),
+        chamada: String(corpo.chamada || '').trim(),
         apelidos: Array.isArray(corpo.apelidos)
           ? corpo.apelidos.map((a) => String(a).trim()).filter(Boolean)
           : (catalogo[chave]?.apelidos ?? []),
