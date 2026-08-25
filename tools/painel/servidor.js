@@ -194,6 +194,9 @@ const TITULOS_DE_MATERIAL = [
   'o que ter em casa',
 ];
 
+/** Nome de produto não passa disso; acima é frase solta da lista. */
+const TAMANHO_MAXIMO_DE_NOME = 48;
+
 /** Tira o marcador, o negrito e o motivo, sobrando só o nome do produto. */
 function limparNomeDeProduto(item) {
   let nome = item.replace(/^[-*]\s*/, '');
@@ -202,12 +205,23 @@ function limparNomeDeProduto(item) {
   const negrito = nome.match(/\*\*([^*]+)\*\*/);
   if (negrito) return negrito[1].trim().replace(/[:,.]$/, '');
 
+  // sem negrito, o nome vai até o travessão que abre a explicação
   const travessao = nome.search(/\s[—–-]\s/);
   if (travessao !== -1) nome = nome.slice(0, travessao);
-  return nome
+
+  // e sem travessão, até a primeira vírgula: em "Torneira nova, claro"
+  // o que interessa é o que vem antes
+  const virgula = nome.indexOf(',');
+  if (virgula > 0) nome = nome.slice(0, virgula);
+
+  nome = nome
     .replace(/\([^)]*\)/g, '')
     .replace(/[[\]]/g, '')
+    .replace(/\*\*/g, '')
     .trim();
+
+  // frase comprida não é nome de produto — é instrução dentro da lista
+  return nome.length > TAMANHO_MAXIMO_DE_NOME ? '' : nome;
 }
 
 /** Remove acento e pontuação, para comparar título de seção. */
@@ -478,10 +492,32 @@ function montarRevisaoDeLinks(catalogo) {
  * Para cada produto citado, decide se está resolvido, se falta link, ou se
  * nem existe no catálogo ainda.
  */
+/**
+ * Acha o produto no catálogo pelo nome ou por um dos apelidos.
+ *
+ * O post cita "Desentupidor de borracha" e o catálogo tem "Desentupidor de
+ * borracha para pia" — mesmo item, nome diferente. Em vez de adivinhar por
+ * semelhança, que erraria, o usuário vincula uma vez e o apelido fica
+ * gravado para todos os posts.
+ */
+function acharNoCatalogo(nomeCitado, catalogo) {
+  const chave = slugificar(nomeCitado);
+  if (catalogo[chave]) return { chave, produto: catalogo[chave] };
+
+  for (const [k, produto] of Object.entries(catalogo)) {
+    const apelidos = Array.isArray(produto.apelidos) ? produto.apelidos : [];
+    if (apelidos.some((a) => slugificar(a) === chave)) {
+      return { chave: k, produto };
+    }
+  }
+  return null;
+}
+
 function cruzarProdutos(citados, catalogo) {
   return citados.map(({ nome, origem }) => {
-    const chave = slugificar(nome);
-    const cadastrado = catalogo[chave];
+    const achado = acharNoCatalogo(nome, catalogo);
+    const chave = achado ? achado.chave : slugificar(nome);
+    const cadastrado = achado ? achado.produto : null;
 
     if (!cadastrado) {
       return { nome, chave, origem, situacao: 'nao-cadastrado' };
@@ -769,6 +805,9 @@ const servidor = http.createServer(async (req, res) => {
         linkShopee: String(corpo.linkShopee || '').trim(),
         observacao: String(corpo.observacao || '').trim(),
         ignorar: Boolean(corpo.ignorar),
+        apelidos: Array.isArray(corpo.apelidos)
+          ? corpo.apelidos.map((a) => String(a).trim()).filter(Boolean)
+          : (catalogo[chave]?.apelidos ?? []),
         atualizadoEm: new Date().toISOString().slice(0, 10),
       };
       gravarJson(ARQ_PRODUTOS, catalogo);
@@ -819,6 +858,28 @@ const servidor = http.createServer(async (req, res) => {
       const novo = '---\n' + semMateriais.join('\n') + '\n---' + texto.slice(fim + 4);
       fs.writeFileSync(arquivo, novo);
       return responderJson(res, { ok: true, gravados: chaves.length });
+    }
+
+    if (rota.endsWith('/apelido') && req.method === 'POST') {
+      const chave = decodeURIComponent(
+        rota.slice('/api/produtos/'.length, -'/apelido'.length)
+      );
+      const catalogo = lerJson(ARQ_PRODUTOS, {});
+      if (!catalogo[chave]) return responderJson(res, { erro: 'produto não encontrado' }, 404);
+
+      const corpo = await lerCorpo(req);
+      const apelido = String(corpo.apelido || '').trim();
+      if (!apelido) return responderJson(res, { erro: 'informe o apelido' }, 400);
+
+      const atuais = Array.isArray(catalogo[chave].apelidos)
+        ? catalogo[chave].apelidos
+        : [];
+      if (!atuais.some((a) => slugificar(a) === slugificar(apelido))) {
+        atuais.push(apelido);
+      }
+      catalogo[chave].apelidos = atuais;
+      gravarJson(ARQ_PRODUTOS, catalogo);
+      return responderJson(res, { ok: true, apelidos: atuais });
     }
 
     if (rota.endsWith('/conferir') && req.method === 'POST') {

@@ -203,6 +203,7 @@ function abrirDetalhe(card) {
       linha.append(b);
     } else {
       linha.append(el('span', 'link-falta', 'não está no catálogo'));
+
       const b = el('button', 'botao-secundario', 'Cadastrar');
       b.type = 'button';
       b.addEventListener('click', () => {
@@ -210,6 +211,16 @@ function abrirDetalhe(card) {
         abrirFormularioProduto({ nome: p.nome }, null);
       });
       linha.append(b);
+
+      // o mesmo item costuma estar cadastrado com outro nome:
+      // vincular grava um apelido e resolve em todos os posts de uma vez
+      if (Object.keys(estado.catalogo).length) {
+        const vincular = el('button', 'botao-secundario', 'É um já cadastrado');
+        vincular.type = 'button';
+        vincular.title = 'Aponta para um produto do catálogo e guarda este nome como apelido';
+        vincular.addEventListener('click', () => abrirVinculo(p.nome));
+        linha.append(vincular);
+      }
     }
     alvo.append(linha);
   }
@@ -338,6 +349,9 @@ function desenharProdutos() {
     }
     cartao.append(links);
 
+    if (p.apelidos && p.apelidos.length) {
+      cartao.append(el('p', 'vazia', 'também citado como: ' + p.apelidos.join(', ')));
+    }
     if (p.ignorar) cartao.append(el('p', 'vazia', 'marcado como "não vale link"'));
     if (p.observacao) cartao.append(el('p', 'vazia', p.observacao));
 
@@ -453,6 +467,49 @@ function desenharPendenciasCatalogo() {
   }
   caixa.append(ul);
   alvo.append(caixa);
+}
+
+/**
+ * Pergunta a qual produto do catálogo o nome citado corresponde, e grava
+ * esse nome como apelido. A partir daí qualquer post que cite assim resolve
+ * sozinho.
+ */
+function abrirVinculo(nomeCitado) {
+  const opcoes = Object.entries(estado.catalogo).sort((a, b) =>
+    a[1].nome.localeCompare(b[1].nome, 'pt-BR')
+  );
+
+  const alvo = $('#detalhe-card');
+  alvo.textContent = '';
+  alvo.append(el('h2', null, 'Vincular a um produto existente'));
+  alvo.append(
+    el('p', 'ajuda', `"${nomeCitado}" vira apelido do produto que você escolher.`)
+  );
+
+  const select = el('select');
+  select.style.cssText = 'width:100%;font:inherit;padding:9px 12px;border-radius:10px;border:2px solid var(--borda);background:var(--creme);margin:12px 0';
+  for (const [chave, produto] of opcoes) {
+    const lojas = estado.lojas.filter((l) => produto[l.campo]).map((l) => l.nome);
+    select.append(
+      new Option(
+        `${produto.nome}${lojas.length ? ' — ' + lojas.join(', ') : ' — sem link'}`,
+        chave
+      )
+    );
+  }
+  alvo.append(select);
+
+  const confirmar = el('button', 'botao-primario', 'Vincular');
+  confirmar.type = 'button';
+  confirmar.addEventListener('click', async () => {
+    await api(`/api/produtos/${encodeURIComponent(select.value)}/apelido`, {
+      method: 'POST',
+      body: JSON.stringify({ apelido: nomeCitado }),
+    });
+    $('#dialogo-card').close();
+    carregar();
+  });
+  alvo.append(confirmar);
 }
 
 function abrirFormularioProduto(produto = {}, chave = null) {

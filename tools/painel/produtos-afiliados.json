@@ -1,1 +1,221 @@
-{}
+{
+  "desentupidor-de-borracha-para-pia": {
+    "nome": "Desentupidor de borracha para pia",
+    "tags": "hidraulica, cozinha, agua",
+    "linkAmazon": "",
+    "linkMercadoLivre": "https://meli.la/2CueWVF",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "atualizadoEm": "2026-08-24",
+    "apelidos": [
+      "Desentupidor de borracha"
+    ]
+  },
+  "sonda-mola-desentupidora-flexivel": {
+    "nome": "Sonda / mola desentupidora flexível",
+    "tags": "hudraulica, encanamento, água,",
+    "linkAmazon": "",
+    "linkMercadoLivre": "https://meli.la/1Brtin9",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "atualizadoEm": "2026-08-24"
+  },
+  "telinha-protetora-de-ralo-para-pia": {
+    "nome": "Telinha protetora de ralo para pia",
+    "tags": "hidraulica, cozinha, pia,",
+    "linkAmazon": "",
+    "linkMercadoLivre": "https://meli.la/2ZE8Bch",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "atualizadoEm": "2026-08-24"
+  },
+  "chave-inglesa-ajustavel": {
+    "nome": "Chave inglesa ajustável",
+    "tags": "ferramentas",
+    "linkAmazon": "",
+    "linkMercadoLivre": "https://meli.la/2sqheqt",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "atualizadoEm": "2026-08-24"
+  },
+  "balde-retratil-10l": {
+    "nome": "Balde retrátil 10L",
+    "tags": "utensilios, cozinha",
+    "linkAmazon": "",
+    "linkMercadoLivre": "https://meli.la/2BdNUR6",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "atualizadoEm": "2026-08-24",
+    "apelidos": [
+      "Balde ou bacia"
+    ]
+  },
+  "bicarbonato-de-sodio-e-vinagre-branco": {
+    "nome": "Bicarbonato de sódio e vinagre branco",
+    "tags": "",
+    "linkAmazon": "",
+    "linkMercadoLivre": "",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": true,
+    "atualizadoEm": "2026-08-24"
+  },
+  "bacia-jogo-bacias-caneladas-com-3-pecas": {
+    "nome": "Bacia - Jogo Bacias Caneladas Com 3 Peças",
+    "tags": "utensilios, cozinha, lavanderia",
+    "linkAmazon": "",
+    "linkMercadoLivre": "https://meli.la/21ZE1iV",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "atualizadoEm": "2026-08-24"
+  },
+  "detergente": {
+    "nome": "Detergente",
+    "tags": "",
+    "linkAmazon": "",
+    "linkMercadoLivre": "",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": true,
+    "atualizadoEm": "2026-08-24"
+  },
+  "luva-de-borracha": {
+    "nome": "Luva de borracha",
+    "tags": "utensilios, cozinha, limpesa",
+    "linkAmazon": "",
+    "linkMercadoLivre": "https://meli.la/2DBQonH",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "atualizadoEm": "2026-08-24"
+  },
+  "chave-de-grifo": {
+    "nome": "Chave de grifo",
+    "tags": "ferramentas",
+    "linkAmazon": "",
+    "linkMercadoLivre": "https://meli.la/1Kx32PF",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "atualizadoEm": "2026-08-24"
+  },
+  "fita-veda-rosca": {
+    "nome": "Fita veda-rosca",
+    "tags": "",
+    "linkAmazon": "",
+    "linkMercadoLivre": "https://meli.la/2H88vdb",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "atualizadoEm": "2026-08-24"
+  },
+  "pano-velho": {
+    "nome": "Pano velho",
+    "tags": "",
+    "linkAmazon": "",
+    "linkMercadoLivre": "",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": true,
+    "atualizadoEm": "2026-08-24"
+  },
+  "torneira": {
+    "nome": "Torneira",
+    "tags": "hidraulica",
+    "linkAmazon": "",
+    "linkMercadoLivre": "https://meli.la/1eAf9Xk",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "atualizadoEm": "2026-08-24",
+    "apelidos": [
+      "Torneira nova"
+    ]
+  },
+  "trena-ou-fita-metrica": {
+    "nome": "Trena ou fita métrica",
+    "tags": "ferramentas",
+    "linkAmazon": "",
+    "linkMercadoLivre": "https://meli.la/1C6Mh7v",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "atualizadoEm": "2026-08-24"
+  },
+  "rolo-de-pintura-com-bandeja": {
+    "nome": "Rolo de pintura com bandeja",
+    "tags": "ferramentas",
+    "linkAmazon": "",
+    "linkMercadoLivre": "https://meli.la/1x4WqMJ",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "atualizadoEm": "2026-08-24"
+  },
+  "fita-crepe-para-pintura": {
+    "nome": "Fita crepe para pintura",
+    "tags": "utensilios, ferramentas",
+    "linkAmazon": "",
+    "linkMercadoLivre": "https://meli.la/1FYMMkD",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "atualizadoEm": "2026-08-24"
+  },
+  "sifao-completo-para-pia-de-cozinha": {
+    "nome": "Sifão completo para pia de cozinha",
+    "tags": "hidraulica, água, pia, cozinha",
+    "linkAmazon": "",
+    "linkMercadoLivre": "https://meli.la/1fT7Vkc",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "atualizadoEm": "2026-08-24"
+  },
+  "potes-plasticos-hermeticos-pequenos": {
+    "nome": "Potes plásticos herméticos pequenos",
+    "tags": "",
+    "linkAmazon": "",
+    "linkMercadoLivre": "",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": true,
+    "atualizadoEm": "2026-08-24"
+  },
+  "papel-e-caneta": {
+    "nome": "Papel e caneta",
+    "tags": "",
+    "linkAmazon": "",
+    "linkMercadoLivre": "",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": true,
+    "atualizadoEm": "2026-08-24"
+  },
+  "calculadora": {
+    "nome": "Calculadora",
+    "tags": "",
+    "linkAmazon": "",
+    "linkMercadoLivre": "",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": true,
+    "atualizadoEm": "2026-08-24"
+  },
+  "a-lata-de-tinta-escolhida-pra-conferir-o-rendimento-no-rotulo-antes-de-fechar-a-compra": {
+    "nome": "A lata de tinta escolhida, pra conferir o rendimento no rótulo antes de fechar a compra",
+    "tags": "",
+    "linkAmazon": "",
+    "linkMercadoLivre": "",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": true,
+    "atualizadoEm": "2026-08-24"
+  }
+}
