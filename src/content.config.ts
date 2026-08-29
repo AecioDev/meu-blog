@@ -2,7 +2,7 @@ import { defineCollection } from 'astro:content';
 // No Astro 7 o `z` vem do próprio zod v4, não mais de 'astro:content'.
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
-import { SITE_AUTHOR_PADRAO } from './consts';
+import { CATEGORIAS, SITE_AUTHOR_PADRAO } from './consts';
 
 const posts = defineCollection({
   loader: glob({ base: './src/content/posts', pattern: '**/*.{md,mdx}' }),
@@ -16,8 +16,16 @@ const posts = defineCollection({
       pubDate: z.coerce.date(),
       /** Data da última atualização, se houver. */
       updatedDate: z.coerce.date().optional(),
-      /** Ex.: "Hidráulica", "Pintura", "Elétrica", "Dicas Gerais". */
-      category: z.string(),
+      /**
+       * Categoria do post. Vale só o que estiver publicado em
+       * `src/dados/categorias.json` — errar o nome derruba o build de
+       * propósito, em vez de criar uma categoria fantasma sem página.
+       */
+      category: z.string().refine((valor) => CATEGORIAS.includes(valor), {
+        message: `categoria inexistente. Use exatamente uma destas: ${CATEGORIAS.join(
+          ', ',
+        )}. Para criar outra, cadastre em src/dados/categorias.json.`,
+      }),
       tags: z.array(z.string()).optional(),
       /**
        * Caminho da imagem de capa, relativo ao arquivo .md

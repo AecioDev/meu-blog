@@ -1,0 +1,42 @@
+[
+  {
+    "nome": "Hidráulica",
+    "slug": "hidraulica",
+    "publica": true,
+    "emoji": "🚿",
+    "chip": "bg-ceu-600 text-white",
+    "barra": "bg-ceu-500"
+  },
+  {
+    "nome": "Pintura",
+    "slug": "pintura",
+    "publica": true,
+    "emoji": "🎨",
+    "chip": "bg-uva-600 text-white",
+    "barra": "bg-uva-500"
+  },
+  {
+    "nome": "Elétrica",
+    "slug": "eletrica",
+    "publica": true,
+    "emoji": "💡",
+    "chip": "bg-obra-400 text-tinta",
+    "barra": "bg-obra-500"
+  },
+  {
+    "nome": "Dicas Gerais",
+    "slug": "dicas-gerais",
+    "publica": true,
+    "emoji": "🧰",
+    "chip": "bg-menta-400 text-tinta",
+    "barra": "bg-menta-500"
+  },
+  {
+    "nome": "Móveis",
+    "slug": "moveis",
+    "publica": false,
+    "emoji": "🪚",
+    "chip": "bg-tijolo-700 text-white",
+    "barra": "bg-tijolo-500"
+  }
+]

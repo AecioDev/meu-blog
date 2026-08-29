@@ -22,16 +22,16 @@ pronto, **não escreva o conteúdo você mesmo** — informe que essa skill mont
 a estrutura, mas o texto/imagem precisam vir prontos (do próprio usuário ou
 de outro agente/skill responsável por redação).
 
-## Categorias válidas
+## Categoria — consulte a fonte de verdade
 
-Use **somente** uma destas categorias existentes. Se o assunto não se encaixar
-em nenhuma, PARE e pergunte ao usuário antes de criar uma categoria nova —
-categoria nova exige ajuste em outras partes do site (navegação, sidebar).
+Antes de validar a categoria, leia `src/dados/categorias.json`: valem as que
+estão com `publica: true`, escritas exatamente como no campo `nome`. Não
+mantenha uma lista própria de categorias nesta skill.
 
-- Hidráulica
-- Elétrica
-- Pintura
-- Dicas Gerais
+Se a categoria recebida não estiver lá, PARE e peça confirmação ao usuário
+antes de criar uma nova — não adianta insistir, porque o schema valida contra
+essa lista e o build vai falhar. Cadastrar categoria nova é decisão do usuário
+e o procedimento está no README.
 
 ## Informações que você precisa RECEBER antes de montar o post
 
@@ -40,7 +40,7 @@ Não prossiga sem ter isso em mãos (pergunte ao usuário o que faltar):
 - Título
 - Texto completo do post (corpo, já em Markdown ou texto corrido)
 - Resumo/descrição curta (1-2 frases)
-- Categoria (deve ser uma das 4 válidas — veja acima)
+- Categoria (deve estar publicada em `src/dados/categorias.json`)
 - Caminho ou arquivo da imagem de capa + texto alternativo dela
 - Data de publicação — se o usuário não disser, use a data de hoje
 - Se deve ser marcado como destaque (`featured: true`) — padrão é `false`
@@ -155,7 +155,7 @@ nova escrita ali não é compilada e simplesmente não estiliza nada.
 title: "Título do post"
 description: "Resumo de 1-2 frases, usado em meta description e nos cards"
 pubDate: 2026-08-22
-category: "Hidráulica" # uma das 4 categorias válidas, exatamente como escrito acima
+category: "Hidráulica" # deve estar publicada em src/dados/categorias.json
 tags: ["opcional", "array de strings"]
 coverImage: "./capa.jpg" # sempre relativo à pasta do post
 coverImageAlt: "Descrição da imagem para acessibilidade"
@@ -174,8 +174,9 @@ compartilhamento. Use sempre `./`.
 1. **Colete tudo que falta** da lista acima antes de criar qualquer arquivo.
    Se o texto do post, a imagem ou a categoria não vieram prontos, pare e
    peça — não preencha por conta própria.
-2. **Valide a categoria** contra as 4 válidas. Se o valor recebido não bater
-   exatamente com uma delas, pergunte antes de prosseguir.
+2. **Valide a categoria** contra `src/dados/categorias.json`. Se o valor
+   recebido não bater exatamente com uma das publicadas, pergunte antes de
+   prosseguir.
 3. **Gere o slug** do post a partir do título (minúsculo, sem acento, com
    hífen no lugar de espaço) e confira que não existe outra pasta com o mesmo
    slug em `src/content/posts/`.
@@ -214,7 +215,7 @@ compartilhamento. Use sempre `./`.
 ## Checklist antes de considerar pronto
 
 - [ ] Todas as informações necessárias foram recebidas (nada inventado)
-- [ ] Frontmatter completo, válido, categoria é uma das 4 permitidas
+- [ ] Frontmatter completo, válido, categoria publicada no catálogo
 - [ ] Pasta criada com o slug certo, sem conflito com post existente
 - [ ] Capa dentro da pasta do post, referenciada como `./capa.jpg`
 - [ ] Todas as imagens passaram por `scripts/otimizar-imagem.js` — nenhuma

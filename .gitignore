@@ -47,3 +47,7 @@ painel.log
 
 # Diversos
 *.tmp.mjs
+
+# material de apoio que não faz parte do site (segunda opinião, exports, backups)
+/tmp/
+*.zip

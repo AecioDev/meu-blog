@@ -29,7 +29,17 @@ const ARQ_PRODUTOS = path.join(AQUI, 'produtos-afiliados.json');
 
 const PORTA = Number(process.env.PORTA_PAINEL) || 5173;
 
-const CATEGORIAS = ['Hidráulica', 'Elétrica', 'Pintura', 'Dicas Gerais'];
+/**
+ * As categorias vêm de `src/dados/categorias.json`, a mesma fonte que o site
+ * usa. Lido aqui com `readFileSync` porque o painel é Node puro e não passa
+ * pelo compilador do Astro — não dá para importar `src/consts.ts` daqui.
+ * Só entram as públicas: categoria preparada mas fora do ar não deve aparecer
+ * no formulário de pauta.
+ */
+const ARQ_CATEGORIAS = path.join(RAIZ, 'src', 'dados', 'categorias.json');
+const CATEGORIAS = JSON.parse(fs.readFileSync(ARQ_CATEGORIAS, 'utf8'))
+  .filter((categoria) => categoria.publica)
+  .map((categoria) => categoria.nome);
 
 /**
  * Link de afiliado envelhece: oferta expira, produto sai de linha. A ideia é

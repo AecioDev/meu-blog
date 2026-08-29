@@ -11,7 +11,10 @@ Construído com **Astro + TypeScript + Tailwind CSS**, gerando site estático
 
 ## Rodando na sua máquina
 
-Você precisa do [Node.js](https://nodejs.org) 20 ou superior.
+Você precisa do [Node.js](https://nodejs.org) **22.19.0 ou superior** (o Node 24
+LTS também serve). A versão está fixada em `engines` no `package.json` e no
+`.nvmrc`; se o `npm install` reclamar de `EBADENGINE`, é o seu Node que está
+atrás.
 
 ```bash
 npm install
@@ -121,13 +124,37 @@ quebrado ir pro ar.
 
 ### Categoria nova
 
-Basta usar um nome novo em `category`. A página de listagem, a contagem na
-lateral e o link no menu de categorias aparecem sozinhos.
+Categoria não se inventa no frontmatter: o schema valida contra a lista
+oficial, e nome fora dela derruba o build com o aviso do que era esperado.
+Isso é de propósito — antes, um erro de digitação criava uma categoria
+fantasma, com página vazia e sem link em lugar nenhum.
 
-Pra dar cor e emoji próprios à categoria, adicione uma entrada em
-`ESTILOS_CATEGORIA` no arquivo `src/consts.ts`. Sem isso ela funciona igual, só
-usa o visual padrão. Se quiser a categoria no menu do topo, inclua em
-`MENU_PRINCIPAL`, no mesmo arquivo.
+A lista mora em **`src/dados/categorias.json`**, e é a única fonte de verdade:
+dela saem o menu do topo, a cor e o emoji, a validação dos posts e o
+formulário de pauta do painel. Cadastre a nova assim:
+
+```json
+{
+  "nome": "Jardim",
+  "slug": "jardim",
+  "publica": true,
+  "emoji": "🌱",
+  "chip": "bg-menta-600 text-white",
+  "barra": "bg-menta-500"
+}
+```
+
+- **`slug`** precisa bater com o nome sem acento e com hífen (`Dicas Gerais` →
+  `dicas-gerais`) — é o que vai na URL `/categoria/<slug>/`.
+- **`chip`** e **`barra`** são classes do Tailwind; use as cores já definidas
+  em `src/styles/global.css` para não fugir da paleta.
+- **`publica: false`** deixa a categoria preparada sem colocá-la no ar: o
+  estilo já existe, mas ela fica fora do menu e o schema recusa posts que a
+  usem. É o caso de "Móveis" hoje.
+
+Feito isso, a página de listagem, a contagem na lateral e o link no menu
+aparecem sozinhos. Vale avisar os agentes de conteúdo? Não precisa — eles
+leem esse mesmo arquivo.
 
 ---
 
