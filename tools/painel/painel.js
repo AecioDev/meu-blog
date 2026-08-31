@@ -612,8 +612,28 @@ function desenharPendenciasCatalogo() {
 }
 
 /**
+ * Confere se a Observação da pauta já resolveu o título, pra não oferecer
+ * o agente de títulos à toa quando o usuário já decidiu ir direto ao
+ * redator. Só é confiável quando `descricao` vem da pauta (card de
+ * origem 'pauta') — depois que o rascunho existe, esse campo passa a vir
+ * do próprio arquivo, não da pauta, e a checagem é pulada por segurança.
+ */
+function tituloJaDefinidoNaPauta(texto) {
+  if (!texto) return false;
+  const t = texto.toLowerCase();
+  return [
+    /usar\s+o\s+tema\s+(como\s+)?t[ií]tulo/,
+    /t[ií]tulo\s+j[áa]\s+defin/,
+    /ir\s+diret(o|amente)\s+(ao|para\s+o)\s+redator/,
+    /n[ãa]o\s+precisa\s+(passar\s+pelo|acionar\s+o)?\s*agente\s+de\s+t[ií]tulos/,
+    /pular\s+(o\s+)?agente\s+de\s+t[ií]tulos/,
+  ].some((re) => re.test(t));
+}
+
+/**
  * Depois de criar o rascunho, monta o prompt que conduz o fluxo inteiro —
- * títulos, redação, imagens e publicação — e deixa pronto para copiar.
+ * títulos, redação, revisão humana, imagens e publicação — e deixa pronto
+ * para copiar.
  *
  * O painel roda fora do Claude Code e não consegue acionar agente nenhum.
  * O que ele pode fazer é entregar a ordem do trabalho escrita, com o que a
@@ -631,20 +651,92 @@ function mostrarPromptDoFluxo(card, caminho, jaExistia) {
   if (card.categoria) partes.push(`Categoria: ${card.categoria}`);
   if (card.descricao) partes.push(`Contexto: ${card.descricao}`);
   partes.push(`Rascunho já criado em: ${caminho}`);
+
+  // corpo vazio = o painel só escreveu a estrutura inicial (TÍTULO/
+  // DESCRIÇÃO/CATEGORIA/TAGS + "---"), o redator ainda não escreveu nada.
+  // Sem isso, o redator pode achar que o arquivo já é um rascunho editorial
+  // e pular direto para o Modo 2 (consolidação) por engano.
+  const aindaSoEstrutura = !card.corpo || !card.corpo.trim();
+  if (aindaSoEstrutura) {
+    partes.push(
+      '',
+      `O arquivo ${caminho} foi criado pelo painel apenas como estrutura`,
+      'inicial e ainda NÃO contém um primeiro rascunho editorial. Execute',
+      'o Modo 1 — primeiro rascunho. A existência desse arquivo não deve',
+      'ser interpretada como revisão ou consolidação anterior.'
+    );
+  }
+
+  if (card.experienciaPratica && card.experienciaPratica.trim()) {
+    partes.push(
+      '',
+      'EXPERIÊNCIA PRÁTICA / COMO EU FARIA:',
+      `Leia drafts/${card.slug}/experiencia-autor.md antes de planejar e`,
+      'escrever — é a sequência real que anotei para este tutorial.',
+      '',
+      'A experiência fornecida pelo autor é fonte da prática, não',
+      'necessariamente da validação técnica. Use essa sequência e essa',
+      'lógica como espinha dorsal do tutorial. Preserve o que o autor',
+      'observou, faz ou pretende ensinar, mas revise nomenclatura,',
+      'explicações causais, segurança e afirmações técnicas antes de',
+      'transformá-las em texto editorial.',
+      '',
+      'Você pode reorganizar para melhorar clareza, SEO e didática,',
+      'completar lacunas relevantes e acrescentar contexto, mas não',
+      'substitua o procedimento fornecido por um passo a passo genérico.',
+      '',
+      'Se encontrar algo possivelmente incorreto, incompleto, arriscado ou',
+      'tecnicamente incerto, não corrija silenciosamente nem descarte a',
+      'experiência: sinalize a questão e proponha a correção mantendo a',
+      'intenção prática original sempre que possível.',
+      '',
+      'Como você já tem essa experiência prática, não pergunte',
+      'genericamente "você já passou por isso?" nem "como você faria?",',
+      'nem peça experiência que já foi fornecida. Nos "Pontos para sua',
+      'revisão", foque apenas em lacunas reais, dúvidas técnicas, exceções',
+      'ou validações específicas.'
+    );
+  }
+
+  partes.push('', 'FLUXO');
+
+  if (card.origem === 'pauta' && tituloJaDefinidoNaPauta(card.descricao)) {
+    partes.push(
+      '1. O título já foi definido pela pauta. Use o tema informado como',
+      '   título e siga diretamente para o Redator — não acione',
+      '   titulos-crescendo-na-obra.'
+    );
+  } else {
+    partes.push(
+      '1. Resolva o título antes de escrever:',
+      '   - Se eu tiver palavra-chave pesquisada, ou quiser explorar',
+      '     opções, acione titulos-crescendo-na-obra e me mostre as',
+      '     opções para eu escolher.',
+      '   - Se eu não tiver palavra-chave, use o tema da pauta como',
+      '     título provisório — não fique sem título esperando por isso.',
+      '     O redator pode refinar título e descrição depois, se o',
+      '     conteúdo consolidado mudar de ângulo.'
+    );
+  }
+
   partes.push(
-    '',
-    'FLUXO',
-    '1. Me pergunte se tenho palavra-chave pesquisada para este post.',
-    '   - Se eu tiver, acione titulos-crescendo-na-obra e me mostre as opções',
-    '     para eu escolher antes de escrever.',
-    '   - Se eu não tiver, siga com o tema da pauta e deixe o título para',
-    '     depois do texto pronto.',
-    '2. Acione redator-crescendo-na-obra para escrever no rascunho acima.',
-    '3. O redator aciona o gerador de imagens. Me entregue os prompts das',
-    '   imagens e espere — eu gero e coloco os arquivos na pasta do rascunho.',
-    '4. Quando eu avisar que as imagens estão lá, publique com a skill',
-    '   publicar-post-blog-crescendo-na-obra.',
-    '5. Me mostre o resultado e não commite nada sem eu aprovar.',
+    '2. Acione redator-crescendo-na-obra em Modo 1 para escrever o',
+    '   primeiro rascunho no arquivo acima.',
+    '3. PARE e espere minha revisão — não prossiga sozinho para a',
+    '   consolidação nem para as imagens.',
+    '4. Depois que eu responder com revisão ou correção, acione',
+    '   redator-crescendo-na-obra em Modo 2 para consolidar o mesmo',
+    '   post.md. A consolidação grava o BRIEFING PARA A ETAPA VISUAL',
+    '   dentro do arquivo.',
+    '5. Só depois da consolidação aprovada, acione',
+    '   gerador-imagens-crescendo-na-obra — ele nunca entra antes da',
+    '   revisão humana.',
+    '6. Me entregue os prompts/plano visual e espere — eu gero as',
+    '   imagens e coloco os arquivos na pasta do rascunho.',
+    '7. Quando eu avisar que as imagens estão prontas, publique com a',
+    '   skill publicar-post-blog-crescendo-na-obra.',
+    '8. Me mostre o resultado e não commite nem dê push sem eu aprovar',
+    '   explicitamente.'
   );
 
   const prompt = partes.join('\n');
@@ -789,6 +881,7 @@ function abrirFormularioPauta(pauta) {
     form.titulo.value = pauta.titulo || '';
     form.categoria.value = pauta.categoria || '';
     form.observacao.value = pauta.descricao || '';
+    form.experienciaPratica.value = pauta.experienciaPratica || '';
     form.criarRascunho.parentElement.hidden = true;
   } else {
     form.criarRascunho.parentElement.hidden = false;
@@ -847,6 +940,7 @@ $('#form-pauta').addEventListener('submit', async (evento) => {
       titulo: form.titulo.value,
       categoria: form.categoria.value,
       observacao: form.observacao.value,
+      experienciaPratica: form.experienciaPratica.value,
     };
 
     if (editando) {

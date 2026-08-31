@@ -496,6 +496,17 @@ function criarRascunho(pauta) {
 
   fs.mkdirSync(pasta, { recursive: true });
   fs.writeFileSync(arquivo, linhas.join('\n'));
+
+  // Experiência prática pode ser longa — vira arquivo próprio em vez de
+  // comentário dentro do post.md, para o redator ler com a ferramenta
+  // Read em vez do usuário colar tudo no prompt do chat.
+  if (pauta.experienciaPratica && pauta.experienciaPratica.trim()) {
+    fs.writeFileSync(
+      path.join(pasta, 'experiencia-autor.md'),
+      pauta.experienciaPratica.trim() + '\n'
+    );
+  }
+
   return { ja: false, caminho: caminhoRelativo(arquivo) };
 }
 
@@ -732,6 +743,7 @@ async function montarEstado() {
       titulo: pauta.titulo,
       categoria: pauta.categoria || '',
       descricao: pauta.observacao || '',
+      experienciaPratica: pauta.experienciaPratica || '',
       origem: 'pauta',
       data: pauta.criadaEm || '',
       idPauta: pauta.id,
@@ -827,6 +839,7 @@ const servidor = http.createServer(async (req, res) => {
         slug: slugificar(titulo),
         categoria: corpo.categoria || '',
         observacao: corpo.observacao || '',
+        experienciaPratica: corpo.experienciaPratica || '',
         criadaEm: new Date().toISOString().slice(0, 10),
       };
       if (pautas.some((p) => p.slug === nova.slug)) {
@@ -872,6 +885,7 @@ const servidor = http.createServer(async (req, res) => {
       if (!temRascunho) pauta.slug = novoSlug;
       pauta.categoria = corpo.categoria || '';
       pauta.observacao = corpo.observacao || '';
+      pauta.experienciaPratica = corpo.experienciaPratica || '';
 
       gravarJson(ARQ_PAUTAS, pautas);
       return responderJson(res, { ...pauta, slugMantido: temRascunho });

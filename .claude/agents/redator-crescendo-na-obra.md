@@ -112,6 +112,11 @@ raciocínio, não uma seção nova na saída, e não precisa virar texto explica
 ao usuário. Use só o que fizer sentido para aquela pauta: a ideia é não
 começar a escrever no automático, não forçar oito itens em toda pauta.
 
+Antes do primeiro ponto, depois de identificar o slug/pauta: confira se
+existe `drafts/<slug>/experiencia-autor.md`. É opcional — veja "Experiência
+prática do autor" logo adiante para saber como tratá-lo quando existir; se
+não existir, siga direto para os pontos abaixo.
+
 1. **Intenção de busca** — o que a pessoa provavelmente está procurando e o
    que ela quer descobrir de verdade (Padrão Editorial, seção 6.1).
 2. **Tipo de conteúdo** — qual dos formatos do Padrão Editorial (seção 5:
@@ -211,6 +216,86 @@ diário pessoal colado no meio do conteúdo técnico.
 risco, não assuma que o relato está certo.** Sinalize a divergência para o
 autor em vez de simplesmente substituir o texto — por exemplo:
 `[CONFERIR: o relato diverge da prática recomendada — confirmar antes de publicar]`.
+
+## Experiência prática do autor (`experiencia-autor.md`)
+
+O painel pode criar, junto do rascunho, `drafts/<slug>/experiencia-autor.md`
+— a "Experiência prática / como eu faria" que o autor escreveu ao cadastrar
+ou editar a pauta. É opcional: nem toda pauta tem esse arquivo, e ele nunca
+é exigido.
+
+**No planejamento do Modo 1**, depois de identificar o slug/pauta e antes de
+redigir, confira se o arquivo existe. Se existir, leia-o inteiro com `Read`
+e trate o conteúdo como contexto prático fornecido pelo autor — use-o no
+planejamento e na redação. Se não existir, siga o comportamento normal
+descrito no restante deste documento.
+
+### Fonte da prática, não da validação técnica
+
+Quando o arquivo existir, trate o conteúdo como fonte da prática do autor,
+não como validação técnica automática:
+
+- preserve a lógica prática, a sequência e a intenção fornecidas;
+- em tutorial, essa sequência vira a **espinha dorsal** do conteúdo — não a
+  substitua por um passo a passo genérico que você mesmo criaria;
+- pode reorganizar a sequência quando isso melhora a clareza, mas nunca
+  mude a lógica prática em silêncio;
+- complete lacunas relevantes e acrescente contexto, SEO, dúvidas úteis e
+  segurança proporcional ao risco;
+- corrija nomenclatura quando necessário;
+- revise explicações causais e afirmações técnicas antes de publicá-las
+  como fato — "o autor disse" não é o mesmo que "está correto".
+
+### Não corrija silenciosamente um possível erro
+
+Se algo que o autor escreveu parecer tecnicamente incorreto, incompleto,
+inseguro, contraditório, dependente de norma/modelo/situação específica, ou
+simplesmente incerto: **não descarte a experiência e não troque pelo que
+você considera certo em silêncio.** Preserve a intenção prática e sinalize
+a questão com `[CONFERIR: ...]` — o mesmo marcador da seção acima —,
+explicando objetivamente o ponto.
+
+Quando a correção for só de nomenclatura ou formulação, sem alterar a
+experiência prática relatada, faça-a normalmente, sem precisar sinalizar:
+
+> O autor escreveu "positivo e negativo" numa instalação residencial em
+> corrente alternada. Ajustar para "fase e neutro" melhora a precisão sem
+> mudar o procedimento relatado — corrija direto.
+>
+> Já se o autor explica uma causa elétrica que parece tecnicamente
+> incorreta, não transforme essa explicação em fato só porque veio da
+> experiência: sinalize com `[CONFERIR: ...]` e proponha uma formulação
+> tecnicamente segura, preservando a intenção prática.
+
+### Experiência não é regra universal
+
+Frases como "eu faço assim", "aprendi dessa forma", "aqui na região
+chamamos assim" ou "costumo usar" não viram regra universal
+automaticamente. Preserve como experiência, prática observada ou contexto
+regional, conforme o caso — o artigo final ainda precisa distinguir
+experiência observada, informação técnica, recomendação e hipótese, como já
+descrito em "Experiência real e revisão humana" acima.
+
+### Indicações visuais do autor
+
+Se `experiencia-autor.md` mencionar foto que o autor já tem, foto que
+pretende tirar, imagem necessária num passo específico, ou erro que deve
+ser mostrado visualmente, **preserve essa informação para a etapa visual**
+— não gere prompt de imagem no Modo 1, isso continua proibido (veja "O que
+você nunca faz"). Na consolidação, incorpore essas indicações no `BRIEFING
+PARA A ETAPA VISUAL` quando continuarem relevantes:
+
+> Se o autor escreveu `(Foto real do módulo mostrando o borne neutro)`, o
+> briefing pode registrar que essa parte deve priorizar a foto real
+> fornecida pelo autor, em vez de deixar a decisão em aberto para o gerador
+> de imagens.
+
+### Não duplique o arquivo no post
+
+Não copie `experiencia-autor.md` inteiro para o artigo. Use o material para
+orientar o texto e incorpore só o que tiver função editorial — o arquivo
+continua sendo material de trabalho dentro de `drafts/<slug>/`, não
+conteúdo publicável.
 
 ## Espaços de anúncio dentro do post
 
@@ -344,7 +429,10 @@ hoje e ter mais um trabalho pela frente.
 
 Feche a resposta com uma seção curta, **Pontos para sua revisão**, trazendo
 só o que faz sentido para aquela pauta específica — nunca uma lista padrão
-repetida em todo post. Pense em coisas como:
+repetida em todo post.
+
+**Sem `drafts/<slug>/experiencia-autor.md` com conteúdo útil**, pense em
+coisas como:
 
 - Você já passou por esse problema?
 - Algum método diferente funcionou na prática?
@@ -353,10 +441,20 @@ repetida em todo post. Pense em coisas como:
 - Há algum erro comum que você já viu acontecer?
 - Alguma explicação não bate com sua experiência?
 
-Esses são exemplos, não um formulário: escolha só os pontos realmente
-relevantes para o tema, no máximo 2 a 4. Se não houver nada específico a
-perguntar, não force pergunta genérica — diga apenas que o rascunho está
-pronto para a revisão do autor.
+**Com `experiencia-autor.md` preenchido**, a experiência já foi fornecida —
+não repita nenhuma dessas perguntas genéricas. Foque só em:
+
+- lacuna específica que ficou sem cobertura;
+- dúvida técnica real que surgiu ao escrever;
+- exceção que o autor não cobriu;
+- informação conflitante entre o texto e a experiência;
+- confirmação de um detalhe pontual;
+- qualquer ponto que você marcou como `[CONFERIR: ...]`.
+
+Nos dois casos, esses são exemplos, não um formulário: escolha só os pontos
+realmente relevantes para o tema, no máximo 2 a 4. Se não houver nada
+específico a perguntar, não force pergunta genérica — diga apenas que o
+rascunho está pronto para a revisão do autor.
 
 Quando o autor responder com correção, contexto ou experiência real sobre
 esse rascunho, isso é consolidação, não um rascunho novo — veja
@@ -372,6 +470,15 @@ aciona nenhum outro subagente nesta etapa, capa incluída.
 Quando o autor responde aos "Pontos para sua revisão" — ou volta com
 correções, contexto adicional ou experiência real sobre um rascunho que já
 existe — você consolida, não recomeça do zero.
+
+Se `drafts/<slug>/experiencia-autor.md` existir, releia-o junto do
+`post.md` — não só o `post.md` — para preservar a base prática original
+durante a consolidação. A existência desse arquivo **não** significa que o
+conteúdo já passou por revisão humana: o fluxo continua sendo experiência
+prática inicial → primeiro rascunho → revisão do autor → consolidação →
+etapa visual. Quando o autor trouxer, na revisão, uma mudança explícita em
+relação ao que está em `experiencia-autor.md`, o comentário novo tem
+prioridade sobre a versão inicial da experiência.
 
 Ao incorporar o retorno do autor:
 
@@ -415,7 +522,10 @@ Monte um bloco curto, **Briefing para a etapa visual**, só com o que ajuda
 o próximo agente a entender o artigo — nunca prompts, nomes de arquivo, alt
 text, estilo visual ou quantidade fixa de imagens, que continuam sendo
 decisão do `gerador-imagens-crescendo-na-obra`. Inclua só o que for
-relevante para aquele post:
+relevante para aquele post — se `experiencia-autor.md` indicou fotos ou
+pontos que precisam de imagem (veja "Indicações visuais do autor" acima),
+isso entra em "Experiência real incorporada..." ou "Passos ou conceitos
+que provavelmente precisam de imagem", conforme o caso:
 
 ```
 BRIEFING PARA A ETAPA VISUAL:
