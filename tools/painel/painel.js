@@ -199,13 +199,18 @@ function abrirDetalhe(card) {
 
   for (const p of card.produtos) {
     const linha = el('div', 'produto-linha');
-    linha.append(el('span', 'nome', p.nome));
-    linha.append(
+
+    const cabecalho = el('div', 'produto-cabecalho');
+    cabecalho.append(el('span', 'nome', p.nome));
+    cabecalho.append(
       el('span', 'chip', p.origem === 'material' ? 'da lista de materiais' : 'sugerido')
     );
+    linha.append(cabecalho);
+
+    const status = el('div', 'produto-status');
 
     if (p.situacao === 'ignorado') {
-      linha.append(el('span', 'vazia', 'marcado como "não vale link"'));
+      status.append(el('span', 'vazia', 'marcado como "não vale link"'));
     } else if (p.situacao === 'resolvido') {
       for (const loja of estado.lojas) {
         const href = p.produto[loja.campo];
@@ -214,41 +219,42 @@ function abrirDetalhe(card) {
         a.href = href;
         a.target = '_blank';
         a.rel = 'noopener noreferrer';
-        linha.append(a);
+        status.append(a);
       }
       if (p.faltando && p.faltando.length) {
-        linha.append(el('span', 'vazia', `(sem ${p.faltando.join(' e ')})`));
+        status.append(el('span', 'vazia', `(sem ${p.faltando.join(' e ')})`));
       }
     } else if (p.situacao === 'sem-link') {
-      linha.append(el('span', 'link-falta', 'cadastrado, mas sem link nenhum'));
-      const b = el('button', 'botao-secundario', 'Completar');
+      status.append(el('span', 'link-falta', 'cadastrado, mas sem link nenhum'));
+      const b = el('button', 'botao-mini', 'Completar');
       b.type = 'button';
       b.addEventListener('click', () => {
         $('#dialogo-card').close();
         abrirFormularioProduto(p.produto, p.chave);
       });
-      linha.append(b);
+      status.append(b);
     } else {
-      linha.append(el('span', 'link-falta', 'não está no catálogo'));
+      status.append(el('span', 'link-falta', 'não está no catálogo'));
 
-      const b = el('button', 'botao-secundario', 'Cadastrar');
+      const b = el('button', 'botao-mini', 'Cadastrar');
       b.type = 'button';
       b.addEventListener('click', () => {
         $('#dialogo-card').close();
         abrirFormularioProduto({ nome: p.nome }, null);
       });
-      linha.append(b);
+      status.append(b);
 
       // o mesmo item costuma estar cadastrado com outro nome:
       // vincular grava um apelido e resolve em todos os posts de uma vez
       if (Object.keys(estado.catalogo).length) {
-        const vincular = el('button', 'botao-secundario', 'É um já cadastrado');
+        const vincular = el('button', 'botao-mini', 'É um já cadastrado');
         vincular.type = 'button';
         vincular.title = 'Aponta para um produto do catálogo e guarda este nome como apelido';
         vincular.addEventListener('click', () => abrirVinculo(p.nome));
-        linha.append(vincular);
+        status.append(vincular);
       }
     }
+    linha.append(status);
     listaProdutos.append(linha);
   }
 
