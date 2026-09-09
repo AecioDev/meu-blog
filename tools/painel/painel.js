@@ -174,11 +174,27 @@ function abrirDetalhe(card) {
     alvo.append(preview);
   }
 
-  // --- produtos citados ---
-  alvo.append(el('h3', null, 'Produtos relacionados'));
+  // --- produtos citados (recolhido por padrão: lista comprida empurra o
+  // resto do diálogo pra baixo) ---
+  const listaProdutos = el('div', 'produtos-lista');
+  listaProdutos.hidden = true;
+
+  const alternarProdutos = el('button', 'toggle-secao');
+  alternarProdutos.type = 'button';
+  const atualizarAlternarProdutos = () => {
+    const seta = listaProdutos.hidden ? '▸' : '▾';
+    alternarProdutos.textContent = `${seta} Produtos relacionados (${card.produtos.length})`;
+  };
+  atualizarAlternarProdutos();
+  alternarProdutos.addEventListener('click', () => {
+    listaProdutos.hidden = !listaProdutos.hidden;
+    atualizarAlternarProdutos();
+  });
+  alvo.append(alternarProdutos);
+  alvo.append(listaProdutos);
 
   if (!card.produtos.length) {
-    alvo.append(el('p', 'vazia', 'Nenhum produto citado neste post.'));
+    listaProdutos.append(el('p', 'vazia', 'Nenhum produto citado neste post.'));
   }
 
   for (const p of card.produtos) {
@@ -233,7 +249,7 @@ function abrirDetalhe(card) {
         linha.append(vincular);
       }
     }
-    alvo.append(linha);
+    listaProdutos.append(linha);
   }
 
   // --- escolher o que vai para o bloco "Onde comprar" ---

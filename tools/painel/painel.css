@@ -438,6 +438,28 @@ dialog menu {
   margin: 18px 0 0;
 }
 
+/* diálogo do card costuma ficar comprido (produtos, texto do post...) — o
+   conteúdo rola, mas "Fechar" fica sempre visível no rodapé. */
+#dialogo-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  max-height: 85vh;
+  overflow: hidden;
+}
+#dialogo-card #detalhe-card {
+  overflow-y: auto;
+  padding: 22px;
+  min-height: 0;
+}
+#dialogo-card menu {
+  flex: none;
+  margin: 0;
+  padding: 14px 22px;
+  border-top: 2px solid var(--borda);
+  background: var(--papel);
+}
+
 .erro {
   color: var(--tijolo);
   font-weight: 700;
@@ -463,6 +485,27 @@ dialog menu {
   letter-spacing: 0.04em;
   color: var(--tinta-suave);
   margin: 18px 0 8px;
+}
+
+/* seção que recolhe/expande, como "Produtos relacionados" */
+#detalhe-card .toggle-secao {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--tinta-suave);
+  margin: 18px 0 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+#detalhe-card .toggle-secao:hover {
+  color: var(--tinta);
 }
 #detalhe-card .corpo {
   background: var(--creme);
