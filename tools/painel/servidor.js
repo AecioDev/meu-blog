@@ -511,6 +511,111 @@ function criarRascunho(pauta) {
 }
 
 // ---------------------------------------------------------------------------
+// pré-visualização do rascunho
+//
+// Rascunho não tem rota no Astro — só entra na collection quando a skill de
+// publicação move o arquivo pra `src/content/posts/`. Enquanto isso, quem
+// quer ver como o texto está tomando forma só tinha o bloco de texto cru no
+// detalhe do card. Isto aqui renderiza o Markdown do corpo como HTML, numa
+// página própria servida pelo próprio painel — não é o site, é só uma leitura
+// mais fácil do rascunho.
+
+const ESCAPES_HTML = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
+function escaparHtml(texto) {
+  return String(texto).replace(/[&<>]/g, (c) => ESCAPES_HTML[c]);
+}
+
+/**
+ * O corpo do rascunho traz o artigo e, depois de um "---" isolado, os
+ * metadados de produção (ISCA DE CADASTRO, PRODUTOS RELACIONADOS, BRIEFING
+ * PARA A ETAPA VISUAL). Para a pré-visualização interessa só o artigo.
+ */
+function extrairArtigo(corpo) {
+  const corte = corpo.match(/\n-{3,}\s*\n/);
+  return (corte ? corpo.slice(0, corte.index) : corpo).trim();
+}
+
+/** Aplica negrito, itálico, código, link e os marcadores `[PALAVRA: texto]` de uma linha. */
+function markdownInline(texto) {
+  return escaparHtml(texto)
+    // marcador de produção: [IMAGEM: ...], [ISCA: ...], [LINK INTERNO FUTURO: ...] etc.
+    .replace(
+      /\[([A-ZÀ-Ü][A-ZÀ-Ü \-]{2,}):\s*([^\]]*)\]/g,
+      '<span class="marcador">🛠️ $1: $2</span>'
+    )
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/(?<![*\w])\*([^*\n]+)\*(?![*\w])/g, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+
+/** Conversor de Markdown simples, do jeito que o Redator escreve — não é CommonMark completo. */
+function markdownParaHtml(md) {
+  const blocos = md.split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+  const html = [];
+
+  for (const bloco of blocos) {
+    const linhas = bloco.split('\n');
+
+    const titulo = bloco.match(/^(#{1,6})\s+(.*)$/);
+    if (titulo && linhas.length === 1) {
+      const nivel = titulo[1].length;
+      html.push(`<h${nivel}>${markdownInline(titulo[2])}</h${nivel}>`);
+      continue;
+    }
+
+    if (/^-{3,}$/.test(bloco)) {
+      html.push('<hr>');
+      continue;
+    }
+
+    if (linhas.every((l) => /^>\s?/.test(l))) {
+      const texto = linhas.map((l) => markdownInline(l.replace(/^>\s?/, ''))).join('<br>');
+      html.push(`<blockquote><p>${texto}</p></blockquote>`);
+      continue;
+    }
+
+    if (linhas.every((l) => /^\s*[-*]\s+/.test(l))) {
+      const itens = linhas.map((l) => `<li>${markdownInline(l.replace(/^\s*[-*]\s+/, ''))}</li>`);
+      html.push(`<ul>${itens.join('')}</ul>`);
+      continue;
+    }
+
+    if (linhas.every((l) => /^\s*\d+\.\s+/.test(l))) {
+      const itens = linhas.map((l) => `<li>${markdownInline(l.replace(/^\s*\d+\.\s+/, ''))}</li>`);
+      html.push(`<ol>${itens.join('')}</ol>`);
+      continue;
+    }
+
+    html.push(`<p>${linhas.map(markdownInline).join(' ')}</p>`);
+  }
+
+  return html.join('\n');
+}
+
+function paginaDePreview(rascunho) {
+  const artigoHtml = markdownParaHtml(extrairArtigo(rascunho.corpo));
+  return `<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${escaparHtml(rascunho.titulo)} — pré-visualização</title>
+<link rel="stylesheet" href="/painel.css">
+</head>
+<body class="pagina-preview">
+<div class="aviso-preview">Pré-visualização do rascunho, gerada pelo painel — não é o site publicado. Marcadores como <span class="marcador">🛠️ IMAGEM: ...</span> ainda não viraram conteúdo final.</div>
+<article class="prosa">
+${rascunho.categoria ? `<p class="categoria-preview">${escaparHtml(rascunho.categoria)}</p>` : ''}
+<h1>${escaparHtml(rascunho.titulo)}</h1>
+${rascunho.descricao ? `<p class="descricao-preview">${escaparHtml(rascunho.descricao)}</p>` : ''}
+${artigoHtml}
+</article>
+</body>
+</html>`;
+}
+
+// ---------------------------------------------------------------------------
 // validade dos links
 
 /** Há quantos dias os links deste produto foram conferidos. */
@@ -825,6 +930,17 @@ const servidor = http.createServer(async (req, res) => {
     // ---- API ----
     if (rota === '/api/estado' && req.method === 'GET') {
       return responderJson(res, await montarEstado());
+    }
+
+    if (rota.startsWith('/preview/') && req.method === 'GET') {
+      const slug = decodeURIComponent(rota.slice('/preview/'.length));
+      const rascunho = lerRascunhos().get(slug);
+      if (!rascunho) {
+        res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+        return res.end('rascunho não encontrado');
+      }
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+      return res.end(paginaDePreview(rascunho));
     }
 
     if (rota === '/api/pautas' && req.method === 'POST') {

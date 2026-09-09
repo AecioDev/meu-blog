@@ -161,6 +161,19 @@ function abrirDetalhe(card) {
     alvo.append(el('p', null, card.descricao));
   }
 
+  // post publicado já dá pra ver no site de verdade — a pré-visualização
+  // só faz falta para quem ainda está em drafts/, sem rota nenhuma no Astro.
+  if (card.origem === 'rascunho' && card.corpo && card.corpo.trim()) {
+    const preview = el('button', 'botao-secundario', 'Pré-visualizar rascunho');
+    preview.type = 'button';
+    preview.title = 'Abre o texto do rascunho formatado, numa aba nova';
+    preview.style.marginTop = '8px';
+    preview.addEventListener('click', () => {
+      window.open(`/preview/${encodeURIComponent(card.slug)}`, '_blank', 'noopener');
+    });
+    alvo.append(preview);
+  }
+
   // --- produtos citados ---
   alvo.append(el('h3', null, 'Produtos relacionados'));
 

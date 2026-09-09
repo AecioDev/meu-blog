@@ -639,3 +639,114 @@ dialog .campo-link input {
   opacity: 0.35;
   cursor: default;
 }
+
+/* ---------- pré-visualização do rascunho ---------- */
+
+.pagina-preview {
+  padding: 24px 20px 80px;
+}
+
+.aviso-preview {
+  max-width: 700px;
+  margin: 0 auto 24px;
+  background: var(--creme-forte);
+  border: 2px dashed var(--obra-claro);
+  border-radius: var(--raio);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--tinta-suave);
+}
+
+.prosa {
+  max-width: 700px;
+  margin: 0 auto;
+  background: var(--papel);
+  border: 2px solid var(--borda);
+  border-radius: var(--raio);
+  padding: 32px clamp(20px, 5vw, 48px);
+  line-height: 1.7;
+}
+
+.prosa .categoria-preview {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--obra);
+  margin: 0 0 6px;
+}
+
+.prosa h1 {
+  margin: 0 0 10px;
+  line-height: 1.25;
+}
+
+.prosa .descricao-preview {
+  font-size: 17px;
+  color: var(--tinta-suave);
+  margin: 0 0 28px;
+}
+
+.prosa h2 {
+  margin: 32px 0 12px;
+  padding-top: 8px;
+  border-top: 2px solid var(--borda);
+}
+
+.prosa h3 {
+  margin: 24px 0 8px;
+}
+
+.prosa p {
+  margin: 0 0 16px;
+}
+
+.prosa ul,
+.prosa ol {
+  margin: 0 0 16px;
+  padding-left: 24px;
+}
+
+.prosa li + li {
+  margin-top: 6px;
+}
+
+.prosa blockquote {
+  margin: 0 0 16px;
+  padding: 4px 16px;
+  border-left: 4px solid var(--obra-claro);
+  background: var(--creme);
+  border-radius: 0 10px 10px 0;
+}
+
+.prosa blockquote p {
+  margin: 0;
+}
+
+.prosa a {
+  color: var(--ceu);
+}
+
+.prosa code {
+  background: var(--creme-forte);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.92em;
+}
+
+.prosa hr {
+  border: 0;
+  border-top: 2px solid var(--borda);
+  margin: 28px 0;
+}
+
+/* marcador de produção: sinaliza o que ainda não é conteúdo final */
+.marcador {
+  display: inline-block;
+  background: #fbe4da;
+  color: var(--tijolo);
+  font-weight: 700;
+  font-size: 0.85em;
+  padding: 1px 8px;
+  border-radius: 999px;
+}
