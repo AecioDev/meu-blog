@@ -439,8 +439,11 @@ dialog menu {
 }
 
 /* diálogo do card costuma ficar comprido (produtos, texto do post...) — o
-   conteúdo rola, mas "Fechar" fica sempre visível no rodapé. */
-#dialogo-card {
+   conteúdo rola, mas "Fechar" fica sempre visível no rodapé.
+   O [open] é essencial: sem ele, este display:flex (especificidade de ID)
+   vence a regra nativa "dialog:not([open]) { display: none }" e o diálogo
+   fechado continua visível, encaixado no fluxo da página em vez de sumir. */
+#dialogo-card[open] {
   display: flex;
   flex-direction: column;
   padding: 0;
