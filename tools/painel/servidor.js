@@ -549,6 +549,24 @@ function markdownInline(texto) {
     .replace(/`([^`]+)`/g, '<code>$1</code>');
 }
 
+/**
+ * Junta as linhas de um bloco de lista em itens: uma linha que começa com o
+ * prefixo (`- ` ou `1. `) abre um item novo; uma linha sem prefixo é
+ * continuação do item anterior, quebrada só por causa do limite de coluna
+ * do arquivo.
+ */
+function agruparLinhasDeItem(linhas, prefixo) {
+  const itens = [];
+  for (const linha of linhas) {
+    if (prefixo.test(linha)) {
+      itens.push(linha.replace(prefixo, ''));
+    } else if (itens.length) {
+      itens[itens.length - 1] += ' ' + linha.trim();
+    }
+  }
+  return itens;
+}
+
 /** Conversor de Markdown simples, do jeito que o Redator escreve — não é CommonMark completo. */
 function markdownParaHtml(md) {
   const blocos = md.split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
@@ -570,24 +588,29 @@ function markdownParaHtml(md) {
     }
 
     if (linhas.every((l) => /^>\s?/.test(l))) {
-      const texto = linhas.map((l) => markdownInline(l.replace(/^>\s?/, ''))).join('<br>');
-      html.push(`<blockquote><p>${texto}</p></blockquote>`);
+      const texto = linhas.map((l) => l.replace(/^>\s?/, '')).join(' ');
+      html.push(`<blockquote><p>${markdownInline(texto)}</p></blockquote>`);
       continue;
     }
 
-    if (linhas.every((l) => /^\s*[-*]\s+/.test(l))) {
-      const itens = linhas.map((l) => `<li>${markdownInline(l.replace(/^\s*[-*]\s+/, ''))}</li>`);
-      html.push(`<ul>${itens.join('')}</ul>`);
+    // o Redator escreve com quebra de linha manual (~78 colunas): uma frase,
+    // um marcador `[IMAGEM: ...]` ou um item de lista pode continuar na
+    // linha seguinte sem prefixo nenhum. Juntar as linhas em texto corrido
+    // antes de aplicar o markdownInline evita cortar negrito, link ou
+    // marcador ao meio.
+    if (/^\s*[-*]\s+/.test(linhas[0])) {
+      const itens = agruparLinhasDeItem(linhas, /^\s*[-*]\s+/);
+      html.push(`<ul>${itens.map((t) => `<li>${markdownInline(t)}</li>`).join('')}</ul>`);
       continue;
     }
 
-    if (linhas.every((l) => /^\s*\d+\.\s+/.test(l))) {
-      const itens = linhas.map((l) => `<li>${markdownInline(l.replace(/^\s*\d+\.\s+/, ''))}</li>`);
-      html.push(`<ol>${itens.join('')}</ol>`);
+    if (/^\s*\d+\.\s+/.test(linhas[0])) {
+      const itens = agruparLinhasDeItem(linhas, /^\s*\d+\.\s+/);
+      html.push(`<ol>${itens.map((t) => `<li>${markdownInline(t)}</li>`).join('')}</ol>`);
       continue;
     }
 
-    html.push(`<p>${linhas.map(markdownInline).join(' ')}</p>`);
+    html.push(`<p>${markdownInline(linhas.join(' '))}</p>`);
   }
 
   return html.join('\n');
