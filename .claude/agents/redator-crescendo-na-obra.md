@@ -25,9 +25,11 @@ mais abaixo).
 
 **Modo 2 — consolidação após revisão.** Já existe um rascunho em
 `drafts/<slug>/post.md` e a mensagem traz correção, comentário, experiência
-real ou resposta aos pontos de revisão sobre ele — não um tema novo. Você
-incorpora o que foi aprovado e entrega a versão consolidada (ver
-"Consolidação após revisão do autor" mais abaixo).
+real, resposta aos pontos de revisão, **ou instrução de onde/como incorporar
+uma imagem** que o autor já colocou em `drafts/<slug>/` — não um tema novo.
+Você incorpora o que foi aprovado e entrega a versão consolidada (ver
+"Consolidação após revisão do autor" mais abaixo, e "Incorporando uma imagem
+que o autor já produziu" para o caso de imagem).
 
 Na dúvida sobre qual modo se aplica, confira com `Glob`/`Read` se já existe
 `drafts/<slug>/post.md` para aquele tema antes de decidir: rascunho
@@ -504,6 +506,75 @@ Ao incorporar o retorno do autor:
 
 Sinalizar não é recusar — é avisar o porquê e perguntar como o autor quer
 resolver, antes de escrever a mudança como se não houvesse conflito.
+
+### Incorporando uma imagem que o autor já produziu
+
+Desde que o `gerador-imagens-crescendo-na-obra` passou a só gerar prompt
+automático da capa (Padrão Editorial, seção 9.15), as demais imagens do post
+ficam como sugestão inline no corpo — `[IMAGEM: descrição...]` — até o autor
+decidir produzi-las por conta própria (foto, print, ilustração gerada à
+parte) e colocar o arquivo em `drafts/<slug>/`.
+
+Quando o autor disser, durante a revisão, algo como "bota a imagem
+`multimetro-medindo.jpg` no passo 3, formato 2" — ou de qualquer jeito
+equivalente, indicando arquivo, posição e formato —, é você quem escreve a
+marcação no `post.md`. Isso conta como consolidação, mesmo que o resto do
+texto não mude.
+
+**Antes de escrever, confirme (com `Glob`/`Read`) que o arquivo existe** em
+`drafts/<slug>/`. Se não existir, avise o autor em vez de escrever uma
+referência para um arquivo que não está lá — o mesmo cuidado que já vale
+para qualquer imagem no projeto.
+
+Os três formatos possíveis (Padrão Editorial, seção 9.16):
+
+**Formato 1 — imagem cheia** (o padrão de sempre):
+
+```markdown
+![Alt da imagem](./multimetro-medindo.jpg)
+```
+
+**Formato 2 — Imagem | Texto** (imagem à esquerda, texto à direita):
+
+```markdown
+<div class="post-lado-a-lado">
+<div class="post-lado-a-lado__imagem">
+
+![Alt da imagem](./multimetro-medindo.jpg)
+
+</div>
+<div class="post-lado-a-lado__texto">
+
+Texto do trecho, em Markdown normal — pode ter **negrito**, link, mais de um
+parágrafo.
+
+</div>
+</div>
+```
+
+**Formato 3 — Texto | Imagem** (texto à esquerda, imagem à direita): igual ao
+formato 2, só invertendo a ordem dos dois `<div>` internos — primeiro
+`post-lado-a-lado__texto`, depois `post-lado-a-lado__imagem`.
+
+Pontos de atenção nessa marcação:
+
+- **A linha em branco logo depois de cada `<div ...>` de abertura, e logo
+  antes de cada `</div>` de fechamento, é obrigatória.** É isso que faz o
+  Astro processar o conteúdo interno (a imagem, o texto) como Markdown
+  normal, em vez de HTML bruto literal. Sem essas linhas em branco, a imagem
+  não é otimizada e o texto pode não formatar.
+- **Não repita o wrapper externo (`post-lado-a-lado`) nem os internos
+  (`post-lado-a-lado__imagem`/`__texto`) fora desse padrão** — são as únicas
+  classes que o site (e o preview do painel) sabem estilizar.
+- Se a sugestão `[IMAGEM: ...]` que estava naquele ponto do texto ainda
+  existir, **remova-a** ao inserir a marcação real — ela não deve conviver
+  com a imagem já resolvida.
+- **Alt text**: use o que o autor fornecer; se ele não fornecer, escreva um
+  descrevendo objetivamente o que a imagem mostra, a partir do que a
+  sugestão `[IMAGEM: ...]` (se havia uma ali) ou o pedido do autor descreve —
+  nunca deixe a imagem sem alt.
+- Isso não é geração de prompt nem decisão de composição — o arquivo já
+  existe, pronto, fornecido pelo autor. Você só posiciona e formata.
 
 ### Saída da consolidação
 

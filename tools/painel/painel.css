@@ -830,3 +830,46 @@ dialog .campo-link input {
   padding: 1px 8px;
   border-radius: 999px;
 }
+
+/* imagem real já colocada em drafts/<slug>/ — preview lê direto do disco */
+.prosa .figura-preview {
+  margin: 0 0 16px;
+}
+.prosa .figura-preview img {
+  display: block;
+  width: 100%;
+  border-radius: var(--raio);
+}
+
+/* referência de imagem cujo arquivo ainda não está na pasta do rascunho */
+.prosa .imagem-pendente {
+  border: 2px dashed var(--obra-claro);
+  background: var(--creme-forte);
+  border-radius: var(--raio);
+  padding: 14px 16px;
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: var(--tinta-suave);
+}
+
+/* aproximação do layout lado a lado do site — não é pixel-perfect, só serve
+   para conferir a intenção antes de abrir o site de verdade */
+.prosa .post-lado-a-lado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  margin: 0 0 16px;
+}
+.prosa .post-lado-a-lado > div {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+.prosa .post-lado-a-lado > div > * {
+  margin: 0 0 16px;
+}
+.prosa .post-lado-a-lado img {
+  display: block;
+  width: 100%;
+  border-radius: var(--raio);
+}

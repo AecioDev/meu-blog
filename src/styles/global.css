@@ -188,6 +188,28 @@
     width: 100%;
     height: auto;
   }
+  /*
+   * Layout lado a lado (imagem | texto ou texto | imagem — Padrão
+   * Editorial 9.16). O redator escreve isso como HTML bruto dentro do
+   * Markdown, com linha em branco após cada tag de abertura e antes de
+   * cada fechamento, para o conteúdo interno continuar sendo processado
+   * como Markdown normal (a imagem inclusive passa pela otimização do
+   * Astro). A ordem dos dois `div` internos no arquivo é o que decide
+   * qual fica à esquerda — a classe externa não inverte nada sozinha.
+   */
+  .conteudo-post .post-lado-a-lado {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .conteudo-post .post-lado-a-lado > div {
+    flex: 1 1 280px;
+    min-width: 0;
+  }
+  .conteudo-post .post-lado-a-lado > div > * + * {
+    margin-top: 1.15rem;
+  }
   .conteudo-post hr {
     border: 0;
     border-top: 2px dashed var(--color-borda);

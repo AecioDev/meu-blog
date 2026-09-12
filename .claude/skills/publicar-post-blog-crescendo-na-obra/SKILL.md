@@ -90,10 +90,14 @@ post. **Nenhum desses vai para dentro do `index.md`:**
 - **`PRODUTOS RELACIONADOS`** — sugestão de produto para cadastro/afiliado.
 
 Dentro do corpo, confira também se sobrou algum marcador inline —
-`[CONFERIR: ...]`, `[SUGESTÃO DE ANÚNCIO: ...]` ou `[ISCA: ...]`. Nenhum
-vai para o ar como texto literal: o primeiro depende de decisão do
-usuário, o segundo só vira banner se houver anunciante, e o terceiro só
-faz sentido se a isca citada existir.
+`[CONFERIR: ...]`, `[SUGESTÃO DE ANÚNCIO: ...]`, `[ISCA: ...]` ou
+`[IMAGEM: ...]`. Nenhum vai para o ar como texto literal: o primeiro depende
+de decisão do usuário, o segundo só vira banner se houver anunciante, o
+terceiro só faz sentido se a isca citada existir, e o quarto é uma sugestão
+de imagem ainda não resolvida (Padrão Editorial, seção 9.15) — **pare e
+pergunte ao usuário** o que fazer com ela (produzir a imagem antes de
+publicar, ou publicar sem essa imagem) em vez de publicar o marcador como
+texto ou apagá-lo por conta própria.
 
 **Se não estiver claro se um trecho é conteúdo do post ou metadado
 operacional, PARE e pergunte** — nunca apague algo ambíguo por conta
@@ -106,6 +110,35 @@ rascunho junto com o `index.md`. Se o build parar com
 ainda não gerou: **pare e peça o arquivo**. Nunca remova a referência nem
 invente uma imagem no lugar — a referência é o que faz o post ficar pronto
 sozinho quando o arquivo chega.
+
+**Layout lado a lado (imagem | texto ou texto | imagem):** desde que o plano
+visual passou a sugerir a maioria das imagens em vez de gerar todas
+automaticamente (Padrão Editorial, seção 9.15–9.16), o redator pode ter
+incorporado uma imagem específica dentro de um wrapper assim:
+
+```html
+<div class="post-lado-a-lado">
+<div class="post-lado-a-lado__imagem">
+
+![Alt da imagem](./multimetro-medindo.jpg)
+
+</div>
+<div class="post-lado-a-lado__texto">
+
+Texto do trecho.
+
+</div>
+</div>
+```
+
+Isso **é conteúdo real do post, não metadado operacional** — leve para o
+`index.md` exatamente como está, sem reformatar, sem remover as linhas em
+branco internas (são elas que fazem o Astro processar a imagem e o texto de
+dentro como Markdown normal) e sem "corrigir" para a sintaxe de imagem
+simples. A imagem de dentro desse bloco passa pelo otimizador normalmente,
+igual a qualquer outra imagem de conteúdo. As classes `post-lado-a-lado`,
+`post-lado-a-lado__imagem` e `post-lado-a-lado__texto` já existem no CSS do
+site (e no preview do painel) — não invente classe nova para isso.
 
 Sobre anúncios: o post já ganha um espaço automático depois do conteúdo,
 vindo do layout — não há nada a fazer para isso aparecer. Se o usuário
@@ -207,6 +240,13 @@ compartilhamento. Use sempre `./`.
 
 ## Validação do plano visual (`prompts-imagens.md`)
 
+Desde que o gerador de imagens passou a produzir prompt automático só da
+capa (Padrão Editorial, seção 9.15), é normal que `prompts-imagens.md`
+contenha **apenas a capa** — as demais imagens do post, quando existirem,
+chegam como `![alt](./arquivo.jpg)` já incorporado pelo redator (ou dentro do
+wrapper de layout lado a lado), sem entrada correspondente nesse arquivo.
+Isso não é sinal de plano incompleto: valide normalmente pelo que existir.
+
 Se `drafts/<slug>/prompts-imagens.md` existir, use-o como lista de
 conferência antes de publicar: para cada imagem marcada como necessária no
 plano — **capa incluída, ela é sempre obrigatória** —, confira que existe
@@ -242,9 +282,23 @@ de cada imagem.
 3. **Valide a categoria** contra `src/dados/categorias.json`. Se o valor
    recebido não bater exatamente com uma das publicadas, pergunte antes de
    prosseguir.
-4. **Gere o slug** do post a partir do título (minúsculo, sem acento, com
-   hífen no lugar de espaço) e confira que não existe outra pasta com o mesmo
-   slug em `src/content/posts/`.
+4. **Defina o slug a partir do título final** (minúsculo, sem acento, com
+   hífen no lugar de espaço) — o slug prioriza SEO e segue o título
+   escolhido, não um nome congelado desde a pauta. Se a entrada veio de um
+   pacote `drafts/<slug-antigo>/` e o título mudou depois que essa pasta foi
+   criada (por exemplo, via `titulos-crescendo-na-obra`, ou uma reformulação
+   na consolidação), **renomeie a pasta de rascunho** para o novo slug
+   (`drafts/<slug-antigo>/` → `drafts/<slug-novo>/`) antes de criar a pasta
+   final — não deixe as duas pastas com nomes diferentes. Isso importa porque
+   o painel (`tools/painel/servidor.js`) rastreia o mesmo post do rascunho
+   até a publicação comparando o nome da pasta entre `drafts/` e
+   `src/content/posts/`: se ficarem dessincronizadas, o painel passa a
+   enxergar dois posts diferentes (um "em produção" órfão, outro "pronto pra
+   publicar" com o slug novo). Se existir uma pauta correspondente em
+   `tools/painel/pautas.json` (mesmo `id`), atualize também o campo `slug`
+   dela para o novo valor, senão ela pode reaparecer como um terceiro
+   registro desatualizado. Em qualquer caso, confira que não existe outra
+   pasta com o mesmo slug em `src/content/posts/`.
 5. **Crie a pasta** `src/content/posts/<slug>/` e monte o `index.md` dentro
    dela, com o frontmatter exatamente conforme o schema acima, seguido do
    corpo do post — sem os blocos operacionais (veja "Metadado operacional
@@ -283,6 +337,11 @@ de cada imagem.
 - [ ] Todas as informações necessárias foram recebidas (nada inventado)
 - [ ] Se existia `prompts-imagens.md`, toda imagem marcada como necessária
       (capa incluída) tem arquivo correspondente em `drafts/<slug>/`
+- [ ] Nenhum `[IMAGEM: ...]` sem resolver ficou no corpo — se sobrou algum,
+      o usuário já decidiu (produzir antes de publicar, ou publicar sem ela)
+- [ ] Bloco(s) de layout lado a lado (`post-lado-a-lado`), se houver, foram
+      levados ao `index.md` como estavam, com as linhas em branco internas
+      intactas
 - [ ] Nenhum bloco operacional (`BRIEFING PARA A ETAPA VISUAL`,
       `ISCA DE CADASTRO`, `PRODUTOS RELACIONADOS`) foi copiado para o
       `index.md`
@@ -313,10 +372,21 @@ de cada imagem.
 - Nunca copiar `BRIEFING PARA A ETAPA VISUAL`, `ISCA DE CADASTRO` ou
   `PRODUTOS RELACIONADOS` para dentro do `index.md`: são metadado
   operacional, não conteúdo do post.
+- Nunca publicar com `[IMAGEM: ...]` sobrando no corpo sem antes perguntar ao
+  usuário o que fazer com aquela sugestão — nunca deixá-lo ir ao ar como
+  texto literal, nem apagá-lo sem confirmação.
+- Nunca reformatar ou remover as linhas em branco de um bloco
+  `post-lado-a-lado`: é isso que faz a imagem e o texto de dentro serem
+  processados como Markdown normal.
 - Nunca apagar um trecho ambíguo por conta própria: se não estiver claro se
   é conteúdo ou metadado, pare e pergunte.
 - Nunca usar caminho absoluto no `coverImage` — o build passa e a capa quebra
   depois, sem aviso nenhum.
+- Nunca deixar a pasta de rascunho com um slug diferente do slug final
+  quando o título mudou depois que o rascunho foi criado: renomeie
+  `drafts/<slug-antigo>/` para o novo slug antes de publicar, senão o painel
+  passa a mostrar o mesmo post duas vezes (um card "em produção" órfão e
+  outro "pronto pra publicar").
 - Nunca deixar banner de anunciante passar por conteúdo: o alt sempre diz que
   é publicidade, e o link sempre leva `rel="sponsored"`.
 - Nunca considerar o post pronto tendo rodado só o `npm run dev`: erro de

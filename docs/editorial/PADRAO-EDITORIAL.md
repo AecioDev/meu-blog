@@ -656,6 +656,11 @@ A ordem ideal é:
 
 Redator → rascunho → revisão humana → texto consolidado → plano visual → prompts → imagens
 
+**Só a capa segue esse caminho até o fim** (prompt completo, gerado e publicado
+antes de ir para o site). As demais imagens (didáticas e de apoio) param um
+passo antes: o plano visual as identifica e sugere, mas não gera prompt nem
+força a produção imediata — ver 9.15.
+
 ### 9.5 Avaliação por passo
 
 Em tutoriais, cada passo deve ser avaliado:
@@ -668,7 +673,7 @@ Se não, não criar apenas para manter quantidade.
 
 ### 9.6 Contrato da imagem
 
-Cada imagem necessária deve possuir:
+**A capa** sempre segue o contrato completo:
 
 - posição no artigo;
 - tipo;
@@ -678,6 +683,12 @@ Cada imagem necessária deve possuir:
 - nome sugerido;
 - alt text;
 - prompt completo.
+
+**As demais imagens (didáticas e de apoio) não seguem mais esse contrato
+completo por padrão** — ver 9.15. Elas viram uma sugestão inline no corpo do
+rascunho, com objetivo e descrição do que a imagem mostraria, sem prompt,
+nome de arquivo ou alt text ainda (isso só existe quando a imagem for de fato
+produzida).
 
 ### 9.7 Continuidade visual
 
@@ -736,12 +747,53 @@ Usar nomes descritivos e simples.
 
 ### 9.14 Contrato de conclusão
 
-O trabalho visual não está concluído enquanto todas as imagens necessárias não tiverem:
+O trabalho visual da capa não está concluído enquanto ela não tiver:
 
 - objetivo;
 - prompt;
 - arquivo;
 - alt text.
+
+As demais imagens (9.15) só precisam disso quando o autor decidir de fato
+produzi-las; até lá, a sugestão inline é suficiente para o rascunho seguir
+adiante.
+
+### 9.15 Sugestão de imagem no corpo (demais imagens além da capa)
+
+Fora a capa, o post não sai do plano visual com prompt pronto para cada
+imagem. Em vez disso, o agente de imagem faz a mesma avaliação de sempre —
+"essa etapa fica significativamente mais clara com uma imagem?" — e, quando a
+resposta é sim, grava uma sugestão curta e objetiva direto no corpo do
+rascunho, na posição onde a imagem entraria, usando o marcador:
+
+```
+[IMAGEM: descrição objetiva do que a imagem mostraria e por quê]
+```
+
+Esse é o mesmo padrão de marcador de produção já usado por `[SUGESTÃO DE
+ANÚNCIO: ...]`, `[ISCA: ...]` e `[CONFERIR: ...]` — some se não virar
+conteúdo, e a pré-visualização do painel já reconhece esse formato e mostra
+como aviso visual, sem precisar de nenhum ajuste extra.
+
+A sugestão não inclui prompt, nome de arquivo, alt text nem formato de
+layout — isso só é decidido quando o autor de fato providenciar a imagem (ver
+9.16) e pedir para ela entrar no texto.
+
+### 9.16 Formatos de posicionamento de imagem no corpo
+
+Quando uma imagem (capa ou não) é de fato incorporada ao corpo do post, ela
+pode usar um destes formatos:
+
+1. **Imagem cheia** — o formato de sempre: `![alt](./arquivo.jpg)` sozinha,
+   ocupando a largura do texto.
+2. **Imagem | Texto** — a imagem ao lado esquerdo, o texto ao lado direito,
+   lado a lado.
+3. **Texto | Imagem** — o texto ao lado esquerdo, a imagem ao lado direito.
+
+Quem decide usar o formato 2 ou 3, em vez do padrão (1), é o autor — ele
+indica na revisão qual arquivo (já salvo em `drafts/<slug>/`) entra em qual
+trecho e em qual formato, e o redator escreve a marcação correspondente na
+consolidação. Não é o agente de imagem quem escolhe o formato.
 
 ## 10. Reaproveitamento multimídia
 
