@@ -1008,20 +1008,31 @@ $('#form-produto').addEventListener('submit', async (evento) => {
   const form = evento.target;
   const erro = form.querySelector('[data-erro]');
   try {
-    await api('/api/produtos', {
-      method: 'POST',
-      body: JSON.stringify({
-        nome: form.nome.value,
-        tags: form.tags.value,
-        linkAmazon: form.linkAmazon.value,
-        linkMercadoLivre: form.linkMercadoLivre.value,
-        linkShopee: form.linkShopee.value,
-        observacao: form.observacao.value,
-        ignorar: form.ignorar.checked,
-        destaque: form.destaque.checked,
-        chamada: form.chamada.value,
-      }),
-    });
+    const chave = form.dataset.chave;
+    const corpo = {
+      nome: form.nome.value,
+      tags: form.tags.value,
+      linkAmazon: form.linkAmazon.value,
+      linkMercadoLivre: form.linkMercadoLivre.value,
+      linkShopee: form.linkShopee.value,
+      observacao: form.observacao.value,
+      ignorar: form.ignorar.checked,
+      destaque: form.destaque.checked,
+      chamada: form.chamada.value,
+    };
+    // editando um produto já cadastrado: atualiza no lugar, sem trocar a
+    // chave (renomear não pode virar um cadastro duplicado no catálogo)
+    if (chave) {
+      await api(`/api/produtos/${encodeURIComponent(chave)}`, {
+        method: 'PUT',
+        body: JSON.stringify(corpo),
+      });
+    } else {
+      await api('/api/produtos', {
+        method: 'POST',
+        body: JSON.stringify(corpo),
+      });
+    }
     $('#dialogo-produto').close();
     await carregar();
   } catch (e) {

@@ -567,13 +567,40 @@ function agruparLinhasDeItem(linhas, prefixo) {
   return itens;
 }
 
+/**
+ * Resolve `./arquivo.jpg` (como o redator escreve no corpo) para a rota que
+ * serve o arquivo direto de `drafts/<slug>/` — ver a rota `/rascunho-imagem/`
+ * mais abaixo. `existeArquivo` diz se o arquivo já está na pasta: enquanto a
+ * imagem é só uma referência escrita mas o arquivo ainda não chegou, o
+ * preview mostra um aviso em vez de uma imagem quebrada.
+ */
+function imagemDoRascunho(slug, caminho) {
+  const nomeArquivo = caminho.replace(/^\.\//, '');
+  const caminhoAbsoluto = path.join(PASTA_DRAFTS, slug, nomeArquivo);
+  const dentroDaPasta = caminhoAbsoluto.startsWith(path.join(PASTA_DRAFTS, slug));
+  return {
+    existeArquivo: dentroDaPasta && existe(caminhoAbsoluto),
+    url: `/rascunho-imagem/${encodeURIComponent(slug)}/${encodeURIComponent(nomeArquivo)}`,
+  };
+}
+
 /** Conversor de Markdown simples, do jeito que o Redator escreve — não é CommonMark completo. */
-function markdownParaHtml(md) {
+function markdownParaHtml(md, slug) {
   const blocos = md.split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
   const html = [];
 
   for (const bloco of blocos) {
     const linhas = bloco.split('\n');
+
+    // wrapper do layout lado a lado (Padrão Editorial 9.16): um bloco feito
+    // só de tags <div>/</div>, sem mais nada, sai como HTML puro. Não
+    // precisa rastrear aninhamento aqui — o navegador fecha cada tag pela
+    // ordem, e o conteúdo real (texto, imagem) chega em blocos separados,
+    // processados normalmente pelo resto deste laço.
+    if (/^(<\/?div[^>]*>\s*)+$/.test(bloco)) {
+      html.push(bloco);
+      continue;
+    }
 
     const titulo = bloco.match(/^(#{1,6})\s+(.*)$/);
     if (titulo && linhas.length === 1) {
@@ -584,6 +611,26 @@ function markdownParaHtml(md) {
 
     if (/^-{3,}$/.test(bloco)) {
       html.push('<hr>');
+      continue;
+    }
+
+    // imagem sozinha no bloco: ![alt](./arquivo.jpg) — o redator só escreve
+    // isso quando o autor já colocou o arquivo em drafts/<slug>/.
+    const imagem = linhas.length === 1 && bloco.match(/^!\[([^\]]*)\]\(([^)\s]+)\)$/);
+    if (imagem) {
+      const [, alt, caminho] = imagem;
+      if (!slug) {
+        html.push(`<p>${markdownInline(bloco)}</p>`);
+        continue;
+      }
+      const { existeArquivo, url } = imagemDoRascunho(slug, caminho);
+      if (existeArquivo) {
+        html.push(`<figure class="figura-preview"><img src="${url}" alt="${escaparHtml(alt)}" loading="lazy"></figure>`);
+      } else {
+        html.push(
+          `<div class="imagem-pendente">🖼️ Imagem referenciada, mas ainda não está em <code>drafts/${escaparHtml(slug)}/</code>: <code>${escaparHtml(caminho)}</code> — alt: “${escaparHtml(alt)}”</div>`
+        );
+      }
       continue;
     }
 
@@ -617,7 +664,7 @@ function markdownParaHtml(md) {
 }
 
 function paginaDePreview(rascunho) {
-  const artigoHtml = markdownParaHtml(extrairArtigo(rascunho.corpo));
+  const artigoHtml = markdownParaHtml(extrairArtigo(rascunho.corpo), rascunho.slug);
   return `<!doctype html>
 <html lang="pt-BR">
 <head>
@@ -627,7 +674,7 @@ function paginaDePreview(rascunho) {
 <link rel="stylesheet" href="/painel.css">
 </head>
 <body class="pagina-preview">
-<div class="aviso-preview">Pré-visualização do rascunho, gerada pelo painel — não é o site publicado. Marcadores como <span class="marcador">🛠️ IMAGEM: ...</span> ainda não viraram conteúdo final.</div>
+<div class="aviso-preview">Pré-visualização do rascunho, gerada pelo painel — não é o site publicado. Marcadores como <span class="marcador">🛠️ IMAGEM: ...</span> ainda não viraram conteúdo final, e imagens ainda não colocadas em <code>drafts/${escaparHtml(rascunho.slug)}/</code> aparecem como aviso, não como imagem quebrada.</div>
 <article class="prosa">
 ${rascunho.categoria ? `<p class="categoria-preview">${escaparHtml(rascunho.categoria)}</p>` : ''}
 <h1>${escaparHtml(rascunho.titulo)}</h1>
@@ -917,6 +964,11 @@ const TIPOS = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.gif': 'image/gif',
 };
 
 function responderJson(res, dados, status = 200) {
@@ -964,6 +1016,32 @@ const servidor = http.createServer(async (req, res) => {
       }
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
       return res.end(paginaDePreview(rascunho));
+    }
+
+    // Serve as imagens que já estão em drafts/<slug>/, só para o preview do
+    // painel conseguir mostrá-las — nunca usado pelo site publicado, que lê
+    // as imagens de src/content/posts/ depois que a skill de publicação as
+    // move e otimiza pra lá.
+    if (rota.startsWith('/rascunho-imagem/') && req.method === 'GET') {
+      const partes = rota.slice('/rascunho-imagem/'.length).split('/').map(decodeURIComponent);
+      const [slug, ...resto] = partes;
+      const nomeArquivo = resto.join('/');
+      const pastaDoRascunho = path.join(PASTA_DRAFTS, slug || '');
+      const arquivo = path.join(pastaDoRascunho, nomeArquivo || '');
+      if (
+        !slug ||
+        !nomeArquivo ||
+        !arquivo.startsWith(pastaDoRascunho) ||
+        !existe(arquivo)
+      ) {
+        res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+        return res.end('imagem não encontrada');
+      }
+      res.writeHead(200, {
+        'Content-Type': TIPOS[path.extname(arquivo).toLowerCase()] || 'application/octet-stream',
+        'Cache-Control': 'no-store',
+      });
+      return res.end(fs.readFileSync(arquivo));
     }
 
     if (rota === '/api/pautas' && req.method === 'POST') {
@@ -1148,6 +1226,36 @@ const servidor = http.createServer(async (req, res) => {
       catalogo[chave].atualizadoEm = new Date().toISOString().slice(0, 10);
       gravarJson(ARQ_PRODUTOS, catalogo);
       return responderJson(res, { ok: true, atualizadoEm: catalogo[chave].atualizadoEm });
+    }
+
+    // edita um produto já cadastrado sem trocar a chave: renomear o produto
+    // não pode virar um cadastro novo, porque a chave é o que liga o produto
+    // aos posts (frontmatter `materiais:`) — igual a pauta.slug, que também
+    // não muda quando só o título é corrigido depois.
+    if (rota.startsWith('/api/produtos/') && req.method === 'PUT') {
+      const chave = decodeURIComponent(rota.slice('/api/produtos/'.length));
+      const catalogo = lerJson(ARQ_PRODUTOS, {});
+      if (!catalogo[chave]) return responderJson(res, { erro: 'produto não encontrado' }, 404);
+
+      const corpo = await lerCorpo(req);
+      const nome = String(corpo.nome || '').trim();
+      if (!nome) return responderJson(res, { erro: 'informe o nome do produto' }, 400);
+
+      catalogo[chave] = {
+        ...catalogo[chave],
+        nome,
+        tags: String(corpo.tags || '').trim(),
+        linkAmazon: String(corpo.linkAmazon || '').trim(),
+        linkMercadoLivre: String(corpo.linkMercadoLivre || '').trim(),
+        linkShopee: String(corpo.linkShopee || '').trim(),
+        observacao: String(corpo.observacao || '').trim(),
+        ignorar: Boolean(corpo.ignorar),
+        destaque: Boolean(corpo.destaque),
+        chamada: String(corpo.chamada || '').trim(),
+        atualizadoEm: new Date().toISOString().slice(0, 10),
+      };
+      gravarJson(ARQ_PRODUTOS, catalogo);
+      return responderJson(res, { chave, ...catalogo[chave] });
     }
 
     if (rota.startsWith('/api/produtos/') && req.method === 'DELETE') {
