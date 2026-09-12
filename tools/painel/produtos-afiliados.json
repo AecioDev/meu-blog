@@ -375,7 +375,9 @@
     "ignorar": false,
     "destaque": false,
     "chamada": "",
-    "apelidos": [],
+    "apelidos": [
+      "Chave de fenda"
+    ],
     "atualizadoEm": "2026-09-11"
   },
   "chave-de-teste-chave-de-fenda-com-neon": {
@@ -425,6 +427,45 @@
     "linkShopee": "",
     "observacao": "",
     "ignorar": false,
+    "destaque": false,
+    "chamada": "",
+    "apelidos": [],
+    "atualizadoEm": "2026-09-12"
+  },
+  "o-reparo-ou-cartucho-novo-compativel-com-o-modelo-da-sua-torneira": {
+    "nome": "O reparo ou cartucho novo, compatível com o modelo da sua torneira",
+    "tags": "",
+    "linkAmazon": "",
+    "linkMercadoLivre": "",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": true,
+    "destaque": false,
+    "chamada": "",
+    "apelidos": [],
+    "atualizadoEm": "2026-09-12"
+  },
+  "graxa-de-silicone-ou-vaselina-em-pasta": {
+    "nome": "Graxa de Silicone",
+    "tags": "",
+    "linkAmazon": "https://link.amazon/B0ckSE52K",
+    "linkMercadoLivre": "https://meli.la/2SDi4jb",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "destaque": false,
+    "chamada": "",
+    "apelidos": [],
+    "atualizadoEm": "2026-09-12"
+  },
+  "kit-de-reparos-courinhos-para-torneira": {
+    "nome": "Kit de reparos/courinhos para torneira",
+    "tags": "",
+    "linkAmazon": "",
+    "linkMercadoLivre": "",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": true,
     "destaque": false,
     "chamada": "",
     "apelidos": [],
