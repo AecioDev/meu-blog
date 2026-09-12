@@ -7,7 +7,7 @@
     "linkShopee": "",
     "observacao": "",
     "ignorar": false,
-    "atualizadoEm": "2026-08-24",
+    "atualizadoEm": "2026-09-11",
     "apelidos": [
       "Desentupidor de borracha"
     ]
@@ -325,5 +325,109 @@
     "chamada": "",
     "apelidos": [],
     "atualizadoEm": "2026-08-26"
+  },
+  "chave-de-teste-chave-de-fenda-testadora-neon": {
+    "nome": "Chave de teste / chave de fenda testadora neon",
+    "tags": "",
+    "linkAmazon": "https://link.amazon/B0hwDwUMU",
+    "linkMercadoLivre": "https://meli.la/2xRnNPS",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "destaque": false,
+    "chamada": "",
+    "apelidos": [],
+    "atualizadoEm": "2026-09-11"
+  },
+  "multimetro-digital": {
+    "nome": "Multímetro digital",
+    "tags": "",
+    "linkAmazon": "https://link.amazon/B05TqFnGQ",
+    "linkMercadoLivre": "https://meli.la/1orBN9V",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "destaque": true,
+    "chamada": "",
+    "apelidos": [],
+    "atualizadoEm": "2026-09-11"
+  },
+  "luva-isolante-para-eletricista": {
+    "nome": "Luva isolante para eletricista",
+    "tags": "",
+    "linkAmazon": "https://link.amazon/B026LY7Cb",
+    "linkMercadoLivre": "https://meli.la/24fG1Ye",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "destaque": false,
+    "chamada": "",
+    "apelidos": [],
+    "atualizadoEm": "2026-09-11"
+  },
+  "kit-de-chaves-de-fenda-isoladas": {
+    "nome": "Kit de chaves de fenda isoladas",
+    "tags": "",
+    "linkAmazon": "https://link.amazon/B09axHqpm",
+    "linkMercadoLivre": "https://meli.la/2NDypCJ",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "destaque": false,
+    "chamada": "",
+    "apelidos": [],
+    "atualizadoEm": "2026-09-11"
+  },
+  "chave-de-teste-chave-de-fenda-com-neon": {
+    "nome": "Chave de teste / chave de fenda com neon",
+    "tags": "",
+    "linkAmazon": "",
+    "linkMercadoLivre": "",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": true,
+    "destaque": false,
+    "chamada": "",
+    "apelidos": [],
+    "atualizadoEm": "2026-09-11"
+  },
+  "alicate-universal": {
+    "nome": "Alicate universal",
+    "tags": "",
+    "linkAmazon": "https://link.amazon/B03wDgLGk",
+    "linkMercadoLivre": "https://meli.la/2ecmv5R",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "destaque": false,
+    "chamada": "",
+    "apelidos": [],
+    "atualizadoEm": "2026-09-11"
+  },
+  "conector-de-derivacao": {
+    "nome": "Conector de derivação",
+    "tags": "",
+    "linkAmazon": "https://link.amazon/B00fg0kOj",
+    "linkMercadoLivre": "https://meli.la/1JbB97f",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "destaque": false,
+    "chamada": "",
+    "apelidos": [],
+    "atualizadoEm": "2026-09-11"
+  },
+  "terminal-ilhos-com-alicate-de-crimpar": {
+    "nome": "Terminal ilhós com alicate de crimpar",
+    "tags": "",
+    "linkAmazon": "https://link.amazon/B09yM0FQi",
+    "linkMercadoLivre": "https://meli.la/2CBkvjF",
+    "linkShopee": "",
+    "observacao": "",
+    "ignorar": false,
+    "destaque": false,
+    "chamada": "",
+    "apelidos": [],
+    "atualizadoEm": "2026-09-12"
   }
 }

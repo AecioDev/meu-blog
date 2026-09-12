@@ -9,6 +9,11 @@ coverImageAlt: "Ilustração de uma chave de teste com a lâmpada acesa, represe
 author: "Equipe Crescendo na Obra"
 featured: false
 draft: false
+materiais:
+  - chave-de-teste-chave-de-fenda-testadora-neon
+  - multimetro-digital
+  - luva-isolante-para-eletricista
+  - kit-de-chaves-de-fenda-isoladas
 ---
 
 Antes de trocar uma tomada, instalar um ventilador de teto ou simplesmente entender por que um aparelho não liga, existe uma pergunta que separa quem mexe em elétrica com segurança de quem está confiando na sorte: **qual desses fios é a fase, qual é o neutro e qual é o terra?**
