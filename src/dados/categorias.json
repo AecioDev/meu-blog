@@ -4,6 +4,7 @@
     "slug": "hidraulica",
     "publica": true,
     "emoji": "🚿",
+    "icone": "material-symbols:plumbing",
     "chip": "bg-ceu-600 text-white",
     "barra": "bg-ceu-500"
   },
@@ -12,6 +13,7 @@
     "slug": "pintura",
     "publica": true,
     "emoji": "🎨",
+    "icone": "material-symbols:format-paint-outline",
     "chip": "bg-uva-600 text-white",
     "barra": "bg-uva-500"
   },
@@ -20,7 +22,8 @@
     "slug": "eletrica",
     "publica": true,
     "emoji": "💡",
-    "chip": "bg-obra-400 text-tinta",
+    "icone": "material-symbols:bolt-outline",
+    "chip": "bg-obra-600 text-white",
     "barra": "bg-obra-500"
   },
   {
@@ -28,7 +31,8 @@
     "slug": "dicas-gerais",
     "publica": true,
     "emoji": "🧰",
-    "chip": "bg-menta-400 text-tinta",
+    "icone": "material-symbols:handyman-outline",
+    "chip": "bg-menta-600 text-white",
     "barra": "bg-menta-500"
   },
   {
@@ -36,6 +40,7 @@
     "slug": "moveis",
     "publica": false,
     "emoji": "🪚",
+    "icone": "material-symbols:chair-outline",
     "chip": "bg-tijolo-700 text-white",
     "barra": "bg-tijolo-500"
   }

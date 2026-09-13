@@ -1,30 +1,37 @@
 ---
+import { Icon } from 'astro-icon/components';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import NewsletterBox from '../components/NewsletterBox.astro';
 import { SITE_TITLE } from '../consts';
+import {
+  ICONE_BALAO,
+  ICONE_ETIQUETA,
+  ICONE_CHAVE,
+  ICONE_ESCUDO,
+} from '../utils/icones';
 
 const valores = [
   {
-    emoji: '🗣️',
+    icone: ICONE_BALAO,
     titulo: 'Português de gente',
     texto:
       'Nada de "efetuar a vedação do flange". Aqui é "aperta a rosca com fita veda-rosca até parar de vazar".',
   },
   {
-    emoji: '💸',
+    icone: ICONE_ETIQUETA,
     titulo: 'Barato de verdade',
     texto:
       'A gente sempre mostra a opção que cabe no bolso — e avisa quando economizar sai caro depois.',
   },
   {
-    emoji: '🏘️',
+    icone: ICONE_CHAVE,
     titulo: 'Pensado pra quem aluga',
     texto:
       'Muita dica é reversível: dá pra fazer no imóvel alugado sem brigar com o proprietário na saída.',
   },
   {
-    emoji: '🦺',
+    icone: ICONE_ESCUDO,
     titulo: 'Honesto sobre o limite',
     texto:
       'Tem coisa que não é pra gente. Quando o caso pede profissional, a gente fala na cara dura.',
@@ -40,7 +47,7 @@ const valores = [
 
   <article class="mt-5">
     <h1 class="font-titulo text-3xl font-bold sm:text-4xl">
-      Oi! A gente é o {SITE_TITLE} <span aria-hidden="true">👋</span>
+      Oi! A gente é o {SITE_TITLE}
     </h1>
 
     <div class="conteudo-post mt-6">
@@ -90,9 +97,12 @@ const valores = [
       {
         valores.map((valor) => (
           <div class="rounded-2xl border-2 border-borda bg-papel p-5">
-            <p class="text-3xl" aria-hidden="true">
-              {valor.emoji}
-            </p>
+            <span
+              class="flex h-10 w-10 items-center justify-center rounded-lg bg-obra-100 text-lg text-obra-800"
+              aria-hidden="true"
+            >
+              <Icon name={valor.icone} />
+            </span>
             <h3 class="mt-2 font-titulo text-lg font-semibold text-tinta">
               {valor.titulo}
             </h3>

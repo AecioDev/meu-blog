@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+import icon from 'astro-icon';
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,7 +15,7 @@ export default defineConfig({
   // Assim o site local se comporta igual ao publicado: link interno
   // sem a barra vira 404 no dev, antes de ir pro ar.
   trailingSlash: 'always',
-  integrations: [sitemap()],
+  integrations: [sitemap(), icon()],
   vite: {
     plugins: [tailwindcss()],
   },

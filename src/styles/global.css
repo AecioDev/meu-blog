@@ -2,53 +2,57 @@
 
 /* =========================================================
    Crescendo na Obra — design tokens
-   Paleta quente e colorida: nada de cinza corporativo.
+   Paleta neutra e sóbria, com um único acento (terracota) —
+   nada de cor-doce nem gradiente berrante.
    ========================================================= */
 @theme {
   /* Fundo e superfícies */
-  --color-creme: #fff8ef;
-  --color-creme-forte: #ffefdc;
+  --color-creme: #faf9f7;
+  --color-creme-forte: #f0efec;
   --color-papel: #ffffff;
 
-  /* Marca */
-  --color-obra-50: #fff4e0;
-  --color-obra-100: #ffe6bd;
-  --color-obra-200: #ffd58e;
-  --color-obra-300: #ffc25c;
-  --color-obra-400: #ffb02e;
-  --color-obra-500: #f79009;
-  --color-obra-600: #d97406;
-  --color-obra-700: #a85705;
-  --color-obra-800: #8a4704;
+  /* Marca — terracota queimado, usado com moderação */
+  --color-obra-50: #f8f0ea;
+  --color-obra-100: #eeddd0;
+  --color-obra-200: #ddbda3;
+  --color-obra-300: #c99b76;
+  --color-obra-400: #b57e51;
+  --color-obra-500: #a06639;
+  --color-obra-600: #82512c;
+  --color-obra-700: #663f23;
+  --color-obra-800: #4f321c;
 
-  /* Acentos */
-  --color-tijolo-400: #ff8a5c;
-  --color-tijolo-500: #ef6541;
-  --color-tijolo-600: #d24a2a;
-  --color-tijolo-700: #b03a1e;
-  --color-menta-400: #43cd8b;
-  --color-menta-500: #22b573;
-  --color-menta-600: #159159;
-  --color-menta-700: #0f7a4a;
-  --color-ceu-400: #4cb8f5;
-  --color-ceu-500: #2196d8;
-  --color-ceu-600: #1478b0;
-  --color-ceu-700: #0f6491;
-  --color-uva-400: #a07bff;
-  --color-uva-500: #7c5cf0;
-  --color-uva-600: #6244cc;
+  /* Acentos de categoria — mesma saturação baixa, tons diferentes */
+  --color-tijolo-400: #c4917d;
+  --color-tijolo-500: #ac7360;
+  --color-tijolo-600: #8c5847;
+  --color-tijolo-700: #714638;
+  --color-menta-400: #83a894;
+  --color-menta-500: #648c74;
+  --color-menta-600: #4d715b;
+  --color-menta-700: #3d5c49;
+  --color-ceu-400: #85a6ba;
+  --color-ceu-500: #63879d;
+  --color-ceu-600: #4c6b7e;
+  --color-ceu-700: #3d5665;
+  --color-uva-400: #a599c0;
+  --color-uva-500: #8879a8;
+  --color-uva-600: #6c608a;
 
-  /* Texto (marrom quente em vez de preto puro) */
-  --color-tinta: #2c2118;
-  --color-tinta-suave: #5c4b3d;
-  --color-tinta-fraca: #6f5b48;
-  --color-borda: #ecdcc6;
+  /* Foco/acessibilidade — cor própria, não decorativa */
+  --color-foco: #2f6690;
 
-  /* Tipografia arredondada e amigável */
-  --font-titulo: 'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
-  --font-corpo: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Texto (grafite neutro em vez de preto ou marrom) */
+  --color-tinta: #23262b;
+  --color-tinta-suave: #52565d;
+  --color-tinta-fraca: #6b6f77;
+  --color-borda: #e2e0dc;
 
-  --radius-xl2: 1.25rem;
+  /* Tipografia neutra e legível */
+  --font-titulo: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-corpo: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --radius-xl2: 0.75rem;
 }
 
 @layer base {
@@ -79,7 +83,7 @@
 
   /* Acessibilidade: foco sempre visível */
   :focus-visible {
-    outline: 3px solid var(--color-uva-500);
+    outline: 3px solid var(--color-foco);
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -103,6 +107,15 @@
 }
 
 @layer components {
+  /* Ícone de linha (astro-icon) alinhado com texto ao redor. O reset do
+     Tailwind força `display: block` em todo <svg>, o que quebra o ícone
+     pra própria linha quando ele fica ao lado de texto — este utilitário
+     corrige isso em todo lugar de uma vez. */
+  .icone-linha {
+    display: inline-block;
+    vertical-align: -0.15em;
+  }
+
   /* Link "pular para o conteúdo" (leitores de tela / teclado) */
   .pular-conteudo {
     position: absolute;

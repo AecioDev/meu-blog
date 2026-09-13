@@ -38,6 +38,7 @@ export type Categoria = {
   slug: string;
   publica: boolean;
   emoji: string;
+  icone: string;
   chip: string;
   barra: string;
 };
@@ -72,6 +73,7 @@ export const MENU_PRINCIPAL: ItemMenu[] = [
  */
 export type EstiloCategoria = {
   emoji: string;
+  icone: string;
   chip: string;
   barra: string;
 };
@@ -82,6 +84,7 @@ export const ESTILOS_CATEGORIA: Record<string, EstiloCategoria> =
       categoria.slug,
       {
         emoji: categoria.emoji,
+        icone: categoria.icone,
         chip: categoria.chip,
         barra: categoria.barra,
       },
@@ -90,6 +93,7 @@ export const ESTILOS_CATEGORIA: Record<string, EstiloCategoria> =
 
 export const ESTILO_CATEGORIA_PADRAO: EstiloCategoria = {
   emoji: '🏠',
+  icone: 'material-symbols:home-outline',
   chip: 'bg-tinta text-white',
   barra: 'bg-tinta',
 };

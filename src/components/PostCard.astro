@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
 import type { Post } from '../utils/posts';
 import {
   urlDoPost,
@@ -43,7 +44,7 @@ const estilo = estiloCategoria(post.data.category);
         estilo.chip,
       ]}
     >
-      <span aria-hidden="true">{estilo.emoji}</span>
+      <Icon name={estilo.icone} class="icone-linha" aria-hidden="true" />
       {post.data.category}
     </a>
 

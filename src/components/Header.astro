@@ -6,16 +6,26 @@ const estaAtivo = (href: string) =>
   href === '/' ? caminhoAtual === '/' : caminhoAtual.startsWith(href);
 ---
 
-<header class="sticky top-0 z-50 border-b-4 border-obra-400 bg-creme/95 backdrop-blur">
+<header class="sticky top-0 z-50 border-b border-borda bg-creme/95 backdrop-blur">
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 lg:px-6">
     <a href="/" class="group flex items-center gap-3" aria-label={`${SITE_TITLE} — página inicial`}>
       <span
-        class="flex h-11 w-11 shrink-0 items-end justify-center gap-[3px] rounded-2xl bg-obra-500 p-2 transition-transform group-hover:-rotate-6"
+        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-tinta"
         aria-hidden="true"
       >
-        <span class="h-3 w-1.5 rounded-full bg-creme"></span>
-        <span class="h-5 w-1.5 rounded-full bg-creme"></span>
-        <span class="h-7 w-1.5 rounded-full bg-creme"></span>
+        <svg width="34" height="34" viewBox="0 0 64 64" fill="none">
+          <path
+            d="M16 44 A16 28 0 0 1 48 44"
+            class="stroke-tinta-fraca"
+            stroke-width="2.4"
+            stroke-linecap="round"
+          />
+          <line x1="10" y1="44" x2="54" y2="44" class="stroke-tinta-fraca" stroke-width="2.4" stroke-linecap="round" />
+          <line x1="32" y1="44" x2="32" y2="18" class="stroke-tinta-fraca" stroke-width="2.4" stroke-linecap="round" />
+          <rect x="20" y="30" width="6" height="14" rx="1.5" class="fill-papel" />
+          <rect x="29" y="24" width="6" height="20" rx="1.5" class="fill-papel" />
+          <rect x="38" y="14" width="6" height="30" rx="1.5" class="fill-obra-300" />
+        </svg>
       </span>
       <span class="leading-tight">
         <span class="block font-titulo text-xl font-bold text-tinta sm:text-2xl">
@@ -35,10 +45,10 @@ const estaAtivo = (href: string) =>
                 href={item.href}
                 aria-current={estaAtivo(item.href) ? 'page' : undefined}
                 class:list={[
-                  'rounded-full px-3 py-2 text-sm font-bold transition-colors',
+                  'rounded-lg px-3 py-2 text-sm font-semibold transition-colors',
                   estaAtivo(item.href)
-                    ? 'bg-obra-500 text-tinta'
-                    : 'text-tinta-suave hover:bg-obra-100 hover:text-tinta',
+                    ? 'bg-tinta text-papel'
+                    : 'text-tinta-suave hover:bg-creme-forte hover:text-tinta',
                 ]}
               >
                 {item.titulo}
@@ -52,7 +62,7 @@ const estaAtivo = (href: string) =>
     <!-- Menu mobile: <details> puro, sem JavaScript -->
     <details class="menu-mobile relative lg:hidden">
       <summary
-        class="flex cursor-pointer list-none items-center gap-2 rounded-full bg-obra-500 px-4 py-2 font-titulo text-sm font-semibold text-tinta"
+        class="flex cursor-pointer list-none items-center gap-2 rounded-lg bg-tinta px-4 py-2 font-titulo text-sm font-semibold text-papel"
       >
         <span class="sr-only">Abrir menu</span>
         <span aria-hidden="true">Menu</span>
@@ -66,7 +76,7 @@ const estaAtivo = (href: string) =>
       </summary>
       <nav
         aria-label="Menu principal (celular)"
-        class="absolute right-0 mt-2 w-56 rounded-2xl border-2 border-borda bg-papel p-2 shadow-xl"
+        class="absolute right-0 mt-2 w-56 rounded-xl border border-borda bg-papel p-2 shadow-xl"
       >
         <ul class="flex flex-col">
           {

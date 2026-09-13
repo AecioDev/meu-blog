@@ -10,7 +10,9 @@
  * Produto sem link nenhum, ou marcado como "não vale link" no painel,
  * simplesmente não aparece.
  */
+import { Icon } from 'astro-icon/components';
 import catalogo from '../../tools/painel/produtos-afiliados.json';
+import { ICONE_CAIXA } from '../utils/icones';
 
 interface Props {
   /** Slugs do catálogo, vindos do frontmatter do post. */
@@ -61,7 +63,7 @@ const itens = materiais
         id="titulo-onde-comprar"
         class="font-titulo text-xl font-bold text-tinta"
       >
-        <span aria-hidden="true">📦</span> Onde comprar
+        <Icon name={ICONE_CAIXA} class="icone-linha" aria-hidden="true" /> Onde comprar
       </h2>
       <p class="mt-1 text-sm text-tinta-suave">
         Os itens desta lista, nas lojas que a gente confere.

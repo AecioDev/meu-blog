@@ -9,7 +9,9 @@
  *
  * Sem nenhum produto em destaque, o bloco não é renderizado.
  */
+import { Icon } from 'astro-icon/components';
 import catalogo from '../../tools/painel/produtos-afiliados.json';
+import { ICONE_LUPA } from '../utils/icones';
 
 interface Props {
   /** Quantos mostrar. Mais que quatro vira lista e ninguém lê. */
@@ -57,7 +59,7 @@ const achados = Object.values(registro)
         id="titulo-achados"
         class="flex items-center gap-2 font-titulo text-lg font-semibold text-tinta"
       >
-        <span aria-hidden="true">🔎</span>
+        <Icon name={ICONE_LUPA} class="icone-linha" aria-hidden="true" />
         Achados
       </h2>
       <p class="mt-1 text-xs text-tinta-fraca">

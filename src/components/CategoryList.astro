@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { getCategorias, estiloCategoria, idUnico } from '../utils/posts';
 
 const categorias = await getCategorias();
@@ -33,7 +34,7 @@ const idTitulo = idUnico('titulo-categorias');
               ]}
             >
               <span class="flex items-center gap-2">
-                <span aria-hidden="true">{estilo.emoji}</span>
+                <Icon name={estilo.icone} class="icone-linha" aria-hidden="true" />
                 {cat.nome}
               </span>
               <span class="rounded-full bg-creme-forte px-2 py-0.5 text-xs font-bold text-tinta-suave">

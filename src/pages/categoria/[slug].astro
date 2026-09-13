@@ -1,5 +1,6 @@
 ---
 import type { InferGetStaticPropsType } from 'astro';
+import { Icon } from 'astro-icon/components';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
@@ -58,7 +59,7 @@ const descricao =
       ]}
       aria-hidden="true"
     >
-      {estilo.emoji}
+      <Icon name={estilo.icone} />
     </span>
     <div class="min-w-0">
       <h1 class="font-titulo text-3xl font-bold text-tinta sm:text-4xl">
